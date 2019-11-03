@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+	<metadata>
+		<id>{id}</id>
+		<version>{version}</version>
+		<title>Storm.SqlMigrations</title>
+		<authors>{author}</authors>
+		<owners>Storm</owners>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/Julien-Mialon/Storm.Api</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Storm framework for API with aspnet core</description>
+		<releaseNotes>{release_notes}</releaseNotes>
+		<copyright>Copyright 2019</copyright>
+		<tags>storm api aspnet aspnetcore cqrs</tags>
+        <dependencies>
+            <dependency id="Storm.Api.Core" version="{storm.api}" />
+        </dependencies>
+	</metadata>
+</package>
