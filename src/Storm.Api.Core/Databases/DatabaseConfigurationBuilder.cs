@@ -15,9 +15,10 @@ namespace Storm.Api.Core.Databases
 
 		private const string SQL_SERVER_FORMAT = "Data Source={0};Initial Catalog={1};Integrated Security=True;User ID={2};Password={3};MultipleActiveResultSets=True;Encrypt={4};TrustServerCertificate=False;Connect Timeout=30;";
 
-		private const string MYSQL_FORMAT = "Server={0};Port=3306;Database={1};UID={2};Password={3};SslMode=None";
+		private const string MYSQL_FORMAT = "Server={0};Port=3306;Database={1};UID={2};Password={3};SslMode=None;Charset=utf8";
 
 		private bool _enableDebug;
+		private bool _useLogService;
 		private string _connectionString;
 		private IOrmLiteDialectProvider _dialectProvider;
 
@@ -27,7 +28,14 @@ namespace Storm.Api.Core.Databases
 		/// <returns>A new connection factory</returns>
 		public IDatabaseConnectionFactory Build()
 		{
-			LogManager.LogFactory = new ConsoleLogFactory(debugEnabled: true);
+			if (_useLogService)
+			{
+				LogManager.LogFactory = new LogServiceLogFactory(debugEnabled: _enableDebug);
+			}
+			else
+			{
+				LogManager.LogFactory = new ConsoleLogFactory(debugEnabled: _enableDebug);
+			}
 
 			string connectionString = _connectionString ?? throw new InvalidOperationException("Configuration has not been finished");
 			IOrmLiteDialectProvider provider = _dialectProvider ?? throw new InvalidOperationException("Configuration has not been finished");
@@ -125,6 +133,12 @@ namespace Storm.Api.Core.Databases
 		public DatabaseConfigurationBuilder UseDebug(bool enableDebug)
 		{
 			_enableDebug = enableDebug;
+			return this;
+		}
+
+		public DatabaseConfigurationBuilder UseLogService(bool useLogService)
+		{
+			_useLogService = useLogService;
 			return this;
 		}
 	}

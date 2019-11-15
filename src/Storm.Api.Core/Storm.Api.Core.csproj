@@ -8,7 +8,7 @@
 	<ItemGroup>
 		<PackageReference Include="Elasticsearch.Net" Version="6.6.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
 		<PackageReference Include="Storm.Sql" Version="0.2.0" />

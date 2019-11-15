@@ -18,8 +18,8 @@ namespace Storm.Api.Swaggers
 			{
 				options.DescribeAllEnumsAsStrings();
 				options.CustomSchemaIds(x => x.FullName);
-				options.DocumentFilter<SortByNameFilter>();
-				options.OperationFilter<HandleIFormFileFilter>();
+				//options.DocumentFilter<SortByNameFilter>();
+				//options.OperationFilter<HandleIFormFileFilter>();
 				options.OperationFilter<OperationDescriptionFilter>();
 				options.DocInclusionPredicate((version, apiDescription) => _swaggerDocumentDescriptions.Any(x => x.InclusionPredicate(version, apiDescription)));
 

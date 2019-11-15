@@ -13,8 +13,10 @@
 		<releaseNotes>{release_notes}</releaseNotes>
 		<copyright>Copyright 2019</copyright>
 		<tags>storm api aspnet aspnetcore cqrs</tags>
-        <dependencies>
-            <dependency id="Storm.Api.Core" version="{storm.api}" />
-        </dependencies>
+		<dependencies>
+			<group targetFramework=".NETStandard2.0">
+				<dependency id="Newtonsoft.Json" version="12.0.2" exclude="Build,Analyzers" />
+			</group>
+		</dependencies>
 	</metadata>
 </package>

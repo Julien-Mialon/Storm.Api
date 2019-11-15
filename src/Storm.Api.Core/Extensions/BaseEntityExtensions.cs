@@ -6,7 +6,7 @@ namespace Storm.Api.Core.Extensions
 {
 	public static class BaseEntityExtensions
 	{
-		public static void CopyGenericPropertiesFrom(this BaseEntity storage, BaseEntity source)
+		public static void CopyGenericPropertiesFrom(this IEntity storage, IEntity source)
 		{
 			if (storage is null)
 			{
@@ -26,45 +26,45 @@ namespace Storm.Api.Core.Extensions
 			storage.IsDeleted = source.IsDeleted;
 		}
 
-		internal static void MarkAsCreated(this BaseEntity entity)
+		internal static void MarkAsCreated(this IEntity entity)
 		{
 			entity.EntityCreatedDate = DateTime.UtcNow;
 		}
 
-		internal static void MarkAsUpdated(this BaseEntity entity)
+		internal static void MarkAsUpdated(this IEntity entity)
 		{
 			entity.EntityUpdatedDate = DateTime.UtcNow;
 		}
 
-		internal static void MarkAsDeleted(this BaseEntity entity)
+		internal static void MarkAsDeleted(this IEntity entity)
 		{
 			entity.IsDeleted = true;
 			entity.EntityDeletedDate = DateTime.UtcNow;
 		}
 
-		public static T NullIfDeleted<T>(this T entity) where T : BaseEntity
+		public static T NullIfDeleted<T>(this T entity) where T : IEntity
 		{
 			if (entity.IsDeleted)
 			{
-				return null;
+				return default;
 			}
 
 			return entity;
 		}
 
-		public static async Task<T> NullIfDeleted<T>(this Task<T> entity) where T : BaseEntity => (await entity).NullIfDeleted();
+		public static async Task<T> NullIfDeleted<T>(this Task<T> entity) where T : IEntity => (await entity).NullIfDeleted();
 
-		public static bool IsNotNullOrDefault(this BaseEntity entity)
+		public static bool IsNotNullOrDefault(this IEntity entity)
 		{
 			return entity != null && entity.EntityCreatedDate != default;
 		}
 
-		public static bool IsNullOrDefault(this BaseEntity entity)
+		public static bool IsNullOrDefault(this IEntity entity)
 		{
 			return entity is null || entity.EntityCreatedDate == default;
 		}
 
-		public static DateTime LastUpdatedDate(this BaseEntity entity)
+		public static DateTime LastUpdatedDate(this IEntity entity)
 		{
 			return entity.EntityUpdatedDate ?? entity.EntityCreatedDate;
 		}

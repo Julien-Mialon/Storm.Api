@@ -13,6 +13,7 @@ using Storm.Api.Configurations;
 using Storm.Api.Core.Databases;
 using Storm.Api.Core.Logs;
 using Storm.Api.Core.Logs.Appenders;
+using Storm.Api.Core.Logs.Consoles;
 using Storm.Api.Core.Logs.ElasticSearch.Configurations;
 using Storm.Api.Core.Logs.Serilogs.Configurations;
 using Storm.Api.Core.Services;
@@ -27,9 +28,9 @@ namespace Storm.Api.Launchers
 {
 	public abstract class BaseStartup
 	{
-		protected readonly IConfiguration Configuration;
-		protected readonly IWebHostEnvironment Environment;
-		protected ILogService LogService;
+		protected IConfiguration Configuration { get; }
+		protected IWebHostEnvironment Environment { get; }
+		protected ILogService LogService { get; private set; }
 
 		protected abstract string LogsProjectName { get; }
 		protected virtual SwaggerDocumentDescription[] SwaggerDocuments => new SwaggerDocumentDescription[]
@@ -101,14 +102,14 @@ namespace Storm.Api.Launchers
 				.UseEndpoints(endpoints => endpoints.MapControllers())
 				;
 
-			LogService.WithAppender(new RequestContextAppender(app.ApplicationServices.GetService<IActionContextAccessor>()))
+			LogService?.WithAppender(new RequestContextAppender(app.ApplicationServices.GetService<IActionContextAccessor>()))
 				.WithAppender(new RequestHeaderAppender(app.ApplicationServices.GetService<IActionContextAccessor>()))
 				;
 		}
 
-		private void RegisterElasticSearchLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
+		protected void RegisterElasticSearchLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
 		{
-			LogService = ElasticSearchConfiguration.CreateBuilder()
+			SetLogService(services, ElasticSearchConfiguration.CreateBuilder()
 					.WithMinimumLogLevel(LogLevel.Debug)
 					.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}", "log")
 					.WithQueueSender()
@@ -116,19 +117,30 @@ namespace Storm.Api.Launchers
 					.Build()
 					.CreateService()
 					.WithAppender(new TimestampLogAppender())
-				;
-			services.AddSingleton(LogService);
+				);
 		}
 
-		private void RegisterSerilogLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
+		protected void RegisterSerilogLogger(IServiceCollection services, string configurationSectionName = "Serilog")
 		{
-			LogService = SerilogConfiguration.CreateBuilder()
+			SetLogService(services, SerilogConfiguration.CreateBuilder()
 					.WithMinimumLogLevel(LogLevel.Debug)
+					.FromConfiguration(Configuration.GetSection(configurationSectionName))
 					.Build()
 					.CreateService()
 					.WithAppender(new TimestampLogAppender())
-				;
-			services.AddSingleton(LogService);
+				);
+		}
+
+		protected void RegisterConsoleLogger(IServiceCollection services, LogLevel minimumLogLevel = LogLevel.Debug)
+		{
+			SetLogService(services, new LogService(s => new ConsoleLogSender(), minimumLogLevel));
+		}
+
+		protected void SetLogService(IServiceCollection services, ILogService logService)
+		{
+			LogService = logService;
+			services.AddSingleton(logService);
+			LogServiceDatabaseLog.LogService = logService;
 		}
 	}
 }

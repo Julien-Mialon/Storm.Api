@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -33,7 +34,7 @@ namespace Storm.Api.Swaggers
 		{
 			foreach (SwaggerModuleDescription module in Modules)
 			{
-				options.SwaggerDoc($"{Version}_{module.ModuleName}", new Info {Title = $"API - {module.ModuleName}", Version = Version});
+				options.SwaggerDoc($"{Version}_{module.ModuleName}", new OpenApiInfo {Title = $"API - {module.ModuleName}", Version = Version});
 			}
 		}
 

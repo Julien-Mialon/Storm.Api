@@ -3,19 +3,10 @@ using ServiceStack.DataAnnotations;
 
 namespace Storm.Api.Core.Models
 {
-	public interface IEntity
-	{
-		long Id { get; set; }
-		Guid CollationId { get; set; }
-		DateTime EntityCreatedDate { get; set; }
-		DateTime? EntityUpdatedDate { get; set; }
-		bool IsDeleted { get; set; }
-		DateTime? EntityDeletedDate { get; set; }
-	}
-
-	public abstract class BaseEntity : IEntity
+	public abstract class BaseEntityWithAutoIncrement : IEntity
 	{
 		[PrimaryKey]
+		[AutoIncrement]
 		public long Id { get; set; }
 
 		[Index]

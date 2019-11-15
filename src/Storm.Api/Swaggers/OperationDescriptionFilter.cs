@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.OpenApi.Models;
 using Storm.Api.Swaggers.Attributes;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Storm.Api.Swaggers
 {
 	internal class OperationDescriptionFilter : IOperationFilter
 	{
-		public void Apply(Operation operation, OperationFilterContext context)
+		public void Apply(OpenApiOperation operation, OperationFilterContext context)
 		{
 			if (context.ApiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
 			{

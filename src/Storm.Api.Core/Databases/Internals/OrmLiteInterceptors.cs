@@ -15,7 +15,7 @@ namespace Storm.Api.Core.Databases.Internals
 
 		private static void OnInsert(IDbCommand command, object item)
 		{
-			if (item is BaseEntity entity)
+			if (item is IEntity entity)
 			{
 				entity.MarkAsCreated();
 			}
@@ -23,7 +23,7 @@ namespace Storm.Api.Core.Databases.Internals
 
 		private static void OnUpdate(IDbCommand command, object item)
 		{
-			if (item is BaseEntity entity)
+			if (item is IEntity entity)
 			{
 				if (entity.IsDeleted)
 				{

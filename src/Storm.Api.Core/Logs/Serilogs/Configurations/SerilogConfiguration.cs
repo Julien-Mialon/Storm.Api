@@ -17,12 +17,19 @@ namespace Storm.Api.Core.Logs.Serilogs.Configurations
 
 		private ILogSender CreateSender(ILogService logService)
 		{
-			var logger = new LoggerConfiguration()
-				.WriteTo.File("output.log", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
-				.WriteTo.Console()
-				.CreateLogger();
+			var loggerConfiguration = new LoggerConfiguration();
+			if (LogFileName != null)
+			{
+				loggerConfiguration = loggerConfiguration
+					.WriteTo.File("logs/output.log", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true);
+			}
 
-			return new SerilogSender(logger);
+			if (EnableConsoleLogging)
+			{
+				loggerConfiguration = loggerConfiguration.WriteTo.Console();
+			}
+
+			return new SerilogSender(loggerConfiguration.CreateLogger());
 		}
 
 		public static ISerilogConfigurationBuilder CreateBuilder() => new SerilogConfigurationBuilder();

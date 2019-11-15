@@ -13,7 +13,7 @@ namespace Storm.Api.Core.Databases.Internals
 
 		private static void ReorderField(ModelDefinition definition)
 		{
-			if (typeof(BaseEntity).IsAssignableFrom(definition.ModelType))
+			if (typeof(IEntity).IsAssignableFrom(definition.ModelType))
 			{
 				FieldDefinition idField = null;
 				FieldDefinition collationIdField = null;
@@ -26,10 +26,10 @@ namespace Storm.Api.Core.Databases.Internals
 				{
 					switch (fieldDefinition.Name)
 					{
-						case nameof(BaseEntity.Id):
+						case nameof(IEntity.Id):
 							idField = fieldDefinition;
 							break;
-						case nameof(BaseEntity.CollationId):
+						case nameof(IEntity.CollationId):
 							collationIdField = fieldDefinition;
 							break;
 						default:

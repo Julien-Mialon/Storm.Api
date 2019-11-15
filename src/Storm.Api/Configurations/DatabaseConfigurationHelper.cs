@@ -33,13 +33,17 @@ namespace Storm.Api.Configurations
 			}
 
 			string connectionString = configuration.GetValue<string>("connectionString", null);
+			DatabaseConfigurationBuilder configurationBuilder = new DatabaseConfigurationBuilder()
+				.UseDebug(configuration.GetValue<bool>("debugLogging", false))
+				.UseLogService(configuration.GetValue<bool>("useLogService", false));
+
 
 			if (connectionString is null)
 			{
 				switch (databaseType)
 				{
 					case DatabaseType.AzureSqlServer:
-						return new DatabaseConfigurationBuilder()
+						return configurationBuilder
 							.UseAzureSqlServer(
 								configuration["host"],
 								configuration["database"],
@@ -48,7 +52,7 @@ namespace Storm.Api.Configurations
 								configuration.GetValue("encrypt", false)
 							);
 					case DatabaseType.SqlServer:
-						return new DatabaseConfigurationBuilder()
+						return configurationBuilder
 							.UseSqlServer(
 								configuration["host"],
 								configuration["database"],
@@ -57,7 +61,7 @@ namespace Storm.Api.Configurations
 								configuration.GetValue("encrypt", false)
 							);
 					case DatabaseType.MySql:
-						return new DatabaseConfigurationBuilder()
+						return configurationBuilder
 							.UseMySQL(
 								configuration["host"],
 								configuration["database"],
@@ -65,10 +69,10 @@ namespace Storm.Api.Configurations
 								configuration["password"]
 							);
 					case DatabaseType.SQLite:
-						return new DatabaseConfigurationBuilder()
+						return configurationBuilder
 							.UseSQLite(configuration["file"]);
 					case DatabaseType.SQLiteMemory:
-						return new DatabaseConfigurationBuilder()
+						return configurationBuilder
 							.UseInMemorySQLite();
 					default:
 						throw new ArgumentOutOfRangeException();
@@ -78,9 +82,9 @@ namespace Storm.Api.Configurations
 			switch (databaseType)
 			{
 				case DatabaseType.SqlServer:
-					return new DatabaseConfigurationBuilder().UseSqlServer(connectionString);
+					return configurationBuilder.UseSqlServer(connectionString);
 				case DatabaseType.MySql:
-					return new DatabaseConfigurationBuilder().UseMySQL(connectionString);
+					return configurationBuilder.UseMySQL(connectionString);
 				case DatabaseType.AzureSqlServer:
 				case DatabaseType.SQLite:
 				case DatabaseType.SQLiteMemory:

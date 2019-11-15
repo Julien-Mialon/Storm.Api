@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Storm.Api.Swaggers
 {
+	/*
 	internal class HandleIFormFileFilter : IOperationFilter
 	{
-		public void Apply(Operation operation, OperationFilterContext context)
+		public void Apply(OpenApiOperation operation, OperationFilterContext context)
 		{
 			for (int i = 0 ; i < context.ApiDescription.ParameterDescriptions.Count ; i++)
 			{
@@ -24,4 +26,5 @@ namespace Storm.Api.Swaggers
 			}
 		}
 	}
+	*/
 }

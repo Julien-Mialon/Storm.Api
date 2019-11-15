@@ -13,5 +13,15 @@
 		<releaseNotes>{release_notes}</releaseNotes>
 		<copyright>Copyright 2019</copyright>
 		<tags>storm api aspnet aspnetcore cqrs</tags>
+		<dependencies>
+			<group targetFramework=".NETStandard2.0">
+				<dependency id="Elasticsearch.Net" version="6.6.0" exclude="Build,Analyzers" />
+				<dependency id="Microsoft.Extensions.DependencyInjection" version="2.2.0" exclude="Build,Analyzers" />
+				<dependency id="Newtonsoft.Json" version="12.0.2" exclude="Build,Analyzers" />
+				<dependency id="Serilog.Sinks.Console" version="3.1.1" exclude="Build,Analyzers" />
+				<dependency id="Serilog.Sinks.File" version="4.1.0" exclude="Build,Analyzers" />
+				<dependency id="Storm.Sql" version="0.2.0" exclude="Build,Analyzers" />
+			</group>
+		</dependencies>
 	</metadata>
 </package>

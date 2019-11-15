@@ -4,7 +4,7 @@ using Storm.Api.Core.Models;
 namespace Storm.SqlMigrations
 {
 	[Alias("Migrations")]
-	public class Migration : BaseEntity
+	public class Migration : BaseEntityWithAutoIncrement
 	{
 		[Index]
 		public int Number { get; set; }
