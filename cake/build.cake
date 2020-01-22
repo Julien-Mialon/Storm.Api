@@ -3,7 +3,7 @@
 #load "nuget:?package=Cake.Storm.Fluent.NuGet"
 #load "nuget:?package=Cake.Storm.Fluent.Transformations"
 
-const string MODULE_VERSION = "0.1.8";
+const string MODULE_VERSION = "0.2.0";
 
 Configure()
     .UseRootDirectory("..")
@@ -21,7 +21,7 @@ Configure()
             .OnFile("misc/Storm.Api.Dtos.nuspec")
             .OnFile("misc/Storm.Api.nuspec")
             .OnFile("misc/Storm.SqlMigrations.nuspec")
-            
+
             .Replace("{storm.api}", MODULE_VERSION)
         )
     )
