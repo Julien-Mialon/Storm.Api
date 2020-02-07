@@ -17,7 +17,9 @@ namespace Storm.Api.Core.Logs.Serilogs.Configurations
 
 		private ILogSender CreateSender(ILogService logService)
 		{
-			var loggerConfiguration = new LoggerConfiguration();
+			LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
+				.MinimumLevel.Is(MinimumLogLevel.AsLogEventLevel());
+
 			if (LogFileName != null)
 			{
 				loggerConfiguration = loggerConfiguration

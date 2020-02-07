@@ -15,10 +15,13 @@ namespace Storm.Api.Core.Logs.Serilogs.Senders
 
 		public void Enqueue(LogLevel level, string entry)
 		{
-			_logger.Write(AsLogEventLevel(level), entry);
+			_logger.Write(level.AsLogEventLevel(), entry);
 		}
+	}
 
-		private LogEventLevel AsLogEventLevel(LogLevel level) => level switch
+	internal static class LogLevelExtensions
+	{
+		public static LogEventLevel AsLogEventLevel(this LogLevel level) => level switch
 		{
 			LogLevel.Debug => LogEventLevel.Debug,
 			LogLevel.Trace => LogEventLevel.Verbose,
