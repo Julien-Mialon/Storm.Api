@@ -15,7 +15,7 @@ namespace Storm.Api.Core.Databases
 
 		private const string SQL_SERVER_FORMAT = "Data Source={0};Initial Catalog={1};Integrated Security=True;User ID={2};Password={3};MultipleActiveResultSets=True;Encrypt={4};TrustServerCertificate=False;Connect Timeout=30;";
 
-		private const string MYSQL_FORMAT = "Server={0};Port=3306;Database={1};UID={2};Password={3};SslMode=None;Charset=utf8";
+		private const string MYSQL_FORMAT = "Server={0};Port={4};Database={1};UID={2};Password={3};SslMode=None;Charset=utf8";
 
 		private bool _enableDebug;
 		private bool _useLogService;
@@ -92,7 +92,17 @@ namespace Storm.Api.Core.Databases
 		/// <param name="password">Database user password</param>
 		/// <returns>this</returns>
 		public DatabaseConfigurationBuilder UseMySQL(string host, string database, string login, string password)
-			=> UseMySQL(string.Format(MYSQL_FORMAT, host, database, login, password));
+		{
+			int port = 3306;
+			if (host.Contains(':'))
+			{
+				string[] split = host.Split(':');
+				host = split[0];
+				port = int.Parse(split[1]);
+			}
+
+			return UseMySQL(string.Format(MYSQL_FORMAT, host, database, login, password, port));
+		}
 
 		/// <summary>
 		/// Configure to use SQL Server with specific connection string
