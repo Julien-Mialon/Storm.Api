@@ -12,7 +12,6 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 		private string _password;
 		private Func<ElasticSender, ILogService, ILogSender> _senderFactory;
 		private string _index;
-		private string _type;
 
 		internal LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
 
@@ -31,10 +30,9 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 			_senderFactory = senderFactory;
 		}
 
-		internal void UseIndex(string index, string type)
+		internal void UseIndex(string index)
 		{
 			_index = index;
-			_type = type;
 		}
 
 		public ILogService CreateService()
@@ -66,7 +64,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 
 			configuration.ConnectionLimit(-1);
 			ElasticLowLevelClient client = new ElasticLowLevelClient(configuration);
-			ElasticSender sender = new ElasticSender(client, _index, _type);
+			ElasticSender sender = new ElasticSender(client, _index);
 
 			return _senderFactory(sender, logService);
 		}

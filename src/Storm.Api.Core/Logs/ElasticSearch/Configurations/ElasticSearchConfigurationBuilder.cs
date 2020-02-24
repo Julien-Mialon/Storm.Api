@@ -14,7 +14,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 		IElasticSearchConfigurationBuilder WithMinimumLogLevel(LogLevel minimumLogLevel);
 		IElasticSearchConfigurationBuilder WithQueueSender();
 		IElasticSearchConfigurationBuilder WithImmediateSender();
-		IElasticSearchConfigurationBuilder WithIndex(string index, string type);
+		IElasticSearchConfigurationBuilder WithIndex(string index);
 	}
 
 	internal class ElasticSearchConfigurationBuilder : IElasticSearchConfigurationBuilder
@@ -67,9 +67,9 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 			return this;
 		}
 
-		public IElasticSearchConfigurationBuilder WithIndex(string index, string type)
+		public IElasticSearchConfigurationBuilder WithIndex(string index)
 		{
-			Configuration.UseIndex(index, type);
+			Configuration.UseIndex(index);
 			return this;
 		}
 	}

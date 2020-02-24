@@ -111,7 +111,7 @@ namespace Storm.Api.Launchers
 		{
 			SetLogService(services, ElasticSearchConfiguration.CreateBuilder()
 					.WithMinimumLogLevel(LogLevel.Debug)
-					.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}", "log")
+					.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}")
 					.WithQueueSender()
 					.FromConfiguration(Configuration.GetSection(configurationSectionName))
 					.Build()

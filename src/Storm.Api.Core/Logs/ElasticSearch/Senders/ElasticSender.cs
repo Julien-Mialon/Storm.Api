@@ -9,18 +9,16 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Senders
 	{
 		private readonly ElasticLowLevelClient _client;
 		private readonly string _index;
-		private readonly string _type;
 
-		public ElasticSender(ElasticLowLevelClient client, string index, string type)
+		public ElasticSender(ElasticLowLevelClient client, string index)
 		{
 			_client = client;
 			_index = index;
-			_type = type;
 		}
 
 		public async Task<bool> Send(string entry)
 		{
-			StringResponse result = await _client.IndexAsync<StringResponse>(_index, _type, entry);
+			StringResponse result = await _client.IndexAsync<StringResponse>(_index, PostData.String(entry));
 
 			if (result.HttpStatusCode is int statusCode && statusCode >= 200 && statusCode < 300)
 			{
@@ -36,11 +34,11 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Senders
 
 			foreach (string entry in entries)
 			{
-				content.AppendLine($"{{\"index\":{{\"_index\":\"{_index}\", \"_type\":\"{_type}\"}}");
+				content.AppendLine($"{{\"index\":{{\"_index\":\"{_index}\" }} }}");
 				content.AppendLine(entry);
 			}
 
-			StringResponse result = await _client.BulkAsync<StringResponse>(content.ToString());
+			StringResponse result = await _client.BulkAsync<StringResponse>(PostData.String(content.ToString()));
 
 			if (result.HttpStatusCode is int statusCode && statusCode >= 200 && statusCode < 300)
 			{
