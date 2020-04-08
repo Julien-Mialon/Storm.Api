@@ -18,20 +18,5 @@ namespace Storm.Api.Core.Extensions
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static string NullIfEmpty(this string source) => string.IsNullOrEmpty(source) ? null : source;
-
-		public static string AsSha256(this string input)
-		{
-			using (SHA256 algorithm = SHA256.Create())
-			{
-				byte[] hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(input));
-				StringBuilder formatted = new StringBuilder(2 * hash.Length);
-				foreach (byte b in hash)
-				{
-					formatted.AppendFormat("{0:X2}", b);
-				}
-
-				return formatted.ToString();
-			}
-		}
 	}
 }
