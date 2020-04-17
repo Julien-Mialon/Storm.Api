@@ -16,7 +16,6 @@ namespace Storm.Api.Swaggers
 
 			return services.AddSwaggerGen(options =>
 			{
-				options.DescribeAllEnumsAsStrings();
 				options.CustomSchemaIds(x => x.FullName);
 				//options.DocumentFilter<SortByNameFilter>();
 				//options.OperationFilter<HandleIFormFileFilter>();

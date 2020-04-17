@@ -94,7 +94,7 @@ namespace Storm.Api.Core.Databases
 		public DatabaseConfigurationBuilder UseMySQL(string host, string database, string login, string password)
 		{
 			int port = 3306;
-			if (host.Contains(':'))
+			if (host.Contains(":"))
 			{
 				string[] split = host.Split(':');
 				host = split[0];

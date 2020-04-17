@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using ServiceStack.OrmLite;
 using Storm.Api.Core.Models;
 
 namespace Storm.Api.Core.Extensions
@@ -72,6 +73,12 @@ namespace Storm.Api.Core.Extensions
 		public static DateTime LastUpdatedDate(this IEntity entity)
 		{
 			return entity.EntityUpdatedDate ?? entity.EntityCreatedDate;
+		}
+
+		public static SqlExpression<TEntity> NotDeleted<TEntity>(this SqlExpression<TEntity> expression)
+			where TEntity : IEntity
+		{
+			return expression.Where(x => x.IsDeleted == false);
 		}
 	}
 }
