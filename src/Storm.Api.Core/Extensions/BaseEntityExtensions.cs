@@ -28,6 +28,11 @@ namespace Storm.Api.Core.Extensions
 
 		internal static void MarkAsCreated(this IEntity entity)
 		{
+			if (entity.CollationId == default)
+			{
+				entity.CollationId = Guid.NewGuid();
+			}
+
 			entity.EntityCreatedDate = DateTime.UtcNow;
 		}
 

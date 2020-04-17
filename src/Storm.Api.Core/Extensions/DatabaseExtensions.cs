@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using ServiceStack.OrmLite;
 
@@ -38,7 +37,6 @@ namespace Storm.Api.Core.Extensions
 		{
 			return type.GetModelMetadata().ModelName;
 		}
-
 
 		public static string SqlLimitString(this IDbConnection connection, int? offset = null, int? count = null)
 		{
