@@ -6,7 +6,7 @@ namespace Storm.Api.Middlewares
 	{
 		public static IApplicationBuilder EnforceHttps(this IApplicationBuilder app)
 		{
-			if (EnvironmentHelper.IsLocal)
+			if (EnvironmentHelper.IsLocal || EnvironmentHelper.IsContainer)
 			{
 				return app;
 			}

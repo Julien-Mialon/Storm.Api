@@ -8,6 +8,7 @@ namespace Storm.Api
 		Alpha,
 		Beta,
 		Prod,
+		Container,
 	}
 
 	public static class EnvironmentHelper
@@ -24,5 +25,7 @@ namespace Storm.Api
 		public static bool IsInternal => Slot == EnvironmentSlot.Dev || Slot == EnvironmentSlot.Test;
 
 		public static bool IsLocal => Slot == EnvironmentSlot.Local;
+
+		public static bool IsContainer => Slot == EnvironmentSlot.Container;
 	}
 }

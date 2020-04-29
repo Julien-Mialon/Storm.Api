@@ -31,6 +31,9 @@ namespace Storm.Api.Configurations
 				case "prod":
 					EnvironmentHelper.Set(EnvironmentSlot.Prod);
 					break;
+				case "docker":
+					EnvironmentHelper.Set(EnvironmentSlot.Container);
+					break;
 				default:
 					name = "local";
 					EnvironmentHelper.Set(EnvironmentSlot.Local);
