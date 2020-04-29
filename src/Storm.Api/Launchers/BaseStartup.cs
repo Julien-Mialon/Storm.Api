@@ -33,6 +33,9 @@ namespace Storm.Api.Launchers
 		protected ILogService LogService { get; private set; }
 
 		protected abstract string LogsProjectName { get; }
+
+		protected bool ForceHttps { get; set; } = true;
+
 		protected virtual SwaggerDocumentDescription[] SwaggerDocuments => new SwaggerDocumentDescription[]
 		{
 			new SwaggerDocumentDescription("v1", new SwaggerModuleDescription("API", ""))
@@ -42,6 +45,8 @@ namespace Storm.Api.Launchers
 		{
 			Environment = environment;
 			Configuration = configuration;
+
+			Configuration.OnSection("Server", section => ForceHttps = section.GetValue("ForceHttps", true));
 		}
 
 		public virtual void ConfigureServices(IServiceCollection services)
@@ -93,9 +98,14 @@ namespace Storm.Api.Launchers
 			IOptions<RequestLocalizationOptions> options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
 
 			app.UseRouting()
-				.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod())
-				.EnforceHttps()
-				.UseStormSwagger()
+				.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+			if (ForceHttps)
+			{
+				app.UseHttpsRedirection();
+			}
+
+			app.UseStormSwagger()
 				.UseDatabaseModule()
 				.UseRequestLogging()
 				.UseRequestLocalization(options.Value)
