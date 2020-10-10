@@ -61,6 +61,12 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 			return this;
 		}
 
+		public IElasticSearchConfigurationBuilder WithSender(Func<ElasticSender, ILogService, ILogSender> senderFactory)
+		{
+			Configuration.UseSender(senderFactory);
+			return this;
+		}
+
 		public IElasticSearchConfigurationBuilder WithImmediateSender()
 		{
 			Configuration.UseSender((client, logService) => new ImmediateQueueLogSender(logService, client));

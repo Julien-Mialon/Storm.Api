@@ -34,6 +34,78 @@ namespace Storm.Api.Core.Extensions
 			connection.SelectMultiAsync<TTable1, TTable2, TTable3, TTable4, TTable5, TTable6, TTable7>(sql)
 				.ConvertAll(item => mapper(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6, item.Item7));
 
+		public static async Task<TDest> AsSingleMultiAsync<TTable1, TTable2, TDest>(this SqlExpression<TTable1> sql, IDbConnection connection, Func<TTable1, TTable2, TDest> mapper)
+		{
+			var items = await connection.SelectMultiAsync<TTable1, TTable2>(sql.Limit(1));
+			if(items.Count == 0)
+			{
+				return default;
+			}
+
+			var item = items[0];
+			return mapper(item.Item1, item.Item2);
+		}
+
+		public static async Task<TDest> AsSingleMultiAsync<TTable1, TTable2, TTable3, TDest>(this SqlExpression<TTable1> sql, IDbConnection connection, Func<TTable1, TTable2, TTable3, TDest> mapper)
+		{
+			var items = await connection.SelectMultiAsync<TTable1, TTable2, TTable3>(sql.Limit(1));
+			if(items.Count == 0)
+			{
+				return default;
+			}
+
+			var item = items[0];
+			return mapper(item.Item1, item.Item2, item.Item3);
+		}
+
+		public static async Task<TDest> AsSingleMultiAsync<TTable1, TTable2, TTable3, TTable4, TDest>(this SqlExpression<TTable1> sql, IDbConnection connection, Func<TTable1, TTable2, TTable3, TTable4, TDest> mapper)
+		{
+			var items = await connection.SelectMultiAsync<TTable1, TTable2, TTable3, TTable4>(sql.Limit(1));
+			if(items.Count == 0)
+			{
+				return default;
+			}
+
+			var item = items[0];
+			return mapper(item.Item1, item.Item2, item.Item3, item.Item4);
+		}
+
+		public static async Task<TDest> AsSingleMultiAsync<TTable1, TTable2, TTable3, TTable4, TTable5, TDest>(this SqlExpression<TTable1> sql, IDbConnection connection, Func<TTable1, TTable2, TTable3, TTable4, TTable5, TDest> mapper)
+		{
+			var items = await connection.SelectMultiAsync<TTable1, TTable2, TTable3, TTable4, TTable5>(sql.Limit(1));
+			if(items.Count == 0)
+			{
+				return default;
+			}
+
+			var item = items[0];
+			return mapper(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5);
+		}
+
+		public static async Task<TDest> AsSingleMultiAsync<TTable1, TTable2, TTable3, TTable4, TTable5, TTable6, TDest>(this SqlExpression<TTable1> sql, IDbConnection connection, Func<TTable1, TTable2, TTable3, TTable4, TTable5, TTable6, TDest> mapper)
+		{
+			var items = await connection.SelectMultiAsync<TTable1, TTable2, TTable3, TTable4, TTable5, TTable6>(sql.Limit(1));
+			if(items.Count == 0)
+			{
+				return default;
+			}
+
+			var item = items[0];
+			return mapper(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6);
+		}
+
+		public static async Task<TDest> AsSingleMultiAsync<TTable1, TTable2, TTable3, TTable4, TTable5, TTable6, TTable7, TDest>(this SqlExpression<TTable1> sql, IDbConnection connection, Func<TTable1, TTable2, TTable3, TTable4, TTable5, TTable6, TTable7, TDest> mapper)
+		{
+			var items = await connection.SelectMultiAsync<TTable1, TTable2, TTable3, TTable4, TTable5, TTable6, TTable7>(sql.Limit(1));
+			if(items.Count == 0)
+			{
+				return default;
+			}
+
+			var item = items[0];
+			return mapper(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6, item.Item7);
+		}
+
 		public static async Task<List<TResult>> AsQueryAsync<T1, T2, TResult>(this string sql, IDbConnection connection, Func<T1, T2, TResult> map, Dictionary<string, object> parameters = null)
 			=> (await connection.QueryAsync(sql, map, parameters)).ToList();
 
