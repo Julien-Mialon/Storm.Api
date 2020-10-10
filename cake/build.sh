@@ -51,7 +51,7 @@ fi
 # Make sure that packages.config exist.
 if [ ! -f $TOOLS_DIR/packages.config ]; then
     echo "Downloading packages.config..."
-    curl -Lsfo $TOOLS_DIR/packages.config https://raw.githubusercontent.com/cake-build/resources/96db975de07319bc50bbc747385a01fb8268ab11/packages.config #https://raw.githubusercontent.com/cake-build/resources/develop/packages.config
+    curl -Lsfo $TOOLS_DIR/packages.config https://raw.githubusercontent.com/cake-build/resources/develop/packages.config # 0.38.5 #https://raw.githubusercontent.com/cake-build/resources/develop/packages.config
     if [ $? -ne 0 ]; then
         echo "An error occured while downloading packages.config."
         exit 1
