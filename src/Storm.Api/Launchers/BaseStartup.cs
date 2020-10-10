@@ -86,6 +86,8 @@ namespace Storm.Api.Launchers
 				options.SupportedCultures = supportedCultures;
 				options.SupportedUICultures = supportedCultures;
 			});
+
+			services.AddControllers();
 		}
 
 		public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)

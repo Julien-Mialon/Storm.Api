@@ -41,7 +41,7 @@ namespace Storm.Api.Swaggers
 						options.IncludeXmlComments(file);
 					}
 				}
-			});
+			}).AddSwaggerGenNewtonsoftSupport();
 		}
 
 		public static IApplicationBuilder UseStormSwagger(this IApplicationBuilder app)
