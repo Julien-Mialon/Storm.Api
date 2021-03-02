@@ -9,7 +9,7 @@ namespace Storm.Api.Configurations
 	{
 		public static IElasticSearchConfigurationBuilder FromConfiguration(this IElasticSearchConfigurationBuilder builder, IConfiguration configuration)
 		{
-			/* Keys : Host ; User ; Password ; LogLevel */
+			/* Keys : Host ; User ; Password ; LogLevel ; Index */
 
 			builder = builder
 				.WithNode(configuration["Host"])
@@ -18,6 +18,11 @@ namespace Storm.Api.Configurations
 			if (configuration.GetValue<string>("LogLevel", null) is { } minimumLogLevelString && Enum.TryParse<LogLevel>(minimumLogLevelString, out LogLevel minimumLogLevel))
 			{
 				builder = builder.WithMinimumLogLevel(minimumLogLevel);
+			}
+
+			if (configuration.GetValue<string>("Index", null) is { } index)
+			{
+				builder = builder.WithIndex(index);
 			}
 
 			return builder;

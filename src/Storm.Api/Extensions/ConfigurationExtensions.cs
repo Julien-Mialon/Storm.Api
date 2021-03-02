@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Storm.Api.Extensions
 {
@@ -11,6 +12,18 @@ namespace Storm.Api.Extensions
 			{
 				action(section);
 			}
+		}
+
+		public static string SimpleEnvironmentName(this IHostEnvironment environment)
+		{
+			string name = environment.EnvironmentName;
+			int delimiterIndex = name.LastIndexOf('-');
+			if (delimiterIndex > 0)
+			{
+				name = name.Substring(0, delimiterIndex);
+			}
+
+			return name;
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 		private readonly List<string> _nodes = new List<string>();
 		private string _username;
 		private string _password;
-		private Func<ElasticSender, ILogService, ILogSender> _senderFactory;
+		private Func<IElasticSender, ILogService, ILogSender> _senderFactory;
 		private string _index;
 
 		internal LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
@@ -25,7 +25,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 			_password = password;
 		}
 
-		internal void UseSender(Func<ElasticSender, ILogService, ILogSender> senderFactory)
+		internal void UseSender(Func<IElasticSender, ILogService, ILogSender> senderFactory)
 		{
 			_senderFactory = senderFactory;
 		}
@@ -42,10 +42,20 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 				throw new InvalidOperationException("You must specify at least one node address");
 			}
 
-			return new LogService(CreateSender, MinimumLogLevel);
+			return new LogService(logService => _senderFactory(CreateElasticSender(), logService), MinimumLogLevel);
 		}
 
-		private ILogSender CreateSender(ILogService logService)
+		public LogQueueService CreateQueueService()
+		{
+			if (_nodes.Count == 0)
+			{
+				throw new InvalidOperationException("You must specify at least one node address");
+			}
+
+			return new LogQueueService(MinimumLogLevel);
+		}
+
+		public IElasticSender CreateElasticSender()
 		{
 			ConnectionConfiguration configuration;
 			if (_nodes.Count == 1)
@@ -66,7 +76,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 			ElasticLowLevelClient client = new ElasticLowLevelClient(configuration);
 			ElasticSender sender = new ElasticSender(client, _index);
 
-			return _senderFactory(sender, logService);
+			return sender;
 		}
 
 		public static IElasticSearchConfigurationBuilder CreateBuilder() => new ElasticSearchConfigurationBuilder();

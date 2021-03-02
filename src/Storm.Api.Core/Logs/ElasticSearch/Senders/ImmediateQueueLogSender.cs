@@ -5,9 +5,9 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Senders
 {
 	internal class ImmediateQueueLogSender : AbstractImmediateQueueLogSender
 	{
-		private readonly ElasticSender _client;
+		private readonly IElasticSender _client;
 
-		public ImmediateQueueLogSender(ILogService service, ElasticSender client) : base(service)
+		public ImmediateQueueLogSender(ILogService service, IElasticSender client) : base(service)
 		{
 			_client = client;
 		}

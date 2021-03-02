@@ -5,7 +5,13 @@ using Elasticsearch.Net;
 
 namespace Storm.Api.Core.Logs.ElasticSearch.Senders
 {
-	internal class ElasticSender
+	public interface IElasticSender
+	{
+		Task<bool> Send(string entry);
+		Task<bool> Send(IReadOnlyList<string> entries);
+	}
+
+	internal class ElasticSender : IElasticSender
 	{
 		private readonly ElasticLowLevelClient _client;
 		private readonly string _index;
@@ -34,11 +40,14 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Senders
 
 			foreach (string entry in entries)
 			{
-				content.AppendLine($"{{\"index\":{{\"_index\":\"{_index}\" }} }}");
-				content.AppendLine(entry);
+				content.Append($"{{\"index\":{{}}");
+				content.Append("\n");
+				content.Append(entry);
+				content.Append("\n");
 			}
 
-			StringResponse result = await _client.BulkAsync<StringResponse>(PostData.String(content.ToString()));
+			string body = content.ToString();
+			StringResponse result = await _client.BulkAsync<StringResponse>(_index, PostData.String(body));
 
 			if (result.HttpStatusCode is int statusCode && statusCode >= 200 && statusCode < 300)
 			{

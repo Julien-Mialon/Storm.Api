@@ -19,6 +19,25 @@ namespace Storm.Api
 			Slot = slot;
 		}
 
+		public static void SetFromEnvironment(string environmentName)
+		{
+			int delimiterIndex = environmentName.LastIndexOf('-');
+			if (delimiterIndex >= 0)
+			{
+				environmentName = environmentName.Substring(delimiterIndex + 1);
+			}
+
+			Set(environmentName switch
+			{
+				"dev" => EnvironmentSlot.Dev,
+				"test" => EnvironmentSlot.Test,
+				"alpha" => EnvironmentSlot.Alpha,
+				"beta" => EnvironmentSlot.Beta,
+				"prod" => EnvironmentSlot.Prod,
+				_ => EnvironmentSlot.Local,
+			});
+		}
+
 		public static bool IsAvailableClient => Slot == EnvironmentSlot.Alpha || Slot == EnvironmentSlot.Beta || Slot == EnvironmentSlot.Prod;
 
 		public static bool IsInternal => Slot == EnvironmentSlot.Dev || Slot == EnvironmentSlot.Test;

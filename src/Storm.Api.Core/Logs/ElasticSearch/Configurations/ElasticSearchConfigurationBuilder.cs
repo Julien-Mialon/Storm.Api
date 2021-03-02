@@ -12,7 +12,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 		IElasticSearchConfigurationBuilder WithNodes(params string[] nodes);
 		IElasticSearchConfigurationBuilder WithNodes(IEnumerable<string> nodes);
 		IElasticSearchConfigurationBuilder WithMinimumLogLevel(LogLevel minimumLogLevel);
-		IElasticSearchConfigurationBuilder WithQueueSender();
+		IElasticSearchConfigurationBuilder WithSender(Func<IElasticSender, ILogService, ILogSender> senderFactory);
 		IElasticSearchConfigurationBuilder WithImmediateSender();
 		IElasticSearchConfigurationBuilder WithIndex(string index);
 	}
@@ -55,13 +55,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations
 			return this;
 		}
 
-		public IElasticSearchConfigurationBuilder WithQueueSender()
-		{
-			Configuration.UseSender((client, logService) => new BackOffQueueLogSender(logService, client));
-			return this;
-		}
-
-		public IElasticSearchConfigurationBuilder WithSender(Func<ElasticSender, ILogService, ILogSender> senderFactory)
+		public IElasticSearchConfigurationBuilder WithSender(Func<IElasticSender, ILogService, ILogSender> senderFactory)
 		{
 			Configuration.UseSender(senderFactory);
 			return this;

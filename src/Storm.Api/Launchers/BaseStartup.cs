@@ -9,12 +9,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Storm.Api.Configurations;
 using Storm.Api.Core.Databases;
 using Storm.Api.Core.Logs;
 using Storm.Api.Core.Logs.Appenders;
 using Storm.Api.Core.Logs.Consoles;
 using Storm.Api.Core.Logs.ElasticSearch.Configurations;
+using Storm.Api.Core.Logs.ElasticSearch.Senders;
 using Storm.Api.Core.Logs.Serilogs.Configurations;
 using Storm.Api.Core.Services;
 using Storm.Api.Databases;
@@ -64,6 +66,10 @@ namespace Storm.Api.Launchers
 				.AddNewtonsoftJson(options =>
 				{
 					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+					options.SerializerSettings.ContractResolver = new DefaultContractResolver
+					{
+						NamingStrategy = new DefaultNamingStrategy()
+					};
 				});
 			services.AddCors();
 			services.AddStormSwagger(Environment, SwaggerDocuments);
@@ -124,12 +130,31 @@ namespace Storm.Api.Launchers
 			SetLogService(services, ElasticSearchConfiguration.CreateBuilder()
 					.WithMinimumLogLevel(LogLevel.Debug)
 					.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}")
-					.WithQueueSender()
+					.WithImmediateSender()
 					.FromConfiguration(Configuration.GetSection(configurationSectionName))
 					.Build()
 					.CreateService()
 					.WithAppender(new TimestampLogAppender())
 				);
+		}
+
+		protected void RegisterElasticSearchHostedLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
+		{
+			ElasticSearchConfiguration configuration = ElasticSearchConfiguration.CreateBuilder()
+				.WithMinimumLogLevel(LogLevel.Debug)
+				.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}")
+				.WithImmediateSender()
+				.FromConfiguration(Configuration.GetSection(configurationSectionName))
+				.Build();
+			LogQueueService logService = configuration.CreateQueueService();
+
+			services.AddSingleton<IElasticSender>(configuration.CreateElasticSender());
+			services.AddSingleton<ILogQueueService>(logService);
+			services.AddHostedService<ElasticSearchLogSenderHostedService>();
+
+
+			SetLogService(services, logService
+				.WithAppender(new TimestampLogAppender()));
 		}
 
 		protected void RegisterSerilogLogger(IServiceCollection services, string configurationSectionName = "Serilog")

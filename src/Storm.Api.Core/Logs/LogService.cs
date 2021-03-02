@@ -14,7 +14,7 @@ namespace Storm.Api.Core.Logs
 
 	public class LogService : ILogService
 	{
-		private readonly Lazy<ILogSender> _sender;
+		private Lazy<ILogSender> _sender;
 		private readonly LogLevel _minimumLogLevel;
 		private readonly List<ILogAppender> _appenders = new List<ILogAppender>();
 
@@ -22,6 +22,16 @@ namespace Storm.Api.Core.Logs
 		{
 			_sender = new Lazy<ILogSender>(() => senderFactory(this));
 			_minimumLogLevel = minimumLogLevel;
+		}
+
+		protected LogService(LogLevel minimumLogLevel)
+		{
+			_minimumLogLevel = minimumLogLevel;
+		}
+
+		protected void UseSender(ILogSender sender)
+		{
+			_sender = new Lazy<ILogSender>(() => sender);
 		}
 
 		public ILogService WithAppender(ILogAppender appender)
