@@ -12,9 +12,9 @@ namespace Storm.SqlMigrations
 {
 	public class MigrationEngine : BaseServiceContainer
 	{
-		private readonly List<IMigrationModule> _modules;
+		private readonly IReadOnlyList<IMigrationModule> _modules;
 
-		public MigrationEngine(IServiceProvider services, List<IMigrationModule> modules) : base(services)
+		public MigrationEngine(IServiceProvider services, IReadOnlyList<IMigrationModule> modules) : base(services)
 		{
 			_modules = modules;
 		}
