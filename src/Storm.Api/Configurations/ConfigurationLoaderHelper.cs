@@ -13,6 +13,7 @@ namespace Storm.Api.Configurations
 				.AddJsonFile("appsettings.json", true, true)
 				.AddJsonFile("projectsettings.json", true, true)
 				.AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true, true)
+				.AddJsonFile($"projectsettings.{hostingEnvironment.EnvironmentName}.json", true, true)
 				.AddEnvironmentVariables();
 		}
 	}
