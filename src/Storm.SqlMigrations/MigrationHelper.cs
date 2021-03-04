@@ -13,8 +13,17 @@ namespace Storm.SqlMigrations
 		{
 			if (args.Length == 0)
 			{
-				Console.WriteLine("Usage: SqlMigrations <environment>");
-				return -42;
+				string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+				if (string.IsNullOrEmpty(environment))
+				{
+					Console.WriteLine("Usage: SqlMigrations <environment>");
+					return -42;
+				}
+
+				args = new[]
+				{
+					environment
+				};
 			}
 
 			IConfiguration configuration = new ConfigurationBuilder()
