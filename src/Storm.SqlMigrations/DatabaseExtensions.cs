@@ -77,5 +77,18 @@ namespace Storm.SqlMigrations
 
 			db.DropForeignKey<TSource>($"{typeof(TSource).TableName()}_{typeof(TForeign).TableName()}_{sourceFieldName}_{foreignFieldName}");
 		}
+
+		public static void DropTableIfExists<TModel>(this IDbConnection db)
+		{
+			if (db.TableExists<TModel>())
+			{
+				db.DropTable<TModel>();
+			}
+		}
+
+		public static void DropTableIfExists(this IDbConnection db, string tableName)
+		{
+			db.ExecuteNonQuery($"DROP TABLE IF EXISTS {tableName}");
+		}
 	}
 }
