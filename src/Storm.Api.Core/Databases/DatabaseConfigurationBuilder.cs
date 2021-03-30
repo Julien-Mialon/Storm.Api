@@ -13,7 +13,7 @@ namespace Storm.Api.Core.Databases
 	{
 		private const string AZURE_SQL_SERVER_FORMAT = "Server=tcp:{0},1433;Initial Catalog={1};Persist Security Info=False;User ID={2};Password={3};MultipleActiveResultSets=True;Encrypt={4};TrustServerCertificate=False;Connection Timeout=30;";
 
-		private const string SQL_SERVER_FORMAT = "Data Source={0};Initial Catalog={1};Integrated Security=True;User ID={2};Password={3};MultipleActiveResultSets=True;Encrypt={4};TrustServerCertificate=False;Connect Timeout=30;";
+		private const string SQL_SERVER_FORMAT = "Data Source={0};Initial Catalog={1};Integrated Security={5};User ID={2};Password={3};MultipleActiveResultSets=True;Encrypt={4};TrustServerCertificate=False;Connect Timeout=30;";
 
 		private const string MYSQL_FORMAT = "Server={0};Port={4};Database={1};UID={2};Password={3};SslMode=None;Charset=utf8";
 
@@ -124,9 +124,10 @@ namespace Storm.Api.Core.Databases
 		/// <param name="login">Database user login</param>
 		/// <param name="password">Database user password</param>
 		/// <param name="encrypt">Encrypt=True or Encrypt=False in connection string</param>
+		/// <param name="integratedSecurity">IntegratedSecurity=True/False in the connection string, should be disabled unless you are using an active directory with same domain</param>
 		/// <returns>this</returns>
-		public DatabaseConfigurationBuilder UseSqlServer(string host, string database, string login, string password, bool encrypt = true)
-			=> UseSqlServer(string.Format(SQL_SERVER_FORMAT, host, database, login, password, encrypt ? "True" : "False"));
+		public DatabaseConfigurationBuilder UseSqlServer(string host, string database, string login, string password, bool encrypt = true, bool integratedSecurity = false)
+			=> UseSqlServer(string.Format(SQL_SERVER_FORMAT, host, database, login, password, encrypt ? "True" : "False", integratedSecurity ? "True" : "False"));
 
 		/// <summary>
 		/// Configure to use SQL Server in Azure

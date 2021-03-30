@@ -58,7 +58,8 @@ namespace Storm.Api.Configurations
 								configuration["database"],
 								configuration["user"],
 								configuration["password"],
-								configuration.GetValue("encrypt", false)
+								configuration.GetValue("encrypt", false),
+								configuration.GetValue("integratedSecurity", false)
 							);
 					case DatabaseType.MySql:
 						return configurationBuilder
