@@ -1,13 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<LangVersion>latest</LangVersion>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Storm.Api.Core\Storm.Api.Core.csproj" />
-		<ProjectReference Include="..\Storm.Api\Storm.Api.csproj" />
-	</ItemGroup>
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Storm.Api.Core\Storm.Api.Core.csproj" />
+    <ProjectReference Include="..\Storm.Api\Storm.Api.csproj" />
+  </ItemGroup>
 </Project>

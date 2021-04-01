@@ -23,7 +23,7 @@ namespace Storm.Api.Sample
 
 		public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
 		{
-
+			ForceHttps = false;
 		}
 
 		// This method gets called by the runtime. Use this method to add services to the container.
@@ -39,31 +39,6 @@ namespace Storm.Api.Sample
 		public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			base.Configure(app, env);
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-
-			app.UseHttpsRedirection();
-
-			app.UseRouting();
-
-			app.UseAuthorization();
-
-			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
-			Task.Run(async () =>
-			{
-				using (app.ApplicationServices.CreateScope())
-				{
-					IDbConnection c = await app.ApplicationServices.GetService<IDatabaseService>().Connection;
-
-					c.CreateTableIfNotExists<SampleEntity>();
-
-					await c.InsertAsync(new SampleEntity {Name = "Хулиган"});
-				}
-			});
-
 		}
 	}
 }

@@ -51,7 +51,7 @@ fi
 # Make sure that packages.config exist.
 if [ ! -f $TOOLS_DIR/packages.config ]; then
     echo "Downloading packages.config..."
-    curl -Lsfo $TOOLS_DIR/packages.config https://raw.githubusercontent.com/cake-build/resources/develop/packages.config # 0.38.5 #https://raw.githubusercontent.com/cake-build/resources/develop/packages.config
+    curl -Lsfo $TOOLS_DIR/packages.config https://raw.githubusercontent.com/cake-build/resources/master/packages.config
     if [ $? -ne 0 ]; then
         echo "An error occured while downloading packages.config."
         exit 1
@@ -88,5 +88,5 @@ if $SHOW_VERSION; then
     exec $MONO_CMD $CAKE_EXE -version
 else
     echo "Script arguments: $SCRIPT_ARGUMENTS"
-    exec $MONO_CMD $CAKE_EXE $SCRIPT -verbosity=$VERBOSITY -configuration=$CONFIGURATION -target=$TARGET $DRYRUN --settings_skipverification=true "${SCRIPT_ARGUMENTS[@]}"
+    exec $MONO_CMD $CAKE_EXE $SCRIPT --verbosity=$VERBOSITY --configuration=$CONFIGURATION --target=$TARGET $DRYRUN --settings_skipverification=true "${SCRIPT_ARGUMENTS[@]}"
 fi
