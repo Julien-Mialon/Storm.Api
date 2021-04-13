@@ -7,8 +7,8 @@ namespace Storm.Api.Core.Extensions
 	public static class ConnectionExtensions
 	{
 		public static Func<T1, T2, TDest> Mapper<T1, T2, TDest>(this IDbConnection _, Func<T1, T2, TDest> mapper)
-			where T1 : IEntity
-			where T2 : IEntity
+			where T1 : ICommonEntity
+			where T2 : ICommonEntity
 		{
 			return InternalMapper;
 
@@ -22,9 +22,9 @@ namespace Storm.Api.Core.Extensions
 		}
 
 		public static Func<T1, T2, T3, TDest> Mapper<T1, T2, T3, TDest>(this IDbConnection _, Func<T1, T2, T3, TDest> mapper)
-			where T1 : IEntity
-			where T2 : IEntity
-			where T3 : IEntity
+			where T1 : ICommonEntity
+			where T2 : ICommonEntity
+			where T3 : ICommonEntity
 		{
 			return InternalMapper;
 
@@ -39,10 +39,10 @@ namespace Storm.Api.Core.Extensions
 		}
 
 		public static Func<T1, T2, T3, T4, TDest> Mapper<T1, T2, T3, T4, TDest>(this IDbConnection _, Func<T1, T2, T3, T4, TDest> mapper)
-			where T1 : IEntity
-			where T2 : IEntity
-			where T3 : IEntity
-			where T4 : IEntity
+			where T1 : ICommonEntity
+			where T2 : ICommonEntity
+			where T3 : ICommonEntity
+			where T4 : ICommonEntity
 		{
 			return InternalMapper;
 
@@ -58,11 +58,11 @@ namespace Storm.Api.Core.Extensions
 		}
 
 		public static Func<T1, T2, T3, T4, T5, TDest> Mapper<T1, T2, T3, T4, T5, TDest>(this IDbConnection _, Func<T1, T2, T3, T4, T5, TDest> mapper)
-			where T1 : IEntity
-			where T2 : IEntity
-			where T3 : IEntity
-			where T4 : IEntity
-			where T5 : IEntity
+			where T1 : ICommonEntity
+			where T2 : ICommonEntity
+			where T3 : ICommonEntity
+			where T4 : ICommonEntity
+			where T5 : ICommonEntity
 		{
 			return InternalMapper;
 
@@ -79,12 +79,12 @@ namespace Storm.Api.Core.Extensions
 		}
 
 		public static Func<T1, T2, T3, T4, T5, T6, TDest> Mapper<T1, T2, T3, T4, T5, T6, TDest>(this IDbConnection _, Func<T1, T2, T3, T4, T5, T6, TDest> mapper)
-			where T1 : IEntity
-			where T2 : IEntity
-			where T3 : IEntity
-			where T4 : IEntity
-			where T5 : IEntity
-			where T6 : IEntity
+			where T1 : ICommonEntity
+			where T2 : ICommonEntity
+			where T3 : ICommonEntity
+			where T4 : ICommonEntity
+			where T5 : ICommonEntity
+			where T6 : ICommonEntity
 		{
 			return InternalMapper;
 
@@ -102,13 +102,13 @@ namespace Storm.Api.Core.Extensions
 		}
 
 		public static Func<T1, T2, T3, T4, T5, T6, T7, TDest> Mapper<T1, T2, T3, T4, T5, T6, T7, TDest>(this IDbConnection _, Func<T1, T2, T3, T4, T5, T6, T7, TDest> mapper)
-			where T1 : IEntity
-			where T2 : IEntity
-			where T3 : IEntity
-			where T4 : IEntity
-			where T5 : IEntity
-			where T6 : IEntity
-			where T7 : IEntity
+			where T1 : ICommonEntity
+			where T2 : ICommonEntity
+			where T3 : ICommonEntity
+			where T4 : ICommonEntity
+			where T5 : ICommonEntity
+			where T6 : ICommonEntity
+			where T7 : ICommonEntity
 		{
 			return InternalMapper;
 
@@ -127,7 +127,7 @@ namespace Storm.Api.Core.Extensions
 		}
 
 		private static void AssignNullIfNeeded<T>(ref T entity)
-			where T : IEntity
+			where T : ICommonEntity
 		{
 			if (entity.IsNullOrDefault())
 			{

@@ -19,11 +19,15 @@ namespace Storm.Api.Core.Databases.Internals
 			{
 				entity.MarkAsCreated();
 			}
+			else if (item is IGuidEntity guidEntity)
+			{
+				guidEntity.MarkAsCreated();
+			}
 		}
 
 		private static void OnUpdate(IDbCommand command, object item)
 		{
-			if (item is IEntity entity)
+			if (item is ICommonEntity entity)
 			{
 				if (entity.IsDeleted)
 				{

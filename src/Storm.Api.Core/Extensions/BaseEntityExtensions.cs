@@ -37,18 +37,18 @@ namespace Storm.Api.Core.Extensions
 			entity.EntityCreatedDate = DateTime.UtcNow;
 		}
 
-		internal static void MarkAsUpdated(this IEntity entity)
+		internal static void MarkAsUpdated(this ICommonEntity entity)
 		{
 			entity.EntityUpdatedDate = DateTime.UtcNow;
 		}
 
-		internal static void MarkAsDeleted(this IEntity entity)
+		internal static void MarkAsDeleted(this ICommonEntity entity)
 		{
 			entity.IsDeleted = true;
 			entity.EntityDeletedDate = DateTime.UtcNow;
 		}
 
-		public static T NullIfDeleted<T>(this T entity) where T : IEntity
+		public static T NullIfDeleted<T>(this T entity) where T : ICommonEntity
 		{
 			if (entity.IsDeleted)
 			{
@@ -58,25 +58,25 @@ namespace Storm.Api.Core.Extensions
 			return entity;
 		}
 
-		public static async Task<T> NullIfDeleted<T>(this Task<T> entity) where T : IEntity => (await entity).NullIfDeleted();
+		public static async Task<T> NullIfDeleted<T>(this Task<T> entity) where T : ICommonEntity => (await entity).NullIfDeleted();
 
-		public static bool IsNotNullOrDefault(this IEntity entity)
+		public static bool IsNotNullOrDefault(this ICommonEntity entity)
 		{
 			return entity != null && entity.EntityCreatedDate != default;
 		}
 
-		public static bool IsNullOrDefault(this IEntity entity)
+		public static bool IsNullOrDefault(this ICommonEntity entity)
 		{
 			return entity is null || entity.EntityCreatedDate == default;
 		}
 
-		public static DateTime LastUpdatedDate(this IEntity entity)
+		public static DateTime LastUpdatedDate(this ICommonEntity entity)
 		{
 			return entity.EntityUpdatedDate ?? entity.EntityCreatedDate;
 		}
 
 		public static SqlExpression<TEntity> NotDeleted<TEntity>(this SqlExpression<TEntity> expression)
-			where TEntity : IEntity
+			where TEntity : ICommonEntity
 		{
 			return expression.Where(x => x.IsDeleted == false);
 		}

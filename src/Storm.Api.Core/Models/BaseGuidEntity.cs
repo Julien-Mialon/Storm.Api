@@ -3,13 +3,10 @@ using ServiceStack.DataAnnotations;
 
 namespace Storm.Api.Core.Models
 {
-	public abstract class BaseEntity : IEntity
+	public abstract class BaseGuidEntity : IGuidEntity
 	{
 		[PrimaryKey]
-		public long Id { get; set; }
-
-		[Index]
-		public Guid CollationId { get; set; }
+		public Guid Id { get; set; }
 
 		[Index]
 		public DateTime EntityCreatedDate { get; set; }
