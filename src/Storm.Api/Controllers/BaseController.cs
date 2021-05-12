@@ -70,8 +70,8 @@ namespace Storm.Api.Controllers
 				return StatusCode(ex.Code, new Response
 				{
 					IsSuccess = false,
-					ErrorCode = "GENERIC_HTTP_ERROR",
-					ErrorMessage = ex.Message
+					ErrorCode = ex.ErrorCode ?? "GENERIC_HTTP_ERROR",
+					ErrorMessage = ex.ErrorMessage
 				});
 			}
 			catch (DomainException ex)
