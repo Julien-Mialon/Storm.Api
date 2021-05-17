@@ -11,7 +11,7 @@ namespace Storm.Api.Launchers
 			Host.CreateDefaultBuilder(args)
 				.ConfigureWebHostDefaults(webBuilder => webBuilder
 					.ConfigureAppConfiguration((context, configurationBuilder) => configurationBuilder.LoadConfiguration(context.HostingEnvironment))
-					.UseKestrel(x =>
+					.ConfigureKestrel(x =>
 					{
 						x.Limits.MaxRequestBodySize = 2_000_000_000;
 						x.Limits.MaxRequestLineSize = 10_000_000;
