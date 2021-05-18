@@ -3,7 +3,7 @@
 #load "nuget:?package=Cake.Storm.Fluent.NuGet"
 #load "nuget:?package=Cake.Storm.Fluent.Transformations"
 
-const string MODULE_VERSION = "1.0.5";
+const string MODULE_VERSION = "1.0.6";
 
 Configure()
     .UseRootDirectory("..")
