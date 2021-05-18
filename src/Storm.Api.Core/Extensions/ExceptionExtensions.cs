@@ -20,6 +20,6 @@ namespace Storm.Api.Core.Extensions
 			=> o.DomainHttpCodeExceptionIfNull(HttpStatusCode.Forbidden, errorCode, errorMessage);
 
 		public static void NotFoundIfNull(this object o, string errorCode = null, string errorMessage = null)
-			=> o.DomainHttpCodeExceptionIfNull(HttpStatusCode.Forbidden, errorCode, errorMessage);
+			=> o.DomainHttpCodeExceptionIfNull(HttpStatusCode.NotFound, errorCode, errorMessage);
 	}
 }
