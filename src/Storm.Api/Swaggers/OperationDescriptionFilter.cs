@@ -31,6 +31,18 @@ namespace Storm.Api.Swaggers
 				}
 
 				operation.Description = string.Join(Environment.NewLine, lines);
+
+				CategoryAttribute category = methodInfo.GetCustomAttribute<CategoryAttribute>();
+				if (category is not null)
+				{
+					operation.Tags = new List<OpenApiTag>
+					{
+						new()
+						{
+							Name = category.Category
+						}
+					};
+				}
 			}
 		}
 	}
