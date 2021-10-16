@@ -7,6 +7,24 @@ namespace Storm.Api.Core.Extensions
 {
 	public static class BaseEntityExtensions
 	{
+		public static void CopyGenericPropertiesFrom(this ICommonEntity storage, ICommonEntity source)
+		{
+			if (storage is null)
+			{
+				throw new NullReferenceException();
+			}
+
+			if (source is null)
+			{
+				throw new ArgumentNullException(nameof(source), "Source should not be null");
+			}
+
+			storage.EntityCreatedDate = source.EntityCreatedDate;
+			storage.EntityUpdatedDate = source.EntityUpdatedDate;
+			storage.EntityDeletedDate = source.EntityDeletedDate;
+			storage.IsDeleted = source.IsDeleted;
+		}
+
 		public static void CopyGenericPropertiesFrom(this IEntity storage, IEntity source)
 		{
 			if (storage is null)
@@ -27,6 +45,11 @@ namespace Storm.Api.Core.Extensions
 			storage.IsDeleted = source.IsDeleted;
 		}
 
+		internal static void MarkAsCreated(this ICommonEntity entity)
+		{
+			entity.EntityCreatedDate = DateTime.UtcNow;
+		}
+
 		internal static void MarkAsCreated(this IEntity entity)
 		{
 			if (entity.CollationId == default)
@@ -34,7 +57,7 @@ namespace Storm.Api.Core.Extensions
 				entity.CollationId = Guid.NewGuid();
 			}
 
-			entity.EntityCreatedDate = DateTime.UtcNow;
+			((ICommonEntity)entity).MarkAsCreated();
 		}
 
 		internal static void MarkAsUpdated(this ICommonEntity entity)
