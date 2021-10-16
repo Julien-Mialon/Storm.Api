@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using ServiceStack.Logging;
 using ServiceStack.MiniProfiler.Data;
 using ServiceStack.OrmLite;
@@ -6,6 +7,8 @@ using Storm.Api.Core.Databases.Internals;
 
 namespace Storm.Api.Core.Databases
 {
+	public delegate void DatabaseInterceptorDelegate(IDbCommand command, object item);
+
 	/// <summary>
 	/// Builder to configure and create connection factory.
 	/// </summary>
@@ -21,6 +24,9 @@ namespace Storm.Api.Core.Databases
 		private bool _useLogService;
 		private string _connectionString;
 		private IOrmLiteDialectProvider _dialectProvider;
+
+		private DatabaseInterceptorDelegate _onInsert;
+		private DatabaseInterceptorDelegate _onUpdate;
 
 		/// <summary>
 		/// Create database factory from configuration
@@ -48,7 +54,7 @@ namespace Storm.Api.Core.Databases
 
 			IDatabaseConnectionFactory factory = new DatabaseConnectionFactory(connectionFactory);
 			OrmLiteConfig.DialectProvider.GetStringConverter().UseUnicode = true;
-			OrmLiteInterceptors.Initialize();
+			OrmLiteInterceptors.Initialize(_onInsert, _onUpdate);
 			SqlFieldsOrdering.Enable();
 			return factory;
 		}
@@ -150,6 +156,18 @@ namespace Storm.Api.Core.Databases
 		public DatabaseConfigurationBuilder UseLogService(bool useLogService)
 		{
 			_useLogService = useLogService;
+			return this;
+		}
+
+		public DatabaseConfigurationBuilder UseInterceptorOnInsert(DatabaseInterceptorDelegate onInsert)
+		{
+			_onInsert = onInsert;
+			return this;
+		}
+
+		public DatabaseConfigurationBuilder UseInterceptorOnUpdate(DatabaseInterceptorDelegate onUpdate)
+		{
+			_onUpdate = onUpdate;
 			return this;
 		}
 	}
