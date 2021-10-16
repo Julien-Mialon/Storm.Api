@@ -7,8 +7,14 @@ namespace Storm.Api.Core.Databases.Internals
 {
 	internal static class OrmLiteInterceptors
 	{
-		public static void Initialize()
+		private static DatabaseInterceptorDelegate _onInsert;
+		private static DatabaseInterceptorDelegate _onUpdate;
+
+		public static void Initialize(DatabaseInterceptorDelegate onInsert, DatabaseInterceptorDelegate onUpdate)
 		{
+			_onInsert = onInsert;
+			_onUpdate = onUpdate;
+
 			OrmLiteConfig.InsertFilter = OnInsert;
 			OrmLiteConfig.UpdateFilter = OnUpdate;
 		}
@@ -27,6 +33,8 @@ namespace Storm.Api.Core.Databases.Internals
 			{
 				commonEntity.MarkAsCreated();
 			}
+
+			_onInsert(command, item);
 		}
 
 		private static void OnUpdate(IDbCommand command, object item)
@@ -42,6 +50,8 @@ namespace Storm.Api.Core.Databases.Internals
 					entity.MarkAsUpdated();
 				}
 			}
+
+			_onUpdate(command, item);
 		}
 	}
 }
