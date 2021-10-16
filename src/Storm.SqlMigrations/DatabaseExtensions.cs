@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using ServiceStack.OrmLite;
 using Storm.Api.Core.Extensions;
 
@@ -45,6 +47,7 @@ namespace Storm.SqlMigrations
 			{
 				return;
 			}
+
 			var parameter = Expression.Parameter(typeof(TModel), "x");
 			var body = Expression.Convert(Expression.Property(parameter, property), typeof(object));
 			var expression = Expression.Lambda<Func<TModel, object>>(body, parameter);
@@ -76,6 +79,25 @@ namespace Storm.SqlMigrations
 			string foreignFieldName = ModelDefinition<TForeign>.Definition.GetFieldDefinition(foreignField).FieldName;
 
 			db.DropForeignKey<TSource>($"{typeof(TSource).TableName()}_{typeof(TForeign).TableName()}_{sourceFieldName}_{foreignFieldName}");
+		}
+
+		public static async Task DropSqlServerDefaultConstraint<T>(this IDbConnection db, string columnName)
+		{
+			List<string> result = await db.ColumnAsync<string>($@"
+				SELECT con.name
+				FROM sys.default_constraints con
+				LEFT OUTER JOIN sys.objects t ON con.parent_object_id = t.object_id
+				LEFT OUTER JOIN sys.all_columns col ON con.parent_column_id = col.column_id AND con.parent_object_id = col.object_id
+				WHERE t.name = '{typeof(T).TableName()}' AND col.name = '{columnName}'");
+
+			if (result is null or { Count: 0 })
+			{
+				return;
+			}
+
+			string constraintName = result[0];
+
+			db.AlterTable<T>($"DROP CONSTRAINT {constraintName}");
 		}
 
 		public static void DropTableIfExists<TModel>(this IDbConnection db)
