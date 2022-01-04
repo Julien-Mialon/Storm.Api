@@ -1,7 +1,6 @@
-namespace Storm.Api.Core.Logs
+namespace Storm.Api.Core.Logs;
+
+public interface ILogSender
 {
-	public interface ILogSender
-	{
-		void Enqueue(LogLevel level, string entry);
-	}
+	void Enqueue(LogLevel level, string entry);
 }

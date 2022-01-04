@@ -1,37 +1,34 @@
-using System.Threading.Tasks;
+namespace Storm.Api.Core.Workers;
 
-namespace Storm.Api.Core.Workers
+internal class ExponentialBackOffStrategy
 {
-	internal class ExponentialBackOffStrategy
+	private readonly int _baseMillisecondsCount;
+	private readonly int _maxIteration;
+	private int _currentIteration;
+
+	public ExponentialBackOffStrategy(int baseMillisecondsCount, int maxIteration)
 	{
-		private readonly int _baseMillisecondsCount;
-		private readonly int _maxIteration;
-		private int _currentIteration;
+		_baseMillisecondsCount = baseMillisecondsCount;
+		_maxIteration = maxIteration;
+	}
 
-		public ExponentialBackOffStrategy(int baseMillisecondsCount, int maxIteration)
-		{
-			_baseMillisecondsCount = baseMillisecondsCount;
-			_maxIteration = maxIteration;
-		}
+	public void Reset()
+	{
+		_currentIteration = 0;
+	}
 
-		public void Reset()
+	public Task Wait()
+	{
+		_currentIteration++;
+		if (_currentIteration > _maxIteration)
 		{
-			_currentIteration = 0;
+			_currentIteration = _maxIteration;
 		}
+		return Task.Delay(GetTimeForCurrentIteration());
+	}
 
-		public Task Wait()
-		{
-			_currentIteration++;
-			if (_currentIteration > _maxIteration)
-			{
-				_currentIteration = _maxIteration;
-			}
-			return Task.Delay(GetTimeForCurrentIteration());
-		}
-
-		private int GetTimeForCurrentIteration()
-		{
-			return _currentIteration * (_currentIteration + 1) / 2 * _baseMillisecondsCount;
-		}
+	private int GetTimeForCurrentIteration()
+	{
+		return _currentIteration * (_currentIteration + 1) / 2 * _baseMillisecondsCount;
 	}
 }

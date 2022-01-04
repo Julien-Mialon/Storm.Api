@@ -1,29 +1,26 @@
-using System;
 using System.Data;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Storm.Api.Core.Databases;
 
-namespace Storm.Api.Core.Services
+namespace Storm.Api.Core.Services;
+
+public abstract class BaseDatabaseService : BaseService
 {
-	public abstract class BaseDatabaseService : BaseService
+	protected IDatabaseService DatabaseService => Services.GetRequiredService<IDatabaseService>();
+
+	protected BaseDatabaseService(IServiceProvider services) : base(services)
 	{
-		protected IDatabaseService DatabaseService => Services.GetService<IDatabaseService>();
+	}
 
-		protected BaseDatabaseService(IServiceProvider services) : base(services)
-		{
-		}
+	protected async Task<T> UseConnection<T>(Func<IDbConnection, Task<T>> executor)
+	{
+		IDbConnection connection = await DatabaseService.Connection;
+		return await executor(connection);
+	}
 
-		protected async Task<T> UseConnection<T>(Func<IDbConnection, Task<T>> executor)
-		{
-			IDbConnection connection = await DatabaseService.Connection;
-			return await executor(connection);
-		}
-
-		protected async Task UseConnection(Func<IDbConnection, Task> executor)
-		{
-			IDbConnection connection = await DatabaseService.Connection;
-			await executor(connection);
-		}
+	protected async Task UseConnection(Func<IDbConnection, Task> executor)
+	{
+		IDbConnection connection = await DatabaseService.Connection;
+		await executor(connection);
 	}
 }

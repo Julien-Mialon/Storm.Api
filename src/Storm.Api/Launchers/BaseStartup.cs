@@ -26,158 +26,158 @@ using Storm.Api.Middlewares;
 using Storm.Api.Services;
 using Storm.Api.Swaggers;
 
-namespace Storm.Api.Launchers
+namespace Storm.Api.Launchers;
+
+public abstract class BaseStartup
 {
-	public abstract class BaseStartup
+	protected IConfiguration Configuration { get; }
+	protected IWebHostEnvironment Environment { get; }
+	protected ILogService LogService { get; private set; }
+
+	protected abstract string LogsProjectName { get; }
+
+	protected bool ForceHttps { get; set; } = true;
+
+	protected virtual SwaggerDocumentDescription[] SwaggerDocuments => new SwaggerDocumentDescription[]
 	{
-		protected IConfiguration Configuration { get; }
-		protected IWebHostEnvironment Environment { get; }
-		protected ILogService LogService { get; private set; }
+		new SwaggerDocumentDescription("v1", new SwaggerModuleDescription("API", ""))
+	};
 
-		protected abstract string LogsProjectName { get; }
+	public BaseStartup(IConfiguration configuration, IWebHostEnvironment environment)
+	{
+		Environment = environment;
+		Configuration = configuration;
+		LogService = new LogService(_ => new ConsoleLogSender(), LogLevel.Warning);
 
-		protected bool ForceHttps { get; set; } = true;
+		Configuration.OnSection("Server", section => ForceHttps = section.GetValue("ForceHttps", true));
+	}
 
-		protected virtual SwaggerDocumentDescription[] SwaggerDocuments => new SwaggerDocumentDescription[]
-		{
-			new SwaggerDocumentDescription("v1", new SwaggerModuleDescription("API", ""))
-		};
+	public virtual void ConfigureServices(IServiceCollection services)
+	{
+		Configuration.OnSection("Features", FeatureFlagsHelper.Load);
 
-		public BaseStartup(IConfiguration configuration, IWebHostEnvironment environment)
-		{
-			Environment = environment;
-			Configuration = configuration;
+		services.AddSingleton<IDateService, DateService>()
+			.AddSingleton<IScopeServiceAccessor, ScopeServiceAccessor>();
 
-			Configuration.OnSection("Server", section => ForceHttps = section.GetValue("ForceHttps", true));
-		}
-
-		public virtual void ConfigureServices(IServiceCollection services)
-		{
-			Configuration.OnSection("Features", FeatureFlagsHelper.Load);
-
-			services.AddSingleton<IDateService, DateService>()
-				.AddSingleton<IScopeServiceAccessor, ScopeServiceAccessor>();
-
-			Configuration.OnSection("Database", section => services.AddDatabaseModule(section.LoadDatabaseConfiguration()));
+		Configuration.OnSection("Database", section => services.AddDatabaseModule(section.LoadDatabaseConfiguration()));
 
 
-			// frameworks
-			services.AddMvc()
-				.AddNewtonsoftJson(options =>
-				{
-					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
-					options.SerializerSettings.ContractResolver = new DefaultContractResolver
-					{
-						NamingStrategy = new DefaultNamingStrategy()
-					};
-				});
-			services.AddCors();
-			services.AddStormSwagger(Environment, SwaggerDocuments);
-			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-			services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-
-			services.Configure<FormOptions>(x =>
+		// frameworks
+		services.AddMvc()
+			.AddNewtonsoftJson(options =>
 			{
-				x.ValueLengthLimit = 1024 * 1024 * 1024; //1GB
-				x.MultipartBodyLengthLimit = 1024 * 1024 * 1024; //1GB
-			});
-
-			services.Configure<RequestLocalizationOptions>(options =>
-			{
-				CultureInfo[] supportedCultures = new[]
+				options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+				options.SerializerSettings.ContractResolver = new DefaultContractResolver
 				{
-					new CultureInfo("fr")
+					NamingStrategy = new DefaultNamingStrategy()
 				};
-				options.DefaultRequestCulture = new RequestCulture(culture: "fr", uiCulture: "fr");
-				options.SupportedCultures = supportedCultures;
-				options.SupportedUICultures = supportedCultures;
 			});
+		services.AddCors();
+		services.AddStormSwagger(Environment, SwaggerDocuments);
+		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+		services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
-			services.AddControllers();
-		}
-
-		public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		services.Configure<FormOptions>(x =>
 		{
-			if (!EnvironmentHelper.IsAvailableClient)
+			x.ValueLengthLimit = 1024 * 1024 * 1024; //1GB
+			x.MultipartBodyLengthLimit = 1024 * 1024 * 1024; //1GB
+		});
+
+		services.Configure<RequestLocalizationOptions>(options =>
+		{
+			CultureInfo[] supportedCultures = new[]
 			{
-				app.UseDeveloperExceptionPage();
-			}
+				new CultureInfo("fr")
+			};
+			options.DefaultRequestCulture = new RequestCulture(culture: "fr", uiCulture: "fr");
+			options.SupportedCultures = supportedCultures;
+			options.SupportedUICultures = supportedCultures;
+		});
 
-			IOptions<RequestLocalizationOptions> options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+		services.AddControllers();
+	}
 
-			app.UseRouting()
-				.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
-			if (ForceHttps)
-			{
-				app.UseHttpsRedirection();
-			}
-
-			app.UseStormSwagger()
-				.UseDatabaseModule()
-				.UseRequestLogging()
-				.UseRequestLocalization(options.Value)
-				.UseEndpoints(endpoints => endpoints.MapControllers())
-				;
-
-			LogService?.WithAppender(new RequestContextAppender(app.ApplicationServices.GetService<IActionContextAccessor>()))
-				.WithAppender(new RequestHeaderAppender(app.ApplicationServices.GetService<IActionContextAccessor>()))
-				;
-		}
-
-		protected void RegisterElasticSearchLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
+	public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+	{
+		if (!EnvironmentHelper.IsAvailableClient)
 		{
-			SetLogService(services, ElasticSearchConfiguration.CreateBuilder()
-					.WithMinimumLogLevel(LogLevel.Debug)
-					.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}")
-					.WithImmediateSender()
-					.FromConfiguration(Configuration.GetSection(configurationSectionName))
-					.Build()
-					.CreateService()
-					.WithAppender(new TimestampLogAppender())
-				);
+			app.UseDeveloperExceptionPage();
 		}
 
-		protected void RegisterElasticSearchHostedLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
+		IOptions<RequestLocalizationOptions> options = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+
+		app.UseRouting()
+			.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+		if (ForceHttps)
 		{
-			ElasticSearchConfiguration configuration = ElasticSearchConfiguration.CreateBuilder()
-				.WithMinimumLogLevel(LogLevel.Debug)
-				.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}")
-				.WithImmediateSender()
-				.FromConfiguration(Configuration.GetSection(configurationSectionName))
-				.Build();
-			LogQueueService logService = configuration.CreateQueueService();
-
-			services.AddSingleton<IElasticSender>(configuration.CreateElasticSender());
-			services.AddSingleton<ILogQueueService>(logService);
-			services.AddHostedService<ElasticSearchLogSenderHostedService>();
-
-
-			SetLogService(services, logService
-				.WithAppender(new TimestampLogAppender()));
+			app.UseHttpsRedirection();
 		}
 
-		protected void RegisterSerilogLogger(IServiceCollection services, string configurationSectionName = "Serilog")
-		{
-			SetLogService(services, SerilogConfiguration.CreateBuilder()
-					.WithMinimumLogLevel(LogLevel.Debug)
-					.FromConfiguration(Configuration.GetSection(configurationSectionName))
-					.Build()
-					.CreateService()
-					.WithAppender(new TimestampLogAppender())
-				);
-		}
+		app.UseStormSwagger()
+			.UseDatabaseModule()
+			.UseRequestLogging()
+			.UseRequestLocalization(options.Value)
+			.UseEndpoints(endpoints => endpoints.MapControllers())
+			;
 
-		protected void RegisterConsoleLogger(IServiceCollection services, LogLevel minimumLogLevel = LogLevel.Debug)
-		{
-			SetLogService(services, new LogService(s => new ConsoleLogSender(), minimumLogLevel));
-		}
+		LogService.WithAppender(new RequestContextAppender(app.ApplicationServices.GetRequiredService<IActionContextAccessor>()))
+			.WithAppender(new RequestHeaderAppender(app.ApplicationServices.GetRequiredService<IActionContextAccessor>()))
+			;
+	}
 
-		protected void SetLogService(IServiceCollection services, ILogService logService)
-		{
-			LogService = logService;
-			services.AddSingleton(logService);
-			LogServiceDatabaseLog.LogService = logService;
-		}
+	protected void RegisterElasticSearchLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
+	{
+		SetLogService(services, ElasticSearchConfiguration.CreateBuilder()
+			.WithMinimumLogLevel(LogLevel.Debug)
+			.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}")
+			.WithImmediateSender()
+			.FromConfiguration(Configuration.GetSection(configurationSectionName))
+			.Build()
+			.CreateService()
+			.WithAppender(new TimestampLogAppender())
+		);
+	}
+
+	protected void RegisterElasticSearchHostedLogger(IServiceCollection services, string configurationSectionName = "ElasticSearch")
+	{
+		ElasticSearchConfiguration configuration = ElasticSearchConfiguration.CreateBuilder()
+			.WithMinimumLogLevel(LogLevel.Debug)
+			.WithIndex($"{LogsProjectName}-api-{Environment.EnvironmentName}")
+			.WithImmediateSender()
+			.FromConfiguration(Configuration.GetSection(configurationSectionName))
+			.Build();
+		LogQueueService logService = configuration.CreateQueueService();
+
+		services.AddSingleton<IElasticSender>(configuration.CreateElasticSender());
+		services.AddSingleton<ILogQueueService>(logService);
+		services.AddHostedService<ElasticSearchLogSenderHostedService>();
+
+
+		SetLogService(services, logService
+			.WithAppender(new TimestampLogAppender()));
+	}
+
+	protected void RegisterSerilogLogger(IServiceCollection services, string configurationSectionName = "Serilog")
+	{
+		SetLogService(services, SerilogConfiguration.CreateBuilder()
+			.WithMinimumLogLevel(LogLevel.Debug)
+			.FromConfiguration(Configuration.GetSection(configurationSectionName))
+			.Build()
+			.CreateService()
+			.WithAppender(new TimestampLogAppender())
+		);
+	}
+
+	protected void RegisterConsoleLogger(IServiceCollection services, LogLevel minimumLogLevel = LogLevel.Debug)
+	{
+		SetLogService(services, new LogService(s => new ConsoleLogSender(), minimumLogLevel));
+	}
+
+	protected void SetLogService(IServiceCollection services, ILogService logService)
+	{
+		LogService = logService;
+		services.AddSingleton(logService);
+		LogServiceDatabaseLog.LogService = logService;
 	}
 }

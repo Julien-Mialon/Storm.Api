@@ -1,9 +1,8 @@
-namespace Storm.Api.Core.Domains.Parameters
+namespace Storm.Api.Core.Domains.Parameters;
+
+public class PaginationParameter
 {
-	public class PaginationParameter
-	{
-		public int Page { get; set; }
+	public int Page { get; set; }
 		
-		public int Count { get; set; }
-	}
+	public int Count { get; set; }
 }

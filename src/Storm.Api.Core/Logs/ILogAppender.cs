@@ -1,7 +1,6 @@
-namespace Storm.Api.Core.Logs
+namespace Storm.Api.Core.Logs;
+
+public interface ILogAppender
 {
-	public interface ILogAppender
-	{
-		void Append(IObjectWriter logEntry);
-	}
+	void Append(IObjectWriter logEntry);
 }

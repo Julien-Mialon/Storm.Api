@@ -1,31 +1,32 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+namespace Storm.Api.Core.Extensions;
 
-namespace Storm.Api.Core.Extensions
+public static class SemaphoreExtensions
 {
-	public static class SemaphoreExtensions
+	public static async Task<IDisposable> Lock(this SemaphoreSlim semaphore)
 	{
-		public static async Task<IDisposable> Lock(this SemaphoreSlim semaphore)
+		await semaphore.WaitAsync();
+		return new LockDisposable(semaphore);
+	}
+
+	private class LockDisposable : IDisposable
+	{
+		private readonly SemaphoreSlim _semaphore;
+		private bool _disposed;
+
+		public LockDisposable(SemaphoreSlim semaphore)
 		{
-			await semaphore.WaitAsync();
-			return new LockDisposable(semaphore);
+			_semaphore = semaphore;
 		}
 
-		private class LockDisposable : IDisposable
+		public void Dispose()
 		{
-			private SemaphoreSlim _semaphore;
-
-			public LockDisposable(SemaphoreSlim semaphore)
+			if (_disposed)
 			{
-				_semaphore = semaphore;
+				return;
 			}
 
-			public void Dispose()
-			{
-				_semaphore?.Release();
-				_semaphore = null;
-			}
+			_disposed = true;
+			_semaphore.Release();
 		}
 	}
 }

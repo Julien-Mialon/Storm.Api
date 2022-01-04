@@ -1,55 +1,58 @@
-using System;
 using System.Data;
 
-namespace Storm.Api.Core.Databases
-{
-	public interface IDatabaseTransaction : IDisposable
-	{
-		void Commit();
+namespace Storm.Api.Core.Databases;
 
-		void Rollback();
+public interface IDatabaseTransaction : IDisposable
+{
+	void Commit();
+
+	void Rollback();
+}
+
+internal class DatabaseTransaction : IDatabaseTransaction
+{
+	private readonly DatabaseService _databaseService;
+	private readonly IDbTransaction _transaction;
+	private bool _finalized;
+	private bool _disposed;
+
+	public DatabaseTransaction(IDbTransaction transaction, DatabaseService databaseService)
+	{
+		_transaction = transaction;
+		_databaseService = databaseService;
 	}
 
-	internal class DatabaseTransaction : IDatabaseTransaction
+	public void Dispose()
 	{
-		private DatabaseService _databaseService;
-		private IDbTransaction _transaction;
-		private bool _finalized;
-
-		public DatabaseTransaction(IDbTransaction transaction, DatabaseService databaseService)
+		if (_disposed)
 		{
-			_transaction = transaction;
-			_databaseService = databaseService;
+			return;
 		}
 
-		public void Dispose()
-		{
-			if (!_finalized)
-			{
-				_finalized = true;
-				_transaction.Commit();
-
-				_databaseService.EndTransaction(this);
-			}
-			_transaction.Dispose();
-			_transaction = null;
-			_databaseService = null;
-		}
-
-		public void Commit()
+		_disposed = true;
+		if (!_finalized)
 		{
 			_finalized = true;
 			_transaction.Commit();
 
 			_databaseService.EndTransaction(this);
 		}
+		_transaction.Dispose();
+	}
 
-		public void Rollback()
-		{
-			_finalized = true;
-			_transaction.Rollback();
+	public void Commit()
+	{
+		_finalized = true;
+		_transaction.Commit();
 
-			_databaseService.EndTransaction(this);
-		}
+		_databaseService.EndTransaction(this);
+	}
+
+	public void Rollback()
+	{
+		_finalized = true;
+		_transaction.Rollback();
+
+		_databaseService.EndTransaction(this);
 	}
 }

@@ -1,43 +1,40 @@
-using System;
+namespace Storm.Api.Core.Logs.Serilogs.Configurations;
 
-namespace Storm.Api.Core.Logs.Serilogs.Configurations
+public interface ISerilogConfigurationBuilder
 {
-	public interface ISerilogConfigurationBuilder
+	SerilogConfiguration Build();
+	ISerilogConfigurationBuilder WithOutputFile(string file);
+	ISerilogConfigurationBuilder WithConsoleOutput();
+	ISerilogConfigurationBuilder WithMinimumLogLevel(LogLevel minimumLogLevel);
+}
+
+internal class SerilogConfigurationBuilder : ISerilogConfigurationBuilder
+{
+	private SerilogConfiguration _configuration = new SerilogConfiguration();
+	private SerilogConfiguration Configuration => _configuration ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()");
+
+	public SerilogConfiguration Build()
 	{
-		SerilogConfiguration Build();
-		ISerilogConfigurationBuilder WithOutputFile(string file);
-		ISerilogConfigurationBuilder WithConsoleOutput();
-		ISerilogConfigurationBuilder WithMinimumLogLevel(LogLevel minimumLogLevel);
+		SerilogConfiguration configuration = Configuration;
+		_configuration = new SerilogConfiguration();
+		return configuration;
 	}
 
-	internal class SerilogConfigurationBuilder : ISerilogConfigurationBuilder
+	public ISerilogConfigurationBuilder WithOutputFile(string file)
 	{
-		private SerilogConfiguration _configuration = new SerilogConfiguration();
-		private SerilogConfiguration Configuration => _configuration ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()");
+		Configuration.LogFileName = file;
+		return this;
+	}
 
-		public SerilogConfiguration Build()
-		{
-			SerilogConfiguration configuration = Configuration;
-			_configuration = null;
-			return configuration;
-		}
+	public ISerilogConfigurationBuilder WithConsoleOutput()
+	{
+		Configuration.EnableConsoleLogging = true;
+		return this;
+	}
 
-		public ISerilogConfigurationBuilder WithOutputFile(string file)
-		{
-			Configuration.LogFileName = file;
-			return this;
-		}
-
-		public ISerilogConfigurationBuilder WithConsoleOutput()
-		{
-			Configuration.EnableConsoleLogging = true;
-			return this;
-		}
-
-		public ISerilogConfigurationBuilder WithMinimumLogLevel(LogLevel minimumLogLevel)
-		{
-			Configuration.MinimumLogLevel = minimumLogLevel;
-			return this;
-		}
+	public ISerilogConfigurationBuilder WithMinimumLogLevel(LogLevel minimumLogLevel)
+	{
+		Configuration.MinimumLogLevel = minimumLogLevel;
+		return this;
 	}
 }

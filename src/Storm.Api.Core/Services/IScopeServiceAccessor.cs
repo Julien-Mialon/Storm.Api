@@ -1,11 +1,8 @@
-using System;
+namespace Storm.Api.Core.Services;
 
-namespace Storm.Api.Core.Services
+public interface IScopeServiceAccessor
 {
-	public interface IScopeServiceAccessor
-	{
-		TService Get<TService>();
+	TService Get<TService>() where TService : notnull;
 
-		IServiceProvider Services { get; }
-	}
+	IServiceProvider Services { get; }
 }

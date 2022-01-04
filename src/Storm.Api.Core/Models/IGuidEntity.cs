@@ -1,9 +1,6 @@
-using System;
+namespace Storm.Api.Core.Models;
 
-namespace Storm.Api.Core.Models
+public interface IGuidEntity : ICommonEntity
 {
-	public interface IGuidEntity : ICommonEntity
-	{
-		Guid Id { get; set; }
-	}
+	Guid Id { get; set; }
 }

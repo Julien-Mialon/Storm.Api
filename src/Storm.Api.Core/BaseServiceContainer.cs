@@ -1,29 +1,27 @@
-using System;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Storm.Api.Core
+namespace Storm.Api.Core;
+
+public class BaseServiceContainer
 {
-	public class BaseServiceContainer
+	protected IServiceProvider Services { get; }
+
+	public BaseServiceContainer(IServiceProvider services)
 	{
-		protected IServiceProvider Services { get; }
+		Services = services;
+	}
 
-		public BaseServiceContainer(IServiceProvider services)
+	protected TService Resolve<TService>([CallerFilePath] string file = "", [CallerLineNumber] int line = 0, [CallerMemberName] string member = "")
+		where TService : class
+	{
+		TService service = Services.GetRequiredService<TService>();
+
+		if (service is null)
 		{
-			Services = services;
+			throw new InvalidOperationException($"Can not resolve instance of service of type {typeof(TService).Name} from {member} in {file}:{line}");
 		}
 
-		protected TService Resolve<TService>([CallerFilePath] string file = null, [CallerLineNumber] int line = 0, [CallerMemberName] string member = null)
-			where TService : class
-		{
-			TService service = Services.GetService<TService>();
-
-			if (service is null)
-			{
-				throw new InvalidOperationException($"Can not resolve instance of service of type {typeof(TService).Name} from {member} in {file}:{line}");
-			}
-
-			return service;
-		}
+		return service;
 	}
 }

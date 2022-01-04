@@ -1,21 +1,19 @@
-using System;
 using ServiceStack.DataAnnotations;
 
-namespace Storm.Api.Core.Models
+namespace Storm.Api.Core.Models;
+
+public abstract class BaseGuidEntity : IGuidEntity
 {
-	public abstract class BaseGuidEntity : IGuidEntity
-	{
-		[PrimaryKey]
-		public Guid Id { get; set; }
+	[PrimaryKey]
+	public Guid Id { get; set; }
 
-		[Index]
-		public DateTime EntityCreatedDate { get; set; }
+	[Index]
+	public DateTime EntityCreatedDate { get; set; }
 
-		public DateTime? EntityUpdatedDate { get; set; }
+	public DateTime? EntityUpdatedDate { get; set; }
 
-		[Index]
-		public bool IsDeleted { get; set; }
+	[Index]
+	public bool IsDeleted { get; set; }
 
-		public DateTime? EntityDeletedDate { get; set; }
-	}
+	public DateTime? EntityDeletedDate { get; set; }
 }
