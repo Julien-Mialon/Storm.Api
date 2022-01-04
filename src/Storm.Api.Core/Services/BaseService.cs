@@ -1,14 +1,11 @@
-using System;
+namespace Storm.Api.Core.Services;
 
-namespace Storm.Api.Core.Services
+public abstract class BaseService
 {
-	public abstract class BaseService
-	{
-		protected IServiceProvider Services { get; }
+	protected IServiceProvider Services { get; }
 
-		protected BaseService(IServiceProvider services)
-		{
-			Services = services;
-		}
+	protected BaseService(IServiceProvider services)
+	{
+		Services = services;
 	}
 }

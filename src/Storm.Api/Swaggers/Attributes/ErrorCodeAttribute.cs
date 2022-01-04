@@ -1,21 +1,19 @@
-using System;
+namespace Storm.Api.Swaggers.Attributes;
 
-namespace Storm.Api.Swaggers.Attributes
+[AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
+public sealed class ErrorCodeAttribute : Attribute
 {
-	[AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-	public sealed class ErrorCodeAttribute : Attribute
+	public string ErrorCode { get; }
+	public string Explanation { get; }
+
+	public ErrorCodeAttribute(string errorCode)
 	{
-		public string ErrorCode { get; }
-		public string Explanation { get; }
+		ErrorCode = errorCode;
+		Explanation = string.Empty;
+	}
 
-		public ErrorCodeAttribute(string errorCode)
-		{
-			ErrorCode = errorCode;
-		}
-
-		public ErrorCodeAttribute(string errorCode, string explanation) : this(errorCode)
-		{
-			Explanation = explanation;
-		}
+	public ErrorCodeAttribute(string errorCode, string explanation) : this(errorCode)
+	{
+		Explanation = explanation;
 	}
 }

@@ -1,47 +1,44 @@
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using Storm.Api.Core.Exceptions;
 
-namespace Storm.Api.Core.CQRS
+namespace Storm.Api.Core.CQRS;
+
+public interface IActionAuthenticator<TAccount, in TAuthenticationParameter>
 {
-	public interface IActionAuthenticator<TAccount, in TAuthenticationParameter>
+	Task<(bool authenticated, TAccount account)> Authenticate(TAuthenticationParameter parameter);
+}
+
+public abstract class BaseAuthenticatedAction<TParameter, TOutput, TAccount, TAuthenticatorParameter> : BaseAction<TParameter, TOutput>
+{
+	private readonly TAuthenticatorParameter _authenticatorParameter;
+	private readonly IActionAuthenticator<TAccount, TAuthenticatorParameter> _authenticator;
+
+	protected TAccount? Account { get; private set; }
+
+	public BaseAuthenticatedAction(IServiceProvider services, TAuthenticatorParameter authenticatorParameter) : base(services)
 	{
-		Task<(bool authenticated, TAccount account)> Authenticate(TAuthenticationParameter parameter);
+		_authenticatorParameter = authenticatorParameter;
+		_authenticator = Resolve<IActionAuthenticator<TAccount, TAuthenticatorParameter>>();
 	}
 
-	public abstract class BaseAuthenticatedAction<TParameter, TOutput, TAccount, TAuthenticatorParameter> : BaseAction<TParameter, TOutput>
+	public override async Task<TOutput> Execute(TParameter parameter)
 	{
-		private readonly TAuthenticatorParameter _authenticatorParameter;
-		private readonly IActionAuthenticator<TAccount, TAuthenticatorParameter> _authenticator;
+		(bool authenticated, TAccount account) = await _authenticator.Authenticate(_authenticatorParameter);
 
-		protected TAccount Account { get; private set; }
-
-		public BaseAuthenticatedAction(IServiceProvider services, TAuthenticatorParameter authenticatorParameter) : base(services)
+		if (!authenticated)
 		{
-			_authenticatorParameter = authenticatorParameter;
-			_authenticator = Resolve<IActionAuthenticator<TAccount, TAuthenticatorParameter>>();
+			throw new DomainHttpCodeException(HttpStatusCode.Unauthorized);
 		}
 
-		public override async Task<TOutput> Execute(TParameter parameter)
-		{
-			(bool authenticated, TAccount account) = await _authenticator.Authenticate(_authenticatorParameter);
+		await Authorize(parameter, account);
 
-			if (!authenticated)
-			{
-				throw new DomainHttpCodeException(HttpStatusCode.Unauthorized);
-			}
+		Account = account;
 
-			await Authorize(parameter, account);
+		return await base.Execute(parameter);
+	}
 
-			Account = account;
-
-			return await base.Execute(parameter);
-		}
-
-		protected virtual Task Authorize(TParameter parameter, TAccount account)
-		{
-			return Task.CompletedTask;
-		}
+	protected virtual Task Authorize(TParameter parameter, TAccount account)
+	{
+		return Task.CompletedTask;
 	}
 }

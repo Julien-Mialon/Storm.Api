@@ -1,31 +1,28 @@
-using System;
-using System.Threading.Tasks;
 using Storm.Api.Core.Logs;
 
-namespace Storm.Api.Core.Workers
+namespace Storm.Api.Core.Workers;
+
+public class BackgroundItemExponentialQueueWorker<TWorkItem> : BackgroundItemWorker<TWorkItem>
+	where TWorkItem : class
 {
-	public class BackgroundItemExponentialQueueWorker<TWorkItem> : BackgroundItemWorker<TWorkItem>
-		where TWorkItem : class
+	private readonly ExponentialBackOffStrategy _backOffStrategy;
+
+	public BackgroundItemExponentialQueueWorker(ILogService logService, Func<TWorkItem, Task<bool>> itemAction, Action<TWorkItem?, Exception>? onException = null, int? discardAfterFailAttemptsCount = null) : base(logService, itemAction, onException, discardAfterFailAttemptsCount)
 	{
-		private readonly ExponentialBackOffStrategy _backOffStrategy;
+		_backOffStrategy = new ExponentialBackOffStrategy(5000, 4);
+	}
 
-		public BackgroundItemExponentialQueueWorker(ILogService logService, Func<TWorkItem, Task<bool>> itemAction, Action<TWorkItem, Exception> onException = null, int? discardAfterFailAttemptsCount = null) : base(logService, itemAction, onException, discardAfterFailAttemptsCount)
-		{
-			_backOffStrategy = new ExponentialBackOffStrategy(5000, 4);
-		}
+	protected override void OnItemSuccess(TWorkItem item)
+	{
+		base.OnItemSuccess(item);
 
-		protected override void OnItemSuccess(TWorkItem item)
-		{
-			base.OnItemSuccess(item);
+		_backOffStrategy.Reset();
+	}
 
-			_backOffStrategy.Reset();
-		}
+	protected override async Task OnItemError(TWorkItem item)
+	{
+		await base.OnItemError(item);
 
-		protected override async Task OnItemError(TWorkItem item)
-		{
-			await base.OnItemError(item);
-
-			await _backOffStrategy.Wait();
-		}
+		await _backOffStrategy.Wait();
 	}
 }

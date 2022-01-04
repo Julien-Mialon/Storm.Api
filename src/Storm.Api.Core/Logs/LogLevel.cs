@@ -1,12 +1,11 @@
-namespace Storm.Api.Core.Logs
+namespace Storm.Api.Core.Logs;
+
+public enum LogLevel
 {
-	public enum LogLevel
-	{
-		Debug,
-		Trace,
-		Information,
-		Warning,
-		Error,
-		Critical
-	}
+	Debug,
+	Trace,
+	Information,
+	Warning,
+	Error,
+	Critical
 }

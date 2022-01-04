@@ -1,60 +1,58 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
+using Storm.Api.Core.Logs.Consoles;
 using Storm.Api.Core.Logs.Internals;
 
-namespace Storm.Api.Core.Logs
-{
-	public interface ILogService
-	{
-		void Log(LogLevel level, Action<IObjectWriter> fillLogEntry);
+namespace Storm.Api.Core.Logs;
 
-		ILogService WithAppender(ILogAppender appender);
+public interface ILogService
+{
+	void Log(LogLevel level, Action<IObjectWriter> fillLogEntry);
+
+	ILogService WithAppender(ILogAppender appender);
+}
+
+public class LogService : ILogService
+{
+	private Lazy<ILogSender> _sender;
+	private readonly LogLevel _minimumLogLevel;
+	private readonly List<ILogAppender> _appenders = new List<ILogAppender>();
+
+	public LogService(Func<ILogService, ILogSender> senderFactory, LogLevel minimumLogLevel)
+	{
+		_sender = new Lazy<ILogSender>(() => senderFactory(this));
+		_minimumLogLevel = minimumLogLevel;
 	}
 
-	public class LogService : ILogService
+	protected LogService(LogLevel minimumLogLevel)
 	{
-		private Lazy<ILogSender> _sender;
-		private readonly LogLevel _minimumLogLevel;
-		private readonly List<ILogAppender> _appenders = new List<ILogAppender>();
+		_minimumLogLevel = minimumLogLevel;
+		_sender = new Lazy<ILogSender>(() => new ConsoleLogSender());
+	}
 
-		public LogService(Func<ILogService, ILogSender> senderFactory, LogLevel minimumLogLevel)
+	protected void UseSender(ILogSender sender)
+	{
+		_sender = new Lazy<ILogSender>(() => sender);
+	}
+
+	public ILogService WithAppender(ILogAppender appender)
+	{
+		_appenders.Add(appender);
+		return this;
+	}
+
+	public void Log(LogLevel level, Action<IObjectWriter> fillLogEntry)
+	{
+		if (_minimumLogLevel > level)
 		{
-			_sender = new Lazy<ILogSender>(() => senderFactory(this));
-			_minimumLogLevel = minimumLogLevel;
+			return;
 		}
 
-		protected LogService(LogLevel minimumLogLevel)
+		IObjectWriter content = new JsonLogWriter();
+		fillLogEntry(content);
+		content.WriteProperty("log_level", level.ToString());
+		for (int i = 0 ; i < _appenders.Count ; i++)
 		{
-			_minimumLogLevel = minimumLogLevel;
+			_appenders[i].Append(content);
 		}
-
-		protected void UseSender(ILogSender sender)
-		{
-			_sender = new Lazy<ILogSender>(() => sender);
-		}
-
-		public ILogService WithAppender(ILogAppender appender)
-		{
-			_appenders.Add(appender);
-			return this;
-		}
-
-		public void Log(LogLevel level, Action<IObjectWriter> fillLogEntry)
-		{
-			if (_minimumLogLevel > level)
-			{
-				return;
-			}
-
-			IObjectWriter content = new JsonLogWriter();
-			fillLogEntry(content);
-			content.WriteProperty("log_level", level.ToString());
-			for (int i = 0 ; i < _appenders.Count ; i++)
-			{
-				_appenders[i].Append(content);
-			}
-			_sender.Value.Enqueue(level, content.ToString());
-		}
+		_sender.Value.Enqueue(level, content.ToString());
 	}
 }

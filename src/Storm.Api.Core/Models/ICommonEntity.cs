@@ -1,12 +1,9 @@
-using System;
+namespace Storm.Api.Core.Models;
 
-namespace Storm.Api.Core.Models
+public interface ICommonEntity
 {
-	public interface ICommonEntity
-	{
-		DateTime EntityCreatedDate { get; set; }
-		DateTime? EntityUpdatedDate { get; set; }
-		bool IsDeleted { get; set; }
-		DateTime? EntityDeletedDate { get; set; }
-	}
+	DateTime EntityCreatedDate { get; set; }
+	DateTime? EntityUpdatedDate { get; set; }
+	bool IsDeleted { get; set; }
+	DateTime? EntityDeletedDate { get; set; }
 }

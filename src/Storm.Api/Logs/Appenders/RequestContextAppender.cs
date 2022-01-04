@@ -1,55 +1,49 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Storm.Api.Core.Logs;
 
-namespace Storm.Api.Logs.Appenders
+namespace Storm.Api.Logs.Appenders;
+
+public class RequestContextAppender : ILogAppender
 {
-	public class RequestContextAppender : ILogAppender
+	private readonly IActionContextAccessor _actionContextAccessor;
+
+	public RequestContextAppender(IActionContextAccessor actionContextAccessor)
 	{
-		private readonly IActionContextAccessor _actionContextAccessor;
+		_actionContextAccessor = actionContextAccessor;
+	}
 
-		public RequestContextAppender(IActionContextAccessor actionContextAccessor)
+	public void Append(IObjectWriter logEntry)
+	{
+		ActionContext? actionContext = _actionContextAccessor.ActionContext;
+		if (actionContext is null)
 		{
-			_actionContextAccessor = actionContextAccessor;
+			return;
 		}
 
-		public void Append(IObjectWriter logEntry)
-		{
-			ActionContext actionContext = _actionContextAccessor.ActionContext;
-			if (actionContext == null)
-			{
-				return;
-			}
+		DumpRequestContext(actionContext.HttpContext, actionContext.ActionDescriptor.RouteValues, logEntry);
+	}
 
-			DumpRequestContext(actionContext.HttpContext, actionContext.ActionDescriptor.RouteValues, logEntry);
+	public static void DumpRequestContext(HttpContext httpContext, IDictionary<string, string?> routeValues, IObjectWriter logEntry)
+	{
+		if (!(httpContext.Items.TryGetValue(nameof(RequestContextAppender), out object? rawRequestId) && rawRequestId is Guid requestId))
+		{
+			httpContext.Items[nameof(RequestContextAppender)] = requestId = Guid.NewGuid();
 		}
 
-		public static void DumpRequestContext(HttpContext httpContext, IDictionary<string, string> routeValues, IObjectWriter logEntry)
+		logEntry.WriteObject("Request", x =>
 		{
-			if (!(httpContext.Items.TryGetValue(nameof(RequestContextAppender), out object rawRequestId) && rawRequestId is Guid requestId))
-			{
-				httpContext.Items[nameof(RequestContextAppender)] = requestId = Guid.NewGuid();
-			}
-
-			logEntry.WriteObject("Request", x =>
-			{
-				x.WriteProperty("Id", requestId.ToString())
-					.WriteProperty("Path", httpContext.Request.Path)
-					.WriteProperty("Method", httpContext.Request.Method);
-				if (routeValues != null)
+			x.WriteProperty("Id", requestId.ToString())
+				.WriteProperty("Path", httpContext.Request.Path)
+				.WriteProperty("Method", httpContext.Request.Method)
+				.WriteObject("routeValues", y =>
 				{
-					x.WriteObject("routeValues", y =>
+					foreach ((string key, string? value) in routeValues)
 					{
-						foreach (KeyValuePair<string, string> value in routeValues)
-						{
-							y.WriteProperty(value.Key, value.Value);
-						}
-					});
-				}
-			});
-		}
+						y.WriteProperty(key, value);
+					}
+				});
+		});
 	}
 }

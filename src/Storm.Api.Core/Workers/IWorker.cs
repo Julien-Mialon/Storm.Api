@@ -1,7 +1,6 @@
-namespace Storm.Api.Core.Workers
+namespace Storm.Api.Core.Workers;
+
+public interface IWorker<in TWorkItem> where TWorkItem : class
 {
-	public interface IWorker<in TWorkItem> where TWorkItem : class
-	{
-		void Queue(TWorkItem item);
-	}
+	void Queue(TWorkItem item);
 }

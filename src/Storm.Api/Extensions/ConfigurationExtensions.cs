@@ -1,29 +1,27 @@
-using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace Storm.Api.Extensions
+namespace Storm.Api.Extensions;
+
+public static class ConfigurationExtensions
 {
-	public static class ConfigurationExtensions
+	public static void OnSection(this IConfiguration configuration, string sectionName, Action<IConfigurationSection> action)
 	{
-		public static void OnSection(this IConfiguration configuration, string sectionName, Action<IConfigurationSection> action)
+		if (configuration.GetSection(sectionName) is { } section)
 		{
-			if (configuration.GetSection(sectionName) is { } section)
-			{
-				action(section);
-			}
+			action(section);
+		}
+	}
+
+	public static string SimpleEnvironmentName(this IHostEnvironment environment)
+	{
+		string name = environment.EnvironmentName;
+		int delimiterIndex = name.LastIndexOf('-');
+		if (delimiterIndex > 0)
+		{
+			name = name.Substring(0, delimiterIndex);
 		}
 
-		public static string SimpleEnvironmentName(this IHostEnvironment environment)
-		{
-			string name = environment.EnvironmentName;
-			int delimiterIndex = name.LastIndexOf('-');
-			if (delimiterIndex > 0)
-			{
-				name = name.Substring(0, delimiterIndex);
-			}
-
-			return name;
-		}
+		return name;
 	}
 }

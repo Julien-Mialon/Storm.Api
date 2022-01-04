@@ -1,14 +1,11 @@
-using System;
+namespace Storm.Api.Core.Services;
 
-namespace Storm.Api.Core.Services
+public interface IDateService
 {
-	public interface IDateService
-	{
-		DateTime Now { get; }
-	}
+	DateTime Now { get; }
+}
 
-	public class DateService : IDateService
-	{
-		public DateTime Now => DateTime.UtcNow;
-	}
+public class DateService : IDateService
+{
+	public DateTime Now => DateTime.UtcNow;
 }

@@ -1,15 +1,14 @@
-namespace Storm.Api.Swaggers
+namespace Storm.Api.Swaggers;
+
+public class SwaggerModuleDescription
 {
-	public class SwaggerModuleDescription
+	public SwaggerModuleDescription(string moduleName, params string[] matchExpressions)
 	{
-		public SwaggerModuleDescription(string moduleName, params string[] matchExpressions)
-		{
-			MatchExpressions = matchExpressions;
-			ModuleName = moduleName;
-		}
-
-		internal string[] MatchExpressions { get; }
-
-		internal string ModuleName { get; }
+		MatchExpressions = matchExpressions;
+		ModuleName = moduleName;
 	}
+
+	internal string[] MatchExpressions { get; }
+
+	internal string ModuleName { get; }
 }

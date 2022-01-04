@@ -1,24 +1,22 @@
 using System.Data;
-using System.Threading.Tasks;
 
-namespace Storm.SqlMigrations
+namespace Storm.SqlMigrations;
+
+public interface IMigration
 {
-	public interface IMigration
-	{
-		int Number { get; }
+	int Number { get; }
 
-		Task Apply(IDbConnection db);
+	Task Apply(IDbConnection db);
+}
+
+public abstract class BaseMigration : IMigration
+{
+	public int Number { get; }
+
+	protected BaseMigration(int number)
+	{
+		Number = number;
 	}
 
-	public abstract class BaseMigration : IMigration
-	{
-		public int Number { get; }
-
-		protected BaseMigration(int number)
-		{
-			Number = number;
-		}
-
-		public abstract Task Apply(IDbConnection db);
-	}
+	public abstract Task Apply(IDbConnection db);
 }

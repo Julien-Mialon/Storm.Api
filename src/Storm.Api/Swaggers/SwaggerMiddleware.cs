@@ -1,58 +1,55 @@
-using System.IO;
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Storm.Api.Swaggers
+namespace Storm.Api.Swaggers;
+
+public static class SwaggerMiddleware
 {
-	public static class SwaggerMiddleware
+	private static SwaggerDocumentDescription[] _swaggerDocumentDescriptions = Array.Empty<SwaggerDocumentDescription>();
+
+	public static IServiceCollection AddStormSwagger(this IServiceCollection services, IWebHostEnvironment environment, params SwaggerDocumentDescription[] documentDescription)
 	{
-		private static SwaggerDocumentDescription[] _swaggerDocumentDescriptions;
+		_swaggerDocumentDescriptions = documentDescription;
 
-		public static IServiceCollection AddStormSwagger(this IServiceCollection services, IWebHostEnvironment environment, params SwaggerDocumentDescription[] documentDescription)
+		return services.AddSwaggerGen(options =>
 		{
-			_swaggerDocumentDescriptions = documentDescription;
+			options.CustomSchemaIds(x => x.FullName);
+			options.OperationFilter<OperationDescriptionFilter>();
+			options.DocInclusionPredicate((version, apiDescription) => _swaggerDocumentDescriptions.Any(x => x.InclusionPredicate(version, apiDescription)));
 
-			return services.AddSwaggerGen(options =>
+			foreach (SwaggerDocumentDescription apiVersionDoc in _swaggerDocumentDescriptions)
 			{
-				options.CustomSchemaIds(x => x.FullName);
-				options.OperationFilter<OperationDescriptionFilter>();
-				options.DocInclusionPredicate((version, apiDescription) => _swaggerDocumentDescriptions.Any(x => x.InclusionPredicate(version, apiDescription)));
+				apiVersionDoc.Apply(options);
+			}
 
+			foreach (string xmlDocumentationFile in _swaggerDocumentDescriptions.SelectMany(x => x.DocumentationFiles).Distinct())
+			{
+				string? file = new[]
+				{
+					$@"{environment.ContentRootPath}{Path.DirectorySeparatorChar}{xmlDocumentationFile}",
+					$@"{environment.ContentRootPath}{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}Release{Path.DirectorySeparatorChar}netcoreapp3.0{Path.DirectorySeparatorChar}{xmlDocumentationFile}",
+					$@"{environment.ContentRootPath}{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}Debug{Path.DirectorySeparatorChar}netcoreapp3.0{Path.DirectorySeparatorChar}{xmlDocumentationFile}",
+				}.FirstOrDefault(File.Exists);
+
+				if (file != default)
+				{
+					options.IncludeXmlComments(file);
+				}
+			}
+		}).AddSwaggerGenNewtonsoftSupport();
+	}
+
+	public static IApplicationBuilder UseStormSwagger(this IApplicationBuilder app)
+	{
+		return app
+			.UseSwagger()
+			.UseSwaggerUI(options =>
+			{
 				foreach (SwaggerDocumentDescription apiVersionDoc in _swaggerDocumentDescriptions)
 				{
 					apiVersionDoc.Apply(options);
 				}
-
-				foreach (string xmlDocumentationFile in _swaggerDocumentDescriptions.SelectMany(x => x.DocumentationFiles).Distinct())
-				{
-					string file = new[]
-					{
-						$@"{environment.ContentRootPath}{Path.DirectorySeparatorChar}{xmlDocumentationFile}",
-						$@"{environment.ContentRootPath}{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}Release{Path.DirectorySeparatorChar}netcoreapp3.0{Path.DirectorySeparatorChar}{xmlDocumentationFile}",
-						$@"{environment.ContentRootPath}{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}Debug{Path.DirectorySeparatorChar}netcoreapp3.0{Path.DirectorySeparatorChar}{xmlDocumentationFile}",
-					}.FirstOrDefault(File.Exists);
-
-					if (file != default)
-					{
-						options.IncludeXmlComments(file);
-					}
-				}
-			}).AddSwaggerGenNewtonsoftSupport();
-		}
-
-		public static IApplicationBuilder UseStormSwagger(this IApplicationBuilder app)
-		{
-			return app
-				.UseSwagger()
-				.UseSwaggerUI(options =>
-				{
-					foreach (SwaggerDocumentDescription apiVersionDoc in _swaggerDocumentDescriptions)
-					{
-						apiVersionDoc.Apply(options);
-					}
-				});
-		}
+			});
 	}
 }

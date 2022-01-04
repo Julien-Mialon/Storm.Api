@@ -1,98 +1,93 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using ServiceStack.OrmLite;
 using Storm.Api.Core;
 using Storm.Api.Core.Databases;
 using Storm.Api.Core.Extensions;
 
-namespace Storm.SqlMigrations
+namespace Storm.SqlMigrations;
+
+public class MigrationEngine : BaseServiceContainer
 {
-	public class MigrationEngine : BaseServiceContainer
+	private readonly IReadOnlyList<IMigrationModule> _modules;
+
+	public MigrationEngine(IServiceProvider services, IReadOnlyList<IMigrationModule> modules) : base(services)
 	{
-		private readonly IReadOnlyList<IMigrationModule> _modules;
+		_modules = modules;
+	}
 
-		public MigrationEngine(IServiceProvider services, IReadOnlyList<IMigrationModule> modules) : base(services)
+	public async Task<bool> Run()
+	{
+		using (IDatabaseService databaseService = Resolve<IDatabaseService>())
 		{
-			_modules = modules;
-		}
+			IDbConnection connection = await databaseService.Connection;
 
-		public async Task<bool> Run()
-		{
-			using (IDatabaseService databaseService = Resolve<IDatabaseService>())
+			connection.CreateTableIfNotExists<Migration>();
+
+			using (IDatabaseTransaction transaction = await databaseService.Transaction())
 			{
-				IDbConnection connection = await databaseService.Connection;
-
-				connection.CreateTableIfNotExists<Migration>();
-
-				using (IDatabaseTransaction transaction = await databaseService.Transaction())
+				try
 				{
-					try
+					foreach (IMigrationModule module in _modules)
 					{
-						foreach (IMigrationModule module in _modules)
+						if (!await MigrateModule(connection, module))
 						{
-							if (!await MigrateModule(connection, module))
-							{
-								return false;
-							}
+							return false;
 						}
-						transaction.Commit();
 					}
-					catch (Exception)
-					{
-						transaction.Rollback();
-						throw;
-					}
+					transaction.Commit();
 				}
-			}
-
-			return true;
-		}
-
-		private static async Task<bool> MigrateModule(IDbConnection connection, IMigrationModule module)
-		{
-			int lastAppliedMigration = await GetLastAppliedMigration(connection, module.Name) ?? -1;
-			List<IMigration> migrationsToApply = module.Operations.OrderBy(x => x.Number).SkipWhile(x => x.Number <= lastAppliedMigration).ToList();
-
-			if (migrationsToApply.Count == 0)
-			{
-				return true;
-			}
-
-			try
-			{
-				await module.StartMigrationOnModule(connection);
-				foreach (IMigration operation in migrationsToApply)
+				catch (Exception)
 				{
-					await operation.Apply(connection);
-
-					await connection.InsertAsync(new Migration
-					{
-						Module = module.Name,
-						Number = operation.Number,
-					});
+					transaction.Rollback();
+					throw;
 				}
-
-				await module.EndMigrationOnModule(connection);
 			}
-			catch (Exception exception)
-			{
-				throw new InvalidOperationException($"Error while applying migrations to module {module.Name} from migration {lastAppliedMigration}", exception);
-			}
+		}
 
+		return true;
+	}
+
+	private static async Task<bool> MigrateModule(IDbConnection connection, IMigrationModule module)
+	{
+		int lastAppliedMigration = await GetLastAppliedMigration(connection, module.Name) ?? -1;
+		List<IMigration> migrationsToApply = module.Operations.OrderBy(x => x.Number).SkipWhile(x => x.Number <= lastAppliedMigration).ToList();
+
+		if (migrationsToApply.Count == 0)
+		{
 			return true;
 		}
 
-		private static async Task<int?> GetLastAppliedMigration(IDbConnection connection, string moduleName)
+		try
 		{
-			Migration lastMigration = await connection.From<Migration>()
-							.Where(x => x.Module == moduleName)
-							.OrderByDescending(x => x.Number)
-							.AsSingleAsync(connection);
+			await module.StartMigrationOnModule(connection);
+			foreach (IMigration operation in migrationsToApply)
+			{
+				await operation.Apply(connection);
 
-			return lastMigration?.Number;
+				await connection.InsertAsync(new Migration
+				{
+					Module = module.Name,
+					Number = operation.Number,
+				});
+			}
+
+			await module.EndMigrationOnModule(connection);
 		}
+		catch (Exception exception)
+		{
+			throw new InvalidOperationException($"Error while applying migrations to module {module.Name} from migration {lastAppliedMigration}", exception);
+		}
+
+		return true;
+	}
+
+	private static async Task<int?> GetLastAppliedMigration(IDbConnection connection, string moduleName)
+	{
+		Migration lastMigration = await connection.From<Migration>()
+			.Where(x => x.Module == moduleName)
+			.OrderByDescending(x => x.Number)
+			.AsSingleAsync(connection);
+
+		return lastMigration?.Number;
 	}
 }

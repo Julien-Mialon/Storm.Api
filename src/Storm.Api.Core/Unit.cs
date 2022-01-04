@@ -1,12 +1,11 @@
-namespace Storm.Api.Core
+namespace Storm.Api.Core;
+
+public sealed class Unit
 {
-	public sealed class Unit
+	public static Unit Default = new Unit();
+
+	private Unit()
 	{
-		public static Unit Default = new Unit();
 
-		private Unit()
-		{
-
-		}
 	}
 }
