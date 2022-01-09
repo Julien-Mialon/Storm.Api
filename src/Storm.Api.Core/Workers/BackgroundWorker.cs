@@ -5,7 +5,7 @@ namespace Storm.Api.Core.Workers;
 
 public class BackgroundWorker
 {
-	private readonly object _mutex = new object();
+	private readonly object _mutex = new();
 	private readonly ILogService _logService;
 	private readonly Func<CancellationToken, Task> _run;
 	private Task? _currentTask;
@@ -27,7 +27,7 @@ public class BackgroundWorker
 				if (_currentTask == null || _cts == null || _cts.IsCancellationRequested || !_isRunning)
 				{
 					_cts?.Dispose();
-					_cts = new CancellationTokenSource();
+					_cts = new();
 					_currentTask = Task.Run(() => Run(_cts.Token), _cts.Token);
 				}
 			}

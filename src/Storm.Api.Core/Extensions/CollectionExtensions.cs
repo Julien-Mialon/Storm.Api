@@ -7,7 +7,7 @@ public static class CollectionExtensions
 		source.ThrowArgumentNullExceptionIfNeeded(nameof(source));
 		mapper.ThrowArgumentNullExceptionIfNeeded(nameof(mapper));
 
-		return new List<TOutput>(source.Select(mapper));
+		return new(source.Select(mapper));
 	}
 
 	public static List<TOutput> ConvertAll<TInput, TOutput>(this ICollection<TInput> source, Func<TInput, TOutput> mapper)
@@ -15,7 +15,7 @@ public static class CollectionExtensions
 		source.ThrowArgumentNullExceptionIfNeeded(nameof(source));
 		mapper.ThrowArgumentNullExceptionIfNeeded(nameof(mapper));
 
-		List<TOutput> result = new List<TOutput>(source.Count);
+		List<TOutput> result = new(source.Count);
 		result.AddRange(source.Select(mapper));
 		return result;
 	}
@@ -30,23 +30,21 @@ public static class CollectionExtensions
 
 	public static IEnumerable<List<T>> ByBunchOf<T>(this IEnumerable<T> source, int bunchMaxSize)
 	{
-		using (IEnumerator<T> enumerator = source.GetEnumerator())
+		using IEnumerator<T> enumerator = source.GetEnumerator();
+		while (enumerator.MoveNext())
 		{
-			while (enumerator.MoveNext())
+			List<T> bunch = new(bunchMaxSize);
+			for (int i = 0 ; i < bunchMaxSize ; i++)
 			{
-				List<T> bunch = new List<T>(bunchMaxSize);
-				for (int i = 0 ; i < bunchMaxSize ; i++)
+				bunch.Add(enumerator.Current);
+
+				if (!enumerator.MoveNext())
 				{
-					bunch.Add(enumerator.Current);
-
-					if (!enumerator.MoveNext())
-					{
-						break;
-					}
+					break;
 				}
-
-				yield return bunch;
 			}
+
+			yield return bunch;
 		}
 	}
 

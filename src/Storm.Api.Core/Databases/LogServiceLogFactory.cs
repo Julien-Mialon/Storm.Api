@@ -92,11 +92,11 @@ public class LogServiceDatabaseLog : ILog
 			.WriteProperty("loggerType", _type)
 			.WriteProperty("message", string.Format(format, args))
 			.WriteProperty("format", format)
-			.WriteArray("args", x =>
+			.WriteArray("args", y =>
 			{
 				foreach (object arg in args)
 				{
-					x.WriteValue(arg.ToString());
+					y.WriteValue(arg.ToString());
 				}
 			})
 		);

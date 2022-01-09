@@ -35,7 +35,7 @@ public static class MigrationHelper
 
 		using (providers.CreateScope())
 		{
-			MigrationEngine migrations = new MigrationEngine(providers, modules);
+			MigrationEngine migrations = new(providers, modules);
 			return await migrations.Run() ? 0 : -1;
 		}
 	}

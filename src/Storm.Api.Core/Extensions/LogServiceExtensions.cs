@@ -4,8 +4,6 @@ namespace Storm.Api.Core.Extensions;
 
 public static class LogServiceExtensions
 {
-	private const string MESSAGE_PROPERTY = "message";
-
 	public static void Debug(this ILogService service, Action<IObjectWriter> fillLogEntry)
 	{
 		service.Log(LogLevel.Debug, fillLogEntry);

@@ -24,7 +24,7 @@ internal class ElasticSender : IElasticSender
 	{
 		StringResponse result = await _client.IndexAsync<StringResponse>(_index, PostData.String(entry));
 
-		if (result.HttpStatusCode is int statusCode && statusCode >= 200 && statusCode < 300)
+		if (result.HttpStatusCode is >= 200 and < 300)
 		{
 			return true;
 		}
@@ -34,7 +34,7 @@ internal class ElasticSender : IElasticSender
 
 	public async Task<bool> Send(IReadOnlyList<string> entries)
 	{
-		StringBuilder content = new StringBuilder(entries.Count * (200 + 75));
+		StringBuilder content = new(entries.Count * (200 + 75));
 
 		foreach (string entry in entries)
 		{
@@ -47,7 +47,7 @@ internal class ElasticSender : IElasticSender
 		string body = content.ToString();
 		StringResponse result = await _client.BulkAsync<StringResponse>(_index, PostData.String(body));
 
-		if (result.HttpStatusCode is int statusCode && statusCode >= 200 && statusCode < 300)
+		if (result.HttpStatusCode is >= 200 and < 300)
 		{
 			return true;
 		}

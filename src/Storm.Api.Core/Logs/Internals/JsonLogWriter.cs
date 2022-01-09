@@ -6,7 +6,7 @@ namespace Storm.Api.Core.Logs.Internals;
 internal class JsonLogWriter : IObjectWriter, IArrayWriter
 {
 	private readonly bool _extraLine;
-	private readonly StringWriter _textWriter = new StringWriter();
+	private readonly StringWriter _textWriter = new();
 	private readonly JsonWriter _jsonWriter;
 
 	public JsonLogWriter(Formatting formatting = Formatting.None, bool extraLine = false)
@@ -113,7 +113,7 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter
 		_jsonWriter.WritePropertyName(property);
 		_jsonWriter.WriteStartObject();
 
-		objectWriter?.Invoke(this);
+		objectWriter.Invoke(this);
 
 		_jsonWriter.WriteEndObject();
 		return this;
@@ -137,7 +137,7 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter
 		_jsonWriter.WritePropertyName(property);
 		_jsonWriter.WriteStartArray();
 
-		arrayWriter?.Invoke(this);
+		arrayWriter.Invoke(this);
 
 		_jsonWriter.WriteEndArray();
 		return this;
@@ -147,7 +147,7 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter
 	{
 		_jsonWriter.WriteStartObject();
 
-		objectWriter?.Invoke(this);
+		objectWriter.Invoke(this);
 
 		_jsonWriter.WriteEndObject();
 		return this;
@@ -157,7 +157,7 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter
 	{
 		_jsonWriter.WriteEndObject();
 
-		string? result = _textWriter.ToString();
+		string result = _textWriter.ToString();
 
 		if (_extraLine)
 		{

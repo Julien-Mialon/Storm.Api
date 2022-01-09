@@ -2,7 +2,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using ServiceStack.MiniProfiler.Data;
 
-namespace Storm.Api.Core.Databases;
+namespace Storm.Api.Core.Databases.Internals;
 
 internal class DebugSqlProfiler : IDbProfiler
 {

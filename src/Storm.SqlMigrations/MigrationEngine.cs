@@ -17,31 +17,27 @@ public class MigrationEngine : BaseServiceContainer
 
 	public async Task<bool> Run()
 	{
-		using (IDatabaseService databaseService = Resolve<IDatabaseService>())
+		using IDatabaseService databaseService = Resolve<IDatabaseService>();
+		IDbConnection connection = await databaseService.Connection;
+
+		connection.CreateTableIfNotExists<Migration>();
+
+		using IDatabaseTransaction transaction = await databaseService.Transaction();
+		try
 		{
-			IDbConnection connection = await databaseService.Connection;
-
-			connection.CreateTableIfNotExists<Migration>();
-
-			using (IDatabaseTransaction transaction = await databaseService.Transaction())
+			foreach (IMigrationModule module in _modules)
 			{
-				try
+				if (!await MigrateModule(connection, module))
 				{
-					foreach (IMigrationModule module in _modules)
-					{
-						if (!await MigrateModule(connection, module))
-						{
-							return false;
-						}
-					}
-					transaction.Commit();
-				}
-				catch (Exception)
-				{
-					transaction.Rollback();
-					throw;
+					return false;
 				}
 			}
+			transaction.Commit();
+		}
+		catch (Exception)
+		{
+			transaction.Rollback();
+			throw;
 		}
 
 		return true;

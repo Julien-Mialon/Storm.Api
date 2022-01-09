@@ -44,7 +44,7 @@ public class DatabaseConfigurationBuilder
 
 		string connectionString = _connectionString ?? throw new InvalidOperationException("Configuration has not been finished");
 		IOrmLiteDialectProvider provider = _dialectProvider ?? throw new InvalidOperationException("Configuration has not been finished");
-		OrmLiteConnectionFactory connectionFactory = new OrmLiteConnectionFactory(connectionString, provider);
+		OrmLiteConnectionFactory connectionFactory = new(connectionString, provider);
 
 		if (_enableDebug)
 		{

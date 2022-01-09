@@ -23,7 +23,7 @@ public static class DatabaseExtensions
 
 	public static void AddColumn<TModel>(this IDbConnection db, string columnName, Type columnType, bool isNullable, string? defaultValue = null)
 	{
-		db.AddColumn(typeof(TModel), new FieldDefinition
+		db.AddColumn(typeof(TModel), new()
 		{
 			Name = columnName,
 			FieldType = columnType,
@@ -45,9 +45,9 @@ public static class DatabaseExtensions
 			return;
 		}
 
-		ParameterExpression? parameter = Expression.Parameter(typeof(TModel), "x");
-		UnaryExpression? body = Expression.Convert(Expression.Property(parameter, property), typeof(object));
-		Expression<Func<TModel, object>>? expression = Expression.Lambda<Func<TModel, object>>(body, parameter);
+		ParameterExpression parameter = Expression.Parameter(typeof(TModel), "x");
+		UnaryExpression body = Expression.Convert(Expression.Property(parameter, property), typeof(object));
+		Expression<Func<TModel, object>> expression = Expression.Lambda<Func<TModel, object>>(body, parameter);
 
 		db.AddColumn(expression);
 	}
@@ -67,7 +67,7 @@ public static class DatabaseExtensions
 		string sourceFieldName = ModelDefinition<TSource>.Definition.GetFieldDefinition(sourceField).FieldName;
 		string foreignFieldName = ModelDefinition<TForeign>.Definition.GetFieldDefinition(foreignField).FieldName;
 
-		db.AddForeignKey<TSource, TForeign>(sourceField, foreignField, OnFkOption.NoAction, OnFkOption.NoAction, $"{typeof(TSource).TableName()}_{typeof(TForeign).TableName()}_{sourceFieldName}_{foreignFieldName}");
+		db.AddForeignKey(sourceField, foreignField, OnFkOption.NoAction, OnFkOption.NoAction, $"{typeof(TSource).TableName()}_{typeof(TForeign).TableName()}_{sourceFieldName}_{foreignFieldName}");
 	}
 
 	public static void RemoveForeignKey<TSource, TForeign>(this IDbConnection db, Expression<Func<TSource, object>> sourceField, Expression<Func<TForeign, object>> foreignField)

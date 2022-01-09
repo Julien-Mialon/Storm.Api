@@ -67,7 +67,7 @@ public abstract class BaseController : Controller
 			return StatusCode(ex.Code, new Response
 			{
 				IsSuccess = false,
-				ErrorCode = ex.ErrorCode ?? "GENERIC_HTTP_ERROR",
+				ErrorCode = ex.ErrorCode.NullIfEmpty().ValueIfNull("GENERIC_HTTP_ERROR"),
 				ErrorMessage = ex.ErrorMessage
 			});
 		}

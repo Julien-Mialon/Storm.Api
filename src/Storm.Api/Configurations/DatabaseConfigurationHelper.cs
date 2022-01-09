@@ -33,8 +33,8 @@ public static class DatabaseConfigurationHelper
 
 		string? connectionString = configuration.GetValue<string?>("connectionString", null);
 		DatabaseConfigurationBuilder configurationBuilder = new DatabaseConfigurationBuilder()
-			.UseDebug(configuration.GetValue<bool>("debugLogging", false))
-			.UseLogService(configuration.GetValue<bool>("useLogService", false));
+			.UseDebug(configuration.GetValue("debugLogging", false))
+			.UseLogService(configuration.GetValue("useLogService", false));
 
 
 		if (connectionString is null)

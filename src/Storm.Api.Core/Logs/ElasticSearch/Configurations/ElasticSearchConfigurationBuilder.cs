@@ -17,13 +17,13 @@ public interface IElasticSearchConfigurationBuilder
 
 internal class ElasticSearchConfigurationBuilder : IElasticSearchConfigurationBuilder
 {
-	private ElasticSearchConfiguration _configuration = new ElasticSearchConfiguration();
+	private ElasticSearchConfiguration _configuration = new();
 	private ElasticSearchConfiguration Configuration => _configuration ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()");
 
 	public ElasticSearchConfiguration Build()
 	{
 		ElasticSearchConfiguration configuration = Configuration;
-		_configuration = new ElasticSearchConfiguration();
+		_configuration = new();
 		return configuration;
 	}
 

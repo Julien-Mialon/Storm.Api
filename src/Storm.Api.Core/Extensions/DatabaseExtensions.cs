@@ -29,7 +29,7 @@ public static class DatabaseExtensions
 
 	public static Task<bool> AsExistsAsync<T>(this SqlExpression<T> expression, IDbConnection connection)
 	{
-		return connection.ExistsAsync<T>(expression);
+		return connection.ExistsAsync(expression);
 	}
 
 	public static string TableName(this Type type)

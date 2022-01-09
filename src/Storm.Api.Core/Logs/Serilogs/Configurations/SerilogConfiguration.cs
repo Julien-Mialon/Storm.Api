@@ -18,13 +18,8 @@ public class SerilogConfiguration
 	private ILogSender CreateSender(ILogService logService)
 	{
 		LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
-			.MinimumLevel.Is(MinimumLogLevel.AsLogEventLevel());
-
-		if (LogFileName != null)
-		{
-			loggerConfiguration = loggerConfiguration
-				.WriteTo.File("logs/output.log", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true);
-		}
+			.MinimumLevel.Is(MinimumLogLevel.AsLogEventLevel())
+			.WriteTo.File($"logs/{LogFileName}", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true);
 
 		if (EnableConsoleLogging)
 		{

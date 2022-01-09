@@ -20,7 +20,7 @@ public class ElasticSearchLogSenderHostedService : BackgroundService
 	{
 		ILogQueueService logQueueService = _services.GetRequiredService<ILogQueueService>();
 		IElasticSender sender = _services.GetRequiredService<IElasticSender>();
-		List<string> items = new List<string>(BULK_SIZE);
+		List<string> items = new(BULK_SIZE);
 		while (true)
 		{
 			try

@@ -7,7 +7,7 @@ public static class FeatureFlagsHelper
 {
 	public static void Load(IConfiguration configuration)
 	{
-		Dictionary<string, bool>? flags = configuration.GetChildren()
+		Dictionary<string, bool> flags = configuration.GetChildren()
 			.ToDictionary(x => x.Key, x => x.Get<bool>());
 
 		FeatureFlags.Set(flags);

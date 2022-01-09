@@ -11,7 +11,7 @@ public static class StringExtensions
 	public static bool NotNullOrEmpty(this string s) => !string.IsNullOrEmpty(s);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static string ValueIfNull(this string s, string value) => s ?? value;
+	public static string ValueIfNull(this string? s, string value) => s ?? value;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static string? NullIfEmpty(this string source) => string.IsNullOrEmpty(source) ? null : source;

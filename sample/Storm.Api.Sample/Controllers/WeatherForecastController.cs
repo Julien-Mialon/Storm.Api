@@ -20,7 +20,7 @@ public class WeatherForecastController : ControllerBase
 	[Category("SampleCategory")]
 	public IEnumerable<WeatherForecast> Get()
 	{
-		Random? rng = new Random();
+		Random? rng = new();
 		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = Summaries[rng.Next(Summaries.Length)]})
 			.ToArray();
 	}
@@ -28,7 +28,7 @@ public class WeatherForecastController : ControllerBase
 	[HttpGet("all")]
 	public IEnumerable<WeatherForecast> GetAll()
 	{
-		Random? rng = new Random();
+		Random? rng = new();
 		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = Summaries[rng.Next(Summaries.Length)]})
 			.ToArray();
 	}
@@ -37,7 +37,7 @@ public class WeatherForecastController : ControllerBase
 	[Category("FileUpload")]
 	public IEnumerable<WeatherForecast> UploadFile(IFormFile file)
 	{
-		Random? rng = new Random();
+		Random? rng = new();
 		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = Summaries[rng.Next(Summaries.Length)]})
 			.ToArray();
 	}
@@ -46,7 +46,7 @@ public class WeatherForecastController : ControllerBase
 	[Category("FileUpload")]
 	public IEnumerable<WeatherForecast> GetFile()
 	{
-		Random? rng = new Random();
+		Random? rng = new();
 		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = Summaries[rng.Next(Summaries.Length)]})
 			.ToArray();
 	}
@@ -55,7 +55,7 @@ public class WeatherForecastController : ControllerBase
 	[Category("FileUpload")]
 	public IEnumerable<WeatherForecast> GetFile2()
 	{
-		Random? rng = new Random();
+		Random? rng = new();
 		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = Summaries[rng.Next(Summaries.Length)]})
 			.ToArray();
 	}

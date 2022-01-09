@@ -8,7 +8,7 @@ public abstract class AbstractImmediateQueueLogSender : ILogSender
 
 	protected AbstractImmediateQueueLogSender(ILogService logService)
 	{
-		_worker = new BackgroundItemQueueWorker<string>(logService, Send);
+		_worker = new(logService, Send);
 	}
 
 	public void Enqueue(LogLevel level, string entry)

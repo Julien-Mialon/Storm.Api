@@ -10,8 +10,8 @@ public abstract class BackgroundItemWorker<TWorkItem> : IWorker<TWorkItem>
 	private readonly ILogService _logService;
 	private readonly BackgroundWorker _worker;
 
-	private readonly ConcurrentQueue<TWorkItem> _waitingQueue = new ConcurrentQueue<TWorkItem>();
-	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0);
+	private readonly ConcurrentQueue<TWorkItem> _waitingQueue = new();
+	private readonly SemaphoreSlim _semaphore = new(0);
 
 	private readonly Func<TWorkItem, Task<bool>> _itemAction;
 	private readonly Action<TWorkItem?, Exception>? _onException;
@@ -24,7 +24,7 @@ public abstract class BackgroundItemWorker<TWorkItem> : IWorker<TWorkItem>
 		_onException = onException;
 		_discardAfterFailAttemptsCount = discardAfterFailAttemptsCount;
 
-		_worker = new BackgroundWorker(_logService, RunAsync);
+		_worker = new(_logService, RunAsync);
 		_worker.Start();
 	}
 
@@ -67,11 +67,13 @@ public abstract class BackgroundItemWorker<TWorkItem> : IWorker<TWorkItem>
 							tries++;
 							if (tries >= _discardAfterFailAttemptsCount)
 							{
+								int triesCopy = tries;
+								TWorkItem? itemCopy = item;
 								_logService.Error(x => x
 									.WriteProperty("type", GetType().FullName)
 									.WriteMethodInfo()
-									.WriteMessage($"Fail to process item {tries} times")
-									.DumpObject("item", item)
+									.WriteMessage($"Fail to process item {triesCopy} times")
+									.DumpObject("item", itemCopy)
 								);
 
 								_waitingQueue.TryDequeue(out _);

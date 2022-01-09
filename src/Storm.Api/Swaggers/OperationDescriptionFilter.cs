@@ -11,7 +11,7 @@ internal class OperationDescriptionFilter : IOperationFilter
 	{
 		if (context.ApiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
 		{
-			List<string> lines = new List<string>();
+			List<string> lines = new();
 
 			lines.AddRange(methodInfo.GetCustomAttributes<ImplementationNotesAttribute>().Select(x => x.Description));
 

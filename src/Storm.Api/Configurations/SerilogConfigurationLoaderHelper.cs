@@ -10,12 +10,12 @@ public static class SerilogConfigurationLoaderHelper
 	{
 		/* Keys : LogLevel, EnableConsole, */
 
-		if (configuration.GetValue<string?>("LogLevel", null) is { } minimumLogLevelString && Enum.TryParse<LogLevel>(minimumLogLevelString, out LogLevel minimumLogLevel))
+		if (configuration.GetValue<string?>("LogLevel", null) is { } minimumLogLevelString && Enum.TryParse(minimumLogLevelString, out LogLevel minimumLogLevel))
 		{
 			builder = builder.WithMinimumLogLevel(minimumLogLevel);
 		}
 
-		if (configuration.GetValue<bool>("EnableConsole", false))
+		if (configuration.GetValue("EnableConsole", false))
 		{
 			builder = builder.WithConsoleOutput();
 		}

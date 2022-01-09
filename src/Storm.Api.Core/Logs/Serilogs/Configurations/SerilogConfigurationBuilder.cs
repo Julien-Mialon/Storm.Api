@@ -10,13 +10,13 @@ public interface ISerilogConfigurationBuilder
 
 internal class SerilogConfigurationBuilder : ISerilogConfigurationBuilder
 {
-	private SerilogConfiguration _configuration = new SerilogConfiguration();
+	private SerilogConfiguration _configuration = new();
 	private SerilogConfiguration Configuration => _configuration ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()");
 
 	public SerilogConfiguration Build()
 	{
 		SerilogConfiguration configuration = Configuration;
-		_configuration = new SerilogConfiguration();
+		_configuration = new();
 		return configuration;
 	}
 

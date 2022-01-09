@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -13,7 +12,7 @@ public class SwaggerDocumentDescription
 
 	internal List<SwaggerModuleDescription> Modules { get; }
 
-	internal List<string> DocumentationFiles { get; } = new List<string>();
+	internal List<string> DocumentationFiles { get; } = new();
 
 	public SwaggerDocumentDescription(string version, params SwaggerModuleDescription[] modules)
 	{
@@ -31,7 +30,8 @@ public class SwaggerDocumentDescription
 	{
 		foreach (SwaggerModuleDescription module in Modules)
 		{
-			options.SwaggerDoc($"{Version}_{module.ModuleName}", new OpenApiInfo {Title = $"API - {module.ModuleName}", Version = Version});
+			options.SwaggerDoc($"{Version}_{module.ModuleName}", new()
+				{Title = $"API - {module.ModuleName}", Version = Version});
 		}
 	}
 

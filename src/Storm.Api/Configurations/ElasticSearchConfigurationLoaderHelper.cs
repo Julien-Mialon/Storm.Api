@@ -14,7 +14,7 @@ public static class ElasticSearchConfigurationLoaderHelper
 			.WithNode(configuration["Host"])
 			.WithBasicAuthentication(configuration["User"], configuration["Password"]);
 
-		if (configuration.GetValue<string?>("LogLevel", null) is { } minimumLogLevelString && Enum.TryParse<LogLevel>(minimumLogLevelString, out LogLevel minimumLogLevel))
+		if (configuration.GetValue<string?>("LogLevel", null) is { } minimumLogLevelString && Enum.TryParse(minimumLogLevelString, out LogLevel minimumLogLevel))
 		{
 			builder = builder.WithMinimumLogLevel(minimumLogLevel);
 		}

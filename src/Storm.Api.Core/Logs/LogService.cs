@@ -14,23 +14,23 @@ public class LogService : ILogService
 {
 	private Lazy<ILogSender> _sender;
 	private readonly LogLevel _minimumLogLevel;
-	private readonly List<ILogAppender> _appenders = new List<ILogAppender>();
+	private readonly List<ILogAppender> _appenders = new();
 
 	public LogService(Func<ILogService, ILogSender> senderFactory, LogLevel minimumLogLevel)
 	{
-		_sender = new Lazy<ILogSender>(() => senderFactory(this));
+		_sender = new(() => senderFactory(this));
 		_minimumLogLevel = minimumLogLevel;
 	}
 
 	protected LogService(LogLevel minimumLogLevel)
 	{
 		_minimumLogLevel = minimumLogLevel;
-		_sender = new Lazy<ILogSender>(() => new ConsoleLogSender());
+		_sender = new(() => new ConsoleLogSender());
 	}
 
 	protected void UseSender(ILogSender sender)
 	{
-		_sender = new Lazy<ILogSender>(() => sender);
+		_sender = new(() => sender);
 	}
 
 	public ILogService WithAppender(ILogAppender appender)

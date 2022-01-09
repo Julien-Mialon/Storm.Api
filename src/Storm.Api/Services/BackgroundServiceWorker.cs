@@ -6,8 +6,8 @@ namespace Storm.Api.Services;
 
 public abstract class BackgroundServiceWorker<TItem> : BackgroundService
 {
-	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0, 1_000_000);
-	private readonly ConcurrentQueue<TItem> _queue = new ConcurrentQueue<TItem>();
+	private readonly SemaphoreSlim _semaphore = new(0, 1_000_000);
+	private readonly ConcurrentQueue<TItem> _queue = new();
 	protected ILogService LogService { get; }
 
 	public BackgroundServiceWorker(ILogService logService)

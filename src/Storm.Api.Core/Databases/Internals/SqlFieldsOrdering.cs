@@ -17,7 +17,7 @@ internal static class SqlFieldsOrdering
 			FieldDefinition? idField = null;
 			FieldDefinition? collationIdField = null;
 
-			List<FieldDefinition?> fields = new List<FieldDefinition?>(definition.FieldDefinitions.Count)
+			List<FieldDefinition?> fields = new(definition.FieldDefinitions.Count)
 			{
 				null, null //set null for keys space
 			};
@@ -47,7 +47,7 @@ internal static class SqlFieldsOrdering
 		{
 			FieldDefinition? idField = null;
 
-			List<FieldDefinition?> fields = new List<FieldDefinition?>(definition.FieldDefinitions.Count)
+			List<FieldDefinition?> fields = new(definition.FieldDefinitions.Count)
 			{
 				null, //set null for keys space
 			};

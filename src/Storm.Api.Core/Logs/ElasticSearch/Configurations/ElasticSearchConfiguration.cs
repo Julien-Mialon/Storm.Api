@@ -5,7 +5,7 @@ namespace Storm.Api.Core.Logs.ElasticSearch.Configurations;
 
 public class ElasticSearchConfiguration
 {
-	private readonly List<string> _nodes = new List<string>();
+	private readonly List<string> _nodes = new();
 	private string? _username;
 	private string? _password;
 	private Func<IElasticSender, ILogService, ILogSender>? _senderFactory;
@@ -50,7 +50,7 @@ public class ElasticSearchConfiguration
 			throw new InvalidOperationException("You must specify at least one node address");
 		}
 
-		return new LogQueueService(MinimumLogLevel);
+		return new(MinimumLogLevel);
 	}
 
 	public IElasticSender CreateElasticSender()
@@ -58,11 +58,11 @@ public class ElasticSearchConfiguration
 		ConnectionConfiguration configuration;
 		if (_nodes.Count == 1)
 		{
-			configuration = new ConnectionConfiguration(new Uri(_nodes[0]));
+			configuration = new(new Uri(_nodes[0]));
 		}
 		else
 		{
-			configuration = new ConnectionConfiguration(new StaticConnectionPool(_nodes.ConvertAll(x => new Uri(x))));
+			configuration = new(new StaticConnectionPool(_nodes.ConvertAll(x => new Uri(x))));
 		}
 
 		if (_username is not null)
@@ -71,8 +71,8 @@ public class ElasticSearchConfiguration
 		}
 
 		configuration.ConnectionLimit(-1);
-		ElasticLowLevelClient client = new ElasticLowLevelClient(configuration);
-		ElasticSender sender = new ElasticSender(client, _index!);
+		ElasticLowLevelClient client = new(configuration);
+		ElasticSender sender = new(client, _index!);
 
 		return sender;
 	}

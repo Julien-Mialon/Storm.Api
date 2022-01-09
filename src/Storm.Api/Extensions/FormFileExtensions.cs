@@ -16,7 +16,7 @@ public static class FormFileExtensions
 
 		if (copyStream)
 		{
-			MemoryStream memoryStream = new MemoryStream((int)file.Length);
+			MemoryStream memoryStream = new((int)file.Length);
 			await file.CopyToAsync(memoryStream);
 			memoryStream.Seek(0, SeekOrigin.Begin);
 
@@ -27,7 +27,7 @@ public static class FormFileExtensions
 			fileStream = file.OpenReadStream();
 		}
 
-		return new FileParameter
+		return new()
 		{
 			ContentDisposition = file.ContentDisposition,
 			ContentType = file.ContentType,

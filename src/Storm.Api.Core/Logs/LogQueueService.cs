@@ -9,8 +9,8 @@ public interface ILogQueueService
 
 public class LogQueueService : LogService, ILogQueueService, ILogSender
 {
-	private readonly ConcurrentQueue<string> _logs = new ConcurrentQueue<string>();
-	private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0);
+	private readonly ConcurrentQueue<string> _logs = new();
+	private readonly SemaphoreSlim _semaphore = new(0);
 
 	public LogQueueService(LogLevel minimumLogLevel) : base(minimumLogLevel)
 	{

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +15,6 @@ using Storm.Api.Core.Logs;
 using Storm.Api.Core.Logs.Appenders;
 using Storm.Api.Core.Logs.Consoles;
 using Storm.Api.Core.Logs.ElasticSearch.Configurations;
-using Storm.Api.Core.Logs.ElasticSearch.Senders;
 using Storm.Api.Core.Logs.Serilogs.Configurations;
 using Storm.Api.Core.Services;
 using Storm.Api.Databases;
@@ -40,7 +38,7 @@ public abstract class BaseStartup
 
 	protected virtual SwaggerDocumentDescription[] SwaggerDocuments => new SwaggerDocumentDescription[]
 	{
-		new SwaggerDocumentDescription("v1", new SwaggerModuleDescription("API", ""))
+		new("v1", new SwaggerModuleDescription("API", ""))
 	};
 
 	public BaseStartup(IConfiguration configuration, IWebHostEnvironment environment)
@@ -89,7 +87,7 @@ public abstract class BaseStartup
 			{
 				new CultureInfo("fr")
 			};
-			options.DefaultRequestCulture = new RequestCulture(culture: "fr", uiCulture: "fr");
+			options.DefaultRequestCulture = new(culture: "fr", uiCulture: "fr");
 			options.SupportedCultures = supportedCultures;
 			options.SupportedUICultures = supportedCultures;
 		});
@@ -149,7 +147,7 @@ public abstract class BaseStartup
 			.Build();
 		LogQueueService logService = configuration.CreateQueueService();
 
-		services.AddSingleton<IElasticSender>(configuration.CreateElasticSender());
+		services.AddSingleton(configuration.CreateElasticSender());
 		services.AddSingleton<ILogQueueService>(logService);
 		services.AddHostedService<ElasticSearchLogSenderHostedService>();
 
@@ -171,7 +169,7 @@ public abstract class BaseStartup
 
 	protected void RegisterConsoleLogger(IServiceCollection services, LogLevel minimumLogLevel = LogLevel.Debug)
 	{
-		SetLogService(services, new LogService(s => new ConsoleLogSender(), minimumLogLevel));
+		SetLogService(services, new LogService(_ => new ConsoleLogSender(), minimumLogLevel));
 	}
 
 	protected void SetLogService(IServiceCollection services, ILogService logService)

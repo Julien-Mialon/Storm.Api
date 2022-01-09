@@ -9,7 +9,7 @@ public class BackgroundItemExponentialQueueWorker<TWorkItem> : BackgroundItemWor
 
 	public BackgroundItemExponentialQueueWorker(ILogService logService, Func<TWorkItem, Task<bool>> itemAction, Action<TWorkItem?, Exception>? onException = null, int? discardAfterFailAttemptsCount = null) : base(logService, itemAction, onException, discardAfterFailAttemptsCount)
 	{
-		_backOffStrategy = new ExponentialBackOffStrategy(5000, 4);
+		_backOffStrategy = new(5000, 4);
 	}
 
 	protected override void OnItemSuccess(TWorkItem item)
