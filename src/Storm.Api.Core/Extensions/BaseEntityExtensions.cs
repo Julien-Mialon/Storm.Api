@@ -19,6 +19,22 @@ public static class BaseEntityExtensions
 
 		storage.EntityCreatedDate = source.EntityCreatedDate;
 		storage.EntityUpdatedDate = source.EntityUpdatedDate;
+	}
+
+	public static void CopyGenericPropertiesFrom(this IDeletableEntity storage, IDeletableEntity source)
+	{
+		if (storage is null)
+		{
+			throw new NullReferenceException();
+		}
+
+		if (source is null)
+		{
+			throw new ArgumentNullException(nameof(source), "Source should not be null");
+		}
+
+		storage.EntityCreatedDate = source.EntityCreatedDate;
+		storage.EntityUpdatedDate = source.EntityUpdatedDate;
 		storage.EntityDeletedDate = source.EntityDeletedDate;
 		storage.IsDeleted = source.IsDeleted;
 	}
@@ -63,13 +79,13 @@ public static class BaseEntityExtensions
 		entity.EntityUpdatedDate = DateTime.UtcNow;
 	}
 
-	internal static void MarkAsDeleted(this ICommonEntity entity)
+	internal static void MarkAsDeleted(this IDeletableEntity entity)
 	{
 		entity.IsDeleted = true;
 		entity.EntityDeletedDate = DateTime.UtcNow;
 	}
 
-	public static T? NullIfDeleted<T>(this T entity) where T : ICommonEntity
+	public static T? NullIfDeleted<T>(this T entity) where T : IDeletableEntity
 	{
 		if (entity.IsDeleted)
 		{
@@ -79,7 +95,7 @@ public static class BaseEntityExtensions
 		return entity;
 	}
 
-	public static async Task<T?> NullIfDeleted<T>(this Task<T> entity) where T : ICommonEntity => (await entity).NullIfDeleted();
+	public static async Task<T?> NullIfDeleted<T>(this Task<T> entity) where T : IDeletableEntity => (await entity).NullIfDeleted();
 
 	public static bool IsNotNullOrDefault(this ICommonEntity? entity)
 	{
@@ -97,7 +113,7 @@ public static class BaseEntityExtensions
 	}
 
 	public static SqlExpression<TEntity> NotDeleted<TEntity>(this SqlExpression<TEntity> expression)
-		where TEntity : ICommonEntity
+		where TEntity : IDeletableEntity
 	{
 		return expression.Where(x => x.IsDeleted == false);
 	}

@@ -39,16 +39,20 @@ internal static class OrmLiteInterceptors
 
 	private static void OnUpdate(IDbCommand command, object item)
 	{
-		if (item is ICommonEntity entity)
+		if (item is IDeletableEntity deletableEntity)
 		{
-			if (entity.IsDeleted)
+			if (deletableEntity.IsDeleted)
 			{
-				entity.MarkAsDeleted();
+				deletableEntity.MarkAsDeleted();
 			}
 			else
 			{
-				entity.MarkAsUpdated();
+				deletableEntity.MarkAsUpdated();
 			}
+		}
+		else if (item is ICommonEntity entity)
+		{
+			entity.MarkAsUpdated();
 		}
 
 		_onUpdate?.Invoke(command, item);

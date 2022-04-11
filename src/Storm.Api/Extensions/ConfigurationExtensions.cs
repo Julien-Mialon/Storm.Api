@@ -7,7 +7,7 @@ public static class ConfigurationExtensions
 {
 	public static void OnSection(this IConfiguration configuration, string sectionName, Action<IConfigurationSection> action)
 	{
-		if (configuration.GetSection(sectionName) is { } section)
+		if (configuration.GetSection(sectionName) is { } section && section.Exists())
 		{
 			action(section);
 		}

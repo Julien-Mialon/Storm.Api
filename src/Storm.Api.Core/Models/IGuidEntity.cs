@@ -1,6 +1,6 @@
 namespace Storm.Api.Core.Models;
 
-public interface IGuidEntity : ICommonEntity
+public interface IGuidEntity : IDeletableEntity
 {
 	Guid Id { get; set; }
 }
