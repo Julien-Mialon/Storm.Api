@@ -13,8 +13,8 @@ internal static class DisposeConnectionMiddleware
 			await next();
 
 			context.RequestServices
-				.GetRequiredService<IDatabaseService>()
-				.Dispose();
+				.GetService<IDatabaseService>()
+				?.Dispose();
 		});
 	}
 }
