@@ -8,10 +8,8 @@ public abstract class BaseEntityWithAutoIncrement : IEntity
 	[AutoIncrement]
 	public long Id { get; set; }
 
-	[Index]
 	public Guid CollationId { get; set; }
 
-	[Index]
 	public DateTime EntityCreatedDate { get; set; }
 
 	public DateTime? EntityUpdatedDate { get; set; }

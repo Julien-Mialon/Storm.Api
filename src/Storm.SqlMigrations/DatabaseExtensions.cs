@@ -62,6 +62,14 @@ public static class DatabaseExtensions
 		db.AddColumn(field);
 	}
 
+	public static bool HasForeignKey(this IDbConnection db, string foreignKeyName)
+	{
+		return db.Exists<string>($@"
+				SELECT con.name
+				FROM sys.foreign_keys con
+				where con.name = '{foreignKeyName}'");
+	}
+
 	public static void CreateForeignKey<TSource, TForeign>(this IDbConnection db, Expression<Func<TSource, object>> sourceField, Expression<Func<TForeign, object>> foreignField)
 	{
 		string sourceFieldName = ModelDefinition<TSource>.Definition.GetFieldDefinition(sourceField).FieldName;

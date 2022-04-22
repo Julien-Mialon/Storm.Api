@@ -7,10 +7,8 @@ public abstract class BaseEntity : IEntity
 	[PrimaryKey]
 	public long Id { get; set; }
 
-	[Index]
 	public Guid CollationId { get; set; }
 
-	[Index]
 	public DateTime EntityCreatedDate { get; set; }
 
 	public DateTime? EntityUpdatedDate { get; set; }
