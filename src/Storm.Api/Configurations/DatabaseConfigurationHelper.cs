@@ -48,7 +48,8 @@ public static class DatabaseConfigurationHelper
 							configuration["database"],
 							configuration["user"],
 							configuration["password"],
-							configuration.GetValue("encrypt", false)
+							configuration.GetValue("encrypt", false),
+							configuration.GetValue("timeout", 30)
 						);
 				case DatabaseType.SqlServer:
 					return configurationBuilder
@@ -58,7 +59,8 @@ public static class DatabaseConfigurationHelper
 							configuration["user"],
 							configuration["password"],
 							configuration.GetValue("encrypt", false),
-							configuration.GetValue("integratedSecurity", false)
+							configuration.GetValue("integratedSecurity", false),
+							configuration.GetValue("timeout", 30)
 						);
 				case DatabaseType.MySql:
 					return configurationBuilder
