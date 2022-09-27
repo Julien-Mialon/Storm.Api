@@ -5,7 +5,7 @@ namespace Storm.Api.Core.CQRS;
 
 public interface IActionAuthenticator<TAccount, in TAuthenticationParameter>
 {
-	Task<(bool authenticated, TAccount account)> Authenticate(TAuthenticationParameter parameter);
+	Task<(bool authenticated, TAccount? account)> Authenticate(TAuthenticationParameter parameter);
 }
 
 public abstract class BaseAuthenticatedAction<TParameter, TOutput, TAccount, TAuthenticatorParameter> : BaseAction<TParameter, TOutput>
@@ -23,7 +23,7 @@ public abstract class BaseAuthenticatedAction<TParameter, TOutput, TAccount, TAu
 
 	public override async Task<TOutput> Execute(TParameter parameter)
 	{
-		(bool authenticated, TAccount account) = await _authenticator.Authenticate(_authenticatorParameter);
+		(bool authenticated, TAccount? account) = await _authenticator.Authenticate(_authenticatorParameter);
 
 		if (!authenticated)
 		{
@@ -37,7 +37,7 @@ public abstract class BaseAuthenticatedAction<TParameter, TOutput, TAccount, TAu
 		return await base.Execute(parameter);
 	}
 
-	protected virtual Task Authorize(TParameter parameter, TAccount account)
+	protected virtual Task Authorize(TParameter parameter, TAccount? account)
 	{
 		return Task.CompletedTask;
 	}
