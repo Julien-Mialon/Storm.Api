@@ -7,13 +7,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Storm.Api.Core\Storm.Api.Core.csproj"/>
-		<ProjectReference Include="..\..\src\Storm.Api.Dtos\Storm.Api.Dtos.csproj"/>
-		<ProjectReference Include="..\..\src\Storm.Api\Storm.Api.csproj"/>
+		<ProjectReference Include="..\..\src\Storm.Api.Core\Storm.Api.Core.csproj" />
+		<ProjectReference Include="..\..\src\Storm.Api.Dtos\Storm.Api.Dtos.csproj" />
+		<ProjectReference Include="..\..\src\Storm.Api.Vaults\Storm.Api.Vaults.csproj" />
+		<ProjectReference Include="..\..\src\Storm.Api\Storm.Api.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="logs"/>
+		<Folder Include="logs" />
 	</ItemGroup>
 
 </Project>

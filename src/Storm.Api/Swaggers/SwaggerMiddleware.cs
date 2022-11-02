@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Storm.Api.Swaggers;
 
@@ -8,7 +9,7 @@ public static class SwaggerMiddleware
 {
 	private static SwaggerDocumentDescription[] _swaggerDocumentDescriptions = Array.Empty<SwaggerDocumentDescription>();
 
-	public static IServiceCollection AddStormSwagger(this IServiceCollection services, IWebHostEnvironment environment, params SwaggerDocumentDescription[] documentDescription)
+	public static IServiceCollection AddStormSwagger(this IServiceCollection services, IHostEnvironment environment, params SwaggerDocumentDescription[] documentDescription)
 	{
 		_swaggerDocumentDescriptions = documentDescription;
 

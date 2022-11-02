@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Storm.Api.Configurations;
 
 public static class ConfigurationLoaderHelper
 {
-	public static void LoadConfiguration(this IConfigurationBuilder configurationBuilder, IWebHostEnvironment hostingEnvironment)
+	public static IConfigurationBuilder LoadConfiguration(this IConfigurationBuilder configurationBuilder, IHostEnvironment hostingEnvironment)
 	{
 		EnvironmentHelper.SetFromEnvironment(hostingEnvironment.EnvironmentName);
 
@@ -15,5 +16,7 @@ public static class ConfigurationLoaderHelper
 			.AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true, true)
 			.AddJsonFile($"projectsettings.{hostingEnvironment.EnvironmentName}.json", true, true)
 			.AddEnvironmentVariables();
+
+		return configurationBuilder;
 	}
 }

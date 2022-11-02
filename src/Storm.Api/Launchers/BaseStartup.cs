@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -29,7 +30,7 @@ namespace Storm.Api.Launchers;
 public abstract class BaseStartup
 {
 	protected IConfiguration Configuration { get; }
-	protected IWebHostEnvironment Environment { get; }
+	protected IHostEnvironment Environment { get; }
 	protected ILogService LogService { get; private set; }
 
 	protected abstract string LogsProjectName { get; }
@@ -41,7 +42,7 @@ public abstract class BaseStartup
 		new("v1", new SwaggerModuleDescription("API", ""))
 	};
 
-	public BaseStartup(IConfiguration configuration, IWebHostEnvironment environment)
+	public BaseStartup(IConfiguration configuration, IHostEnvironment environment)
 	{
 		Environment = environment;
 		Configuration = configuration;
@@ -95,7 +96,7 @@ public abstract class BaseStartup
 		services.AddControllers();
 	}
 
-	public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+	public virtual void Configure(IApplicationBuilder app, IHostEnvironment env)
 	{
 		if (!EnvironmentHelper.IsAvailableClient)
 		{

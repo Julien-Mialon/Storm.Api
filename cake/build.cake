@@ -3,7 +3,7 @@
 #load "nuget:?package=Cake.Storm.Fluent.NuGet"
 #load "nuget:?package=Cake.Storm.Fluent.Transformations"
 
-const string MODULE_VERSION = "2.0.10";
+const string MODULE_VERSION = "2.0.14";
 
 Configure()
     .UseRootDirectory("..")
@@ -71,6 +71,15 @@ Configure()
             .WithNuspec("misc/Storm.Api.nuspec")
             .WithPackageId("Storm.Api")
             .WithReleaseNotesFile("misc/Storm.Api.md")
+        )
+    )
+	.AddApplication("vault", c => c
+        .WithProject("src/Storm.Api.Vaults/Storm.Api.Vaults.csproj")
+        .WithVersion(MODULE_VERSION)
+        .UseNugetPack(n => n
+            .WithNuspec("misc/Storm.Api.Vaults.nuspec")
+            .WithPackageId("Storm.Api.Vaults")
+            .WithReleaseNotesFile("misc/Storm.Api.Vaults.md")
         )
     )
     .Build();
