@@ -11,10 +11,10 @@ public static class ConfigurationLoaderHelper
 		EnvironmentHelper.SetFromEnvironment(hostingEnvironment.EnvironmentName);
 
 		configurationBuilder
-			.AddJsonFile("appsettings.json", true, true)
-			.AddJsonFile("projectsettings.json", true, true)
-			.AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true, true)
-			.AddJsonFile($"projectsettings.{hostingEnvironment.EnvironmentName}.json", true, true)
+			.AddJsonFile("appsettings.json", true, reloadOnChange: false)
+			.AddJsonFile("projectsettings.json", true, reloadOnChange: false)
+			.AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true, reloadOnChange: false)
+			.AddJsonFile($"projectsettings.{hostingEnvironment.EnvironmentName}.json", true, reloadOnChange: false)
 			.AddEnvironmentVariables();
 
 		return configurationBuilder;
