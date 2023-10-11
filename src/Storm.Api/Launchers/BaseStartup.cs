@@ -105,20 +105,19 @@ public abstract class BaseStartup
 
 		IOptions<RequestLocalizationOptions> options = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 
-		app.UseRouting()
-			.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+		app.UseRouting();
+		app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 		if (ForceHttps)
 		{
 			app.UseHttpsRedirection();
 		}
 
-		app.UseStormSwagger()
-			.UseDatabaseModule()
-			.UseRequestLogging()
-			.UseRequestLocalization(options.Value)
-			.UseEndpoints(endpoints => endpoints.MapControllers())
-			;
+		app.UseStormSwagger();
+		app.UseDatabaseModule();
+		app.UseRequestLogging();
+		app.UseRequestLocalization(options.Value);
+		app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 		LogService.WithAppender(new RequestContextAppender(app.ApplicationServices.GetRequiredService<IActionContextAccessor>()))
 			.WithAppender(new RequestHeaderAppender(app.ApplicationServices.GetRequiredService<IActionContextAccessor>()))
