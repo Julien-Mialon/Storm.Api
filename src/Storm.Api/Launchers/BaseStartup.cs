@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -49,6 +50,9 @@ public abstract class BaseStartup
 		LogService = new LogService(_ => new ConsoleLogSender(), LogLevel.Warning);
 
 		Configuration.OnSection("Server", section => ForceHttps = section.GetValue("ForceHttps", true));
+
+		AppContext.SetSwitch("System.Net.Http.EnableActivityPropagation", false);
+		DistributedContextPropagator.Current = DistributedContextPropagator.CreateNoOutputPropagator();
 	}
 
 	public virtual void ConfigureServices(IServiceCollection services)

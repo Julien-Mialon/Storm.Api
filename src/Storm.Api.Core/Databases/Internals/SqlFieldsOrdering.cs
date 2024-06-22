@@ -7,7 +7,7 @@ internal static class SqlFieldsOrdering
 {
 	public static void Enable()
 	{
-		OrmLiteConfig.OnFieldDefinitionsInit = ReorderField;
+		OrmLiteConfig.OnModelDefinitionInit = ReorderField;
 	}
 
 	private static void ReorderField(ModelDefinition definition)
@@ -69,5 +69,9 @@ internal static class SqlFieldsOrdering
 			fields[0] = idField;
 			definition.FieldDefinitions = fields;
 		}
+
+		OrmLiteConfig.OnModelDefinitionInit = null;
+		definition.AfterInit();
+		OrmLiteConfig.OnModelDefinitionInit = ReorderField;
 	}
 }
