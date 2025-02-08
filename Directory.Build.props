@@ -1,0 +1,65 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>CS1591</NoWarn>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904;IDE0045</WarningsNotAsErrors>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(MSBuildProjectName.Contains('.Sample')) == true">
+		<IsSample>true</IsSample>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<PropertyGroup Condition="$(MSBuildProjectName.Contains('.Sample')) == false">
+		<IsSample>false</IsSample>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<!-- Nuget properties -->
+	<PropertyGroup Condition="$(IsSample) == false AND $(Configuration) == 'Release' ">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(IsSample) == false">
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageId>$(MSBuildProjectName)</PackageId>
+		<Title>$(MSBuildProjectName)</Title>
+		<Version>9.0.0-alpha</Version>
+		<PackageVersion>$(Version)</PackageVersion>
+		<Authors>Julien-Mialon</Authors>
+		<Company>Arcanit</Company>
+		<Copyright>2023 Arcanit</Copyright>
+		<PackageProjectUrl>https://github.com/Julien-Mialon/Storm.Api</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Julien-Mialon/Storm.Api</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>logo.png</PackageIcon>
+		<PackageOutputPath>$(MSBuildThisFileDirectory)/artifacts</PackageOutputPath>
+	</PropertyGroup>
+
+	<!-- Source link -->
+	<PropertyGroup Condition="$(IsSample) == false AND $(Configuration) == 'Release'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<EmbedAllSources>true</EmbedAllSources>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(IsSample) == false">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(IsSample) == false">
+		<None Include="$(MSBuildThisFileDirectory)/README.md" Pack="true" PackagePath="/" Link="docs/README.md"/>
+		<None Include="$(MSBuildThisFileDirectory)/logo.png" Pack="true" PackagePath="/" Link="docs/logo.png" />
+	</ItemGroup>
+</Project>

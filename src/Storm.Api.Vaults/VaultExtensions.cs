@@ -13,9 +13,10 @@ public static class VaultExtensions
 	{
 		VaultConfiguration result = new()
 		{
-			Address = configuration.GetValue<string>("Address"),
-			Token = configuration.GetValue<string>("Token"),
-			MountPoint = configuration.GetValue<string>("MountPoint")
+			Address = configuration.GetValue<string>("Address")!,
+			Token = configuration.GetValue<string>("Token")!,
+			MountPoint = configuration.GetValue<string>("MountPoint")!,
+			Keys = []
 		};
 
 		if (configuration.GetValue<string>("Keys") is {} multiKeysStrings)
@@ -28,7 +29,7 @@ public static class VaultExtensions
 		}
 		else
 		{
-			result.Keys = configuration.GetSection("Keys").Get<string[]>();
+			result.Keys = configuration.GetSection("Keys").Get<string[]>()!;
 		}
 
 		return result;

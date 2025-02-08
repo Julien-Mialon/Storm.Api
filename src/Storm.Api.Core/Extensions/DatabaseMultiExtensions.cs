@@ -120,21 +120,21 @@ public static class DatabaseMultiExtensions
 	public static async Task<List<TResult>> AsQueryAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, T5, T6, T7, TResult> map, Dictionary<string, object>? parameters = null)
 		=> (await connection.QueryAsync(sql, map, parameters)).ToList();
 
-	public static async Task<TResult> AsQuerySingleAsync<T1, T2, TResult>(this string sql, IDbConnection connection, Func<T1, T2, TResult> map, Dictionary<string, object>? parameters = null)
+	public static async Task<TResult?> AsQuerySingleAsync<T1, T2, TResult>(this string sql, IDbConnection connection, Func<T1, T2, TResult> map, Dictionary<string, object>? parameters = null)
 		=> (await connection.QueryAsync(sql, map, parameters)).FirstOrDefault();
 
-	public static async Task<TResult> AsQuerySingleAsync<T1, T2, T3, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, TResult> map, Dictionary<string, object>? parameters = null)
+	public static async Task<TResult?> AsQuerySingleAsync<T1, T2, T3, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, TResult> map, Dictionary<string, object>? parameters = null)
 		=> (await connection.QueryAsync(sql, map, parameters)).FirstOrDefault();
 
-	public static async Task<TResult> AsQuerySingleAsync<T1, T2, T3, T4, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, TResult> map, Dictionary<string, object>? parameters = null)
+	public static async Task<TResult?> AsQuerySingleAsync<T1, T2, T3, T4, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, TResult> map, Dictionary<string, object>? parameters = null)
 		=> (await connection.QueryAsync(sql, map, parameters)).FirstOrDefault();
 
-	public static async Task<TResult> AsQuerySingleAsync<T1, T2, T3, T4, T5, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, T5, TResult> map, Dictionary<string, object>? parameters = null)
+	public static async Task<TResult?> AsQuerySingleAsync<T1, T2, T3, T4, T5, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, T5, TResult> map, Dictionary<string, object>? parameters = null)
 		=> (await connection.QueryAsync(sql, map, parameters)).FirstOrDefault();
 
-	public static async Task<TResult> AsQuerySingleAsync<T1, T2, T3, T4, T5, T6, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, T5, T6, TResult> map, Dictionary<string, object>? parameters = null)
+	public static async Task<TResult?> AsQuerySingleAsync<T1, T2, T3, T4, T5, T6, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, T5, T6, TResult> map, Dictionary<string, object>? parameters = null)
 		=> (await connection.QueryAsync(sql, map, parameters)).FirstOrDefault();
 
-	public static async Task<TResult> AsQuerySingleAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, T5, T6, T7, TResult> map, Dictionary<string, object>? parameters = null)
+	public static async Task<TResult?> AsQuerySingleAsync<T1, T2, T3, T4, T5, T6, T7, TResult>(this string sql, IDbConnection connection, Func<T1, T2, T3, T4, T5, T6, T7, TResult> map, Dictionary<string, object>? parameters = null)
 		=> (await connection.QueryAsync(sql, map, parameters)).FirstOrDefault();
 }

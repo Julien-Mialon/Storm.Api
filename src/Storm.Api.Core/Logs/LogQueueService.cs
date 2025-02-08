@@ -29,7 +29,7 @@ public class LogQueueService : LogService, ILogQueueService, ILogSender
 		{
 			return null;
 		}
-		if (_logs.TryDequeue(out string result))
+		if (_logs.TryDequeue(out string? result))
 		{
 			return result;
 		}

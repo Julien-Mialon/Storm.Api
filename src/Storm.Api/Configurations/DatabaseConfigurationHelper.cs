@@ -44,20 +44,20 @@ public static class DatabaseConfigurationHelper
 				case DatabaseType.AzureSqlServer:
 					return configurationBuilder
 						.UseAzureSqlServer(
-							configuration["host"],
-							configuration["database"],
-							configuration["user"],
-							configuration["password"],
+							configuration.GetValue<string>("host")!,
+							configuration.GetValue<string>("database")!,
+							configuration.GetValue<string>("user")!,
+							configuration.GetValue<string>("password")!,
 							configuration.GetValue("encrypt", false),
 							configuration.GetValue("timeout", 30)
 						);
 				case DatabaseType.SqlServer:
 					return configurationBuilder
 						.UseSqlServer(
-							configuration["host"],
-							configuration["database"],
-							configuration["user"],
-							configuration["password"],
+							configuration.GetValue<string>("host")!,
+							configuration.GetValue<string>("database")!,
+							configuration.GetValue<string>("user")!,
+							configuration.GetValue<string>("password")!,
 							configuration.GetValue("encrypt", false),
 							configuration.GetValue("integratedSecurity", false),
 							configuration.GetValue("timeout", 30)
@@ -65,14 +65,14 @@ public static class DatabaseConfigurationHelper
 				case DatabaseType.MySql:
 					return configurationBuilder
 						.UseMySQL(
-							configuration["host"],
-							configuration["database"],
-							configuration["user"],
-							configuration["password"]
+							configuration.GetValue<string>("host")!,
+							configuration.GetValue<string>("database")!,
+							configuration.GetValue<string>("user")!,
+							configuration.GetValue<string>("password")!
 						);
 				case DatabaseType.SQLite:
 					return configurationBuilder
-						.UseSQLite(configuration["file"]);
+						.UseSQLite(configuration.GetValue<string>("file")!);
 				case DatabaseType.SQLiteMemory:
 					return configurationBuilder
 						.UseInMemorySQLite();

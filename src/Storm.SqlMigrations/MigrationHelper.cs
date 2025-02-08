@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Storm.Api.Configurations;
@@ -33,10 +34,22 @@ public static class MigrationHelper
 		services.AddDatabaseModule(configuration.GetSection("Database").LoadDatabaseConfiguration());
 		IServiceProvider providers = services.BuildServiceProvider();
 
-		using (providers.CreateScope())
-		{
-			MigrationEngine migrations = new(providers, modules);
-			return await migrations.Run() ? 0 : -1;
-		}
+		using IServiceScope scope = providers.CreateScope();
+		MigrationEngine migrations = new(scope.ServiceProvider, modules);
+		return await migrations.Run() ? 0 : -1;
+	}
+
+	public static void ApplyMigrations(this IApplicationBuilder applicationBuilder, params IMigrationModule[] modules)
+	{
+		applicationBuilder.ApplyMigrationsAsync(modules).Wait();
+	}
+
+	public static async Task ApplyMigrationsAsync(this IApplicationBuilder applicationBuilder, params IMigrationModule[] modules)
+	{
+		using IServiceScope scope = applicationBuilder.ApplicationServices.CreateScope();
+
+		using IDatabaseService databaseService = scope.ServiceProvider.GetRequiredService<IDatabaseService>();
+		MigrationEngine migrations = new(scope.ServiceProvider, modules);
+		await migrations.Run();
 	}
 }

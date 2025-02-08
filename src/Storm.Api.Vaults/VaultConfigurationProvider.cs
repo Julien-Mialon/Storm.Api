@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using VaultSharp;
 using VaultSharp.V1.AuthMethods.Token;
@@ -47,6 +48,13 @@ internal class VaultConfigurationProvider : ConfigurationProvider
 			foreach ((string key, JToken jToken) in obj)
 			{
 				AddData($"{currentKey}:{key}", jToken);
+			}
+		}
+		else if (value is JsonElement { ValueKind: JsonValueKind.Object } jsonElement)
+		{
+			foreach (JsonProperty property in jsonElement.EnumerateObject())
+			{
+				AddData($"{currentKey}:{property.Name}", property.Value);
 			}
 		}
 		else
