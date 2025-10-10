@@ -53,6 +53,11 @@ public class LogService : ILogService
 		{
 			_appenders[i].Append(content);
 		}
-		_sender.Value.Enqueue(level, content.ToString());
+
+		string? message = content.ToString();
+		if (message is not null)
+		{
+			_sender.Value.Enqueue(level, message);
+		}
 	}
 }

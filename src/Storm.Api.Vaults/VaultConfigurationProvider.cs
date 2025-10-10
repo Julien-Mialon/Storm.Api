@@ -45,9 +45,12 @@ internal class VaultConfigurationProvider : ConfigurationProvider
 	{
 		if (value is JObject obj)
 		{
-			foreach ((string key, JToken jToken) in obj)
+			foreach ((string key, JToken? jToken) in obj)
 			{
-				AddData($"{currentKey}:{key}", jToken);
+				if (jToken is not null)
+				{
+					AddData($"{currentKey}:{key}", jToken);
+				}
 			}
 		}
 		else if (value is JsonElement { ValueKind: JsonValueKind.Object } jsonElement)
