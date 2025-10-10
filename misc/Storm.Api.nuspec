@@ -14,13 +14,13 @@
 		<copyright>Copyright 2019</copyright>
 		<tags>storm api aspnet aspnetcore cqrs</tags>
 		<dependencies>
-			<group targetFramework="net8.0">
-				<dependency id="Storm.Api.Core" version="8.0.3" exclude="Build,Analyzers" />
-				<dependency id="Storm.Api.Dtos" version="8.0.3" exclude="Build,Analyzers" />
+			<group targetFramework="net9.0">
+				<dependency id="Storm.Api.Core" version="{storm.api}" exclude="Build,Analyzers" />
+				<dependency id="Storm.Api.Dtos" version="{storm.api}" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>
 		<frameworkReferences>
-			<group targetFramework="net8.0">
+			<group targetFramework="net9.0">
 				<frameworkReference name="Microsoft.AspNetCore.App" />
 			</group>
 		</frameworkReferences>
