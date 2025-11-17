@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Storm.Api.Core\Storm.Api.Core.csproj" />
 		<ProjectReference Include="..\..\src\Storm.Api.Dtos\Storm.Api.Dtos.csproj" />
-		<ProjectReference Include="..\..\src\Storm.Api.Vaults\Storm.Api.Vaults.csproj" />
 		<ProjectReference Include="..\..\src\Storm.Api\Storm.Api.csproj" />
+		<ProjectReference Include="..\..\src\Storm.Api.SourceGenerators\Storm.Api.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 
 	<ItemGroup>

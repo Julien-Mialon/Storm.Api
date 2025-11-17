@@ -6,11 +6,10 @@ namespace Storm.Api.Sample;
 
 public class Startup : BaseStartup
 {
-	protected override string LogsProjectName { get; } = "Sample";
-
 	public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
 	{
-		ForceHttps = false;
+		UseMigrationModules(new MigrationModule());
+		WaitForMigrationsBeforeStarting = false;
 	}
 
 	// This method gets called by the runtime. Use this method to add services to the container.

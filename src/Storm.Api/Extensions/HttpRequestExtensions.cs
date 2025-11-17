@@ -1,47 +1,47 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Primitives;
-using Storm.Api.Core.Validations;
 
 namespace Storm.Api.Extensions;
 
 public static class HttpRequestExtensions
 {
-	public static bool TryGetHeaderOrQueryParameter(this IHttpContextAccessor contextAccessor, string headerName, string queryStringParameterName, out string? value)
+	public static bool TryGetHeaderOrQueryParameter(this IHttpContextAccessor contextAccessor, string headerName, string queryStringParameterName, [NotNullWhen(true)] out string? value)
 	{
 		if (contextAccessor.HttpContext is { } context)
 		{
 			return context.Request.TryGetHeaderOrQueryParameter(headerName, queryStringParameterName, out value);
 		}
 
-		value = default;
+		value = null;
 		return false;
 	}
 
-	public static bool TryGetHeader(this IHttpContextAccessor contextAccessor, string headerName, out string? value)
+	public static bool TryGetHeader(this IHttpContextAccessor contextAccessor, string headerName, [NotNullWhen(true)] out string? value)
 	{
 		if (contextAccessor.HttpContext is { } context)
 		{
 			return context.Request.TryGetHeader(headerName, out value);
 		}
 
-		value = default;
+		value = null;
 		return false;
 	}
 
-	public static bool TryGetQueryParameter(this IHttpContextAccessor contextAccessor, string queryStringParameterName, out string? value)
+	public static bool TryGetQueryParameter(this IHttpContextAccessor contextAccessor, string queryStringParameterName, [NotNullWhen(true)] out string? value)
 	{
 		if (contextAccessor.HttpContext is { } context)
 		{
 			return context.Request.TryGetQueryParameter(queryStringParameterName, out value);
 		}
 
-		value = default;
+		value = null;
 		return false;
 	}
 
-	public static bool TryGetHeaderOrQueryParameter(this HttpRequest request, string headerName, string queryStringParameterName, out string? value)
+	public static bool TryGetHeaderOrQueryParameter(this HttpRequest request, string headerName, string queryStringParameterName, [NotNullWhen(true)] out string? value)
 	{
 		if (request.TryGetHeader(headerName, out value))
 		{
@@ -53,11 +53,11 @@ public static class HttpRequestExtensions
 			return true;
 		}
 
-		value = default;
+		value = null;
 		return false;
 	}
 
-	public static bool TryGetHeader(this HttpRequest request, string headerName, out string? value)
+	public static bool TryGetHeader(this HttpRequest request, string headerName, [NotNullWhen(true)] out string? value)
 	{
 		if (request.Headers.TryGetValue(headerName, out StringValues values))
 		{
@@ -68,11 +68,11 @@ public static class HttpRequestExtensions
 			}
 		}
 
-		value = default;
+		value = null;
 		return false;
 	}
 
-	public static bool TryGetQueryParameter(this HttpRequest request, string queryParameterName, out string? value)
+	public static bool TryGetQueryParameter(this HttpRequest request, string queryParameterName, [NotNullWhen(true)] out string? value)
 	{
 		if (request.Query.TryGetValue(queryParameterName, out StringValues values))
 		{
@@ -83,7 +83,7 @@ public static class HttpRequestExtensions
 			}
 		}
 
-		value = default;
+		value = null;
 		return false;
 	}
 

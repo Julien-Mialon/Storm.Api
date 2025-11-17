@@ -1,13 +1,24 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Storm.Api.Core.Logs;
+using Microsoft.Extensions.Primitives;
+using Storm.Api.Logs.Interfaces;
 
 namespace Storm.Api.Logs.Appenders;
 
 public class RequestContextAppender : ILogAppender
 {
+	private static readonly ISet<string> HIDDEN_HEADERS = new HashSet<string>
+	{
+		"X-ApiKey",
+		"X-Token",
+		"Authorization",
+		//TODO: see if we want to hide more headers (either sensitive or useless)
+	};
+
 	private readonly IActionContextAccessor _actionContextAccessor;
+
+	public bool MultipleAllowed => false;
 
 	public RequestContextAppender(IActionContextAccessor actionContextAccessor)
 	{
@@ -17,17 +28,15 @@ public class RequestContextAppender : ILogAppender
 	public void Append(IObjectWriter logEntry)
 	{
 		ActionContext? actionContext = _actionContextAccessor.ActionContext;
-		if (actionContext is null)
+		if (actionContext is not null)
 		{
-			return;
+			DumpRequestContext(actionContext.HttpContext, actionContext.ActionDescriptor.RouteValues, logEntry);
 		}
-
-		DumpRequestContext(actionContext.HttpContext, actionContext.ActionDescriptor.RouteValues, logEntry);
 	}
 
-	public static void DumpRequestContext(HttpContext httpContext, IDictionary<string, string?> routeValues, IObjectWriter logEntry)
+	internal static void DumpRequestContext(HttpContext httpContext, IDictionary<string, string?>? routeValues, IObjectWriter logEntry)
 	{
-		if (!(httpContext.Items.TryGetValue(nameof(RequestContextAppender), out object? rawRequestId) && rawRequestId is Guid requestId))
+		if (httpContext.Items.TryGetValue(nameof(RequestContextAppender), out object? rawRequestId) is false || rawRequestId is not Guid requestId)
 		{
 			httpContext.Items[nameof(RequestContextAppender)] = requestId = Guid.NewGuid();
 		}
@@ -37,13 +46,29 @@ public class RequestContextAppender : ILogAppender
 			x.WriteProperty("Id", requestId.ToString())
 				.WriteProperty("Path", httpContext.Request.Path)
 				.WriteProperty("Method", httpContext.Request.Method)
-				.WriteObject("routeValues", y =>
+				.WriteObject("Headers", y =>
 				{
-					foreach ((string key, string? value) in routeValues)
+					foreach (KeyValuePair<string, StringValues> value in httpContext.Request.Headers)
 					{
-						y.WriteProperty(key, value);
+						if (HIDDEN_HEADERS.Contains(value.Key))
+						{
+							continue;
+						}
+
+						y.WriteProperty(value.Key, value.Value.ToString());
 					}
 				});
+
+			if (routeValues is { Count: > 0 })
+			{
+				x.WriteObject("RouteValues", y =>
+				{
+					foreach (KeyValuePair<string, string?> value in routeValues)
+					{
+						y.WriteProperty(value.Key, value.Value);
+					}
+				});
+			}
 		});
 	}
 }

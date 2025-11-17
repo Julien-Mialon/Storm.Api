@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Storm.Api.Core.Domains.Parameters;
+using Storm.Api.CQRS.Domains.Parameters;
 
 namespace Storm.Api.Extensions;
 
@@ -7,34 +7,12 @@ public static class FormFileExtensions
 {
 	public static async Task<FileParameter?> ToFileParameter(this IFormFile? file, bool copyStream = false)
 	{
-		if (file == null || file.Length == 0)
+		if (file is { Length: > 0 })
 		{
-			return null;
+			return await new FileParameter()
+				.LoadFrom(file, copyStream);
 		}
 
-		Stream fileStream;
-
-		if (copyStream)
-		{
-			MemoryStream memoryStream = new((int)file.Length);
-			await file.CopyToAsync(memoryStream);
-			memoryStream.Seek(0, SeekOrigin.Begin);
-
-			fileStream = memoryStream;
-		}
-		else
-		{
-			fileStream = file.OpenReadStream();
-		}
-
-		return new()
-		{
-			ContentDisposition = file.ContentDisposition,
-			ContentType = file.ContentType,
-			FileName = file.FileName,
-			Length = file.Length,
-			Name = file.Name,
-			InputStream = fileStream,
-		};
+		return null;
 	}
 }

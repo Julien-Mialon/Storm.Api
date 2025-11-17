@@ -1,21 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Storm.Api.Dtos;
 
 public class Response
 {
-	[JsonProperty("is_success")]
+	[JsonPropertyName("is_success")]
 	public bool IsSuccess { get; set; }
 
-	[JsonProperty("error_code")]
+	[JsonPropertyName("error_code")]
 	public string? ErrorCode { get; set; }
 
-	[JsonProperty("error_message")]
+	[JsonPropertyName("error_message")]
 	public string? ErrorMessage { get; set; }
 }
 
 public class Response<T> : Response
 {
-	[JsonProperty("data")]
+	[JsonPropertyName("data")]
 	public T? Data { get; set; }
 }

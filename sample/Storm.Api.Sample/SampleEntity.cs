@@ -1,4 +1,4 @@
-using Storm.Api.Core.Models;
+using Storm.Api.Databases.Models;
 
 namespace Storm.Api.Sample;
 

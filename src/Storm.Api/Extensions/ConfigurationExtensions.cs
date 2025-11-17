@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 
 namespace Storm.Api.Extensions;
 
@@ -13,15 +12,13 @@ public static class ConfigurationExtensions
 		}
 	}
 
-	public static string SimpleEnvironmentName(this IHostEnvironment environment)
+	public static T? WithSection<T>(this IConfiguration configuration, string sectionName, Func<IConfigurationSection, T> action)
 	{
-		string name = environment.EnvironmentName;
-		int delimiterIndex = name.LastIndexOf('-');
-		if (delimiterIndex > 0)
+		if (configuration.GetSection(sectionName) is { } section && section.Exists())
 		{
-			name = name.Substring(0, delimiterIndex);
+			return action(section);
 		}
 
-		return name;
+		return default;
 	}
 }

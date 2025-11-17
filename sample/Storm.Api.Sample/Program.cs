@@ -6,6 +6,9 @@ public class Program
 {
 	public static void Main(string[] args)
 	{
+		DefaultLauncherOptions.UseVault = false;
+		DefaultLauncherOptions.SetDatabaseDebug = false;
+
 		DefaultLauncher<Startup>.RunWebHost(args);
 	}
 }
