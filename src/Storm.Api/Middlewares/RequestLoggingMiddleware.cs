@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
-using Storm.Api.Core.Logs;
-using Storm.Api.Logs.Appenders;
+using Storm.Api.Logs;
+using Storm.Api.Logs.Extensions;
 
 namespace Storm.Api.Middlewares;
 
@@ -15,26 +13,14 @@ public static class RequestLoggingMiddleware
 		{
 			ILogService logService = context.RequestServices.GetRequiredService<ILogService>();
 
-			logService.Log(LogLevel.Information, x => x
+			logService.Information(x => x
+				.WriteProperty("filter", "HTTP_LOG")
 				.WriteProperty("route", context.Request.Path.ToString())
 				.WriteProperty("method", context.Request.Method)
-				.WriteProperty("device_id", context.Request.Headers.GetOrDefault("X-Device-Id", "undefined"))
-				.WriteProperty("type", "HTTP_LOG")
 				.WriteRequestContext(context)
-				.WriteRequestHeader(context)
 			);
 
 			return next();
 		});
-	}
-
-	public static string? GetOrDefault(this IHeaderDictionary headers, string key, string? defaultValue = default)
-	{
-		if (headers.TryGetValue(key, out StringValues value))
-		{
-			return value.ToString();
-		}
-
-		return defaultValue;
 	}
 }

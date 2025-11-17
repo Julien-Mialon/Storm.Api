@@ -1,16 +1,17 @@
+﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Storm.Api.Core;
-using Storm.Api.Core.CQRS;
-using Storm.Api.Core.Exceptions;
-using Storm.Api.Core.Extensions;
-using Storm.Api.Core.Logs;
+using Storm.Api.CQRS;
+using Storm.Api.CQRS.Domains.Results;
+using Storm.Api.CQRS.Exceptions;
 using Storm.Api.Dtos;
 using Storm.Api.Extensions;
-using FileResult = Storm.Api.Core.Domains.Results.FileResult;
+using Storm.Api.Logs;
+using Storm.Api.Logs.Extensions;
 
 namespace Storm.Api.Controllers;
 
+[ApiController]
 public abstract class BaseController : Controller
 {
 	/// <summary>
@@ -67,7 +68,7 @@ public abstract class BaseController : Controller
 			return StatusCode(ex.Code, new Response
 			{
 				IsSuccess = false,
-				ErrorCode = ex.ErrorCode.NullIfEmpty().ValueIfNull("GENERIC_HTTP_ERROR"),
+				ErrorCode = ex.ErrorCode.ValueIfNullOrEmpty("GENERIC_HTTP_ERROR"),
 				ErrorMessage = ex.ErrorMessage
 			});
 		}
@@ -99,7 +100,7 @@ public abstract class BaseController : Controller
 				throw;
 			}
 
-			return StatusCode(500, new Response
+			return StatusCode((int)HttpStatusCode.InternalServerError, new Response
 			{
 				IsSuccess = false,
 				ErrorCode = "GENERIC_HTTP_ERROR",
@@ -139,11 +140,11 @@ public abstract class BaseController : Controller
 	/// <param name="parameter"></param>
 	/// <returns></returns>
 	protected Task<IActionResult> FileAction<TAction, TParameter>(TParameter parameter)
-		where TAction : IAction<TParameter, FileResult>
+		where TAction : IAction<TParameter, ApiFileResult>
 	{
 		return WrapForErrorRaw(async () =>
 		{
-			FileResult result = await Services.ExecuteAction<TAction, TParameter, FileResult>(parameter);
+			ApiFileResult result = await Services.ExecuteAction<TAction, TParameter, ApiFileResult>(parameter);
 			if (result.FileName.IsNullOrEmpty())
 			{
 				if (result.IsRawData)
@@ -151,7 +152,7 @@ public abstract class BaseController : Controller
 					return File(result.AsRawData(), result.ContentType);
 				}
 
-				if(result.IsStreamData)
+				if (result.IsStreamData)
 				{
 					return File(result.AsStreamData(), result.ContentType);
 				}
@@ -164,7 +165,7 @@ public abstract class BaseController : Controller
 				return File(result.AsRawData(), result.ContentType, result.FileName);
 			}
 
-			if(result.IsStreamData)
+			if (result.IsStreamData)
 			{
 				return File(result.AsStreamData(), result.ContentType, result.FileName);
 			}
@@ -173,5 +174,73 @@ public abstract class BaseController : Controller
 		});
 	}
 
+	protected Task<ActionResult<T>> InternalWrapForError<T>(Func<Task<T>> executor)
+	{
+		return InternalWrapForErrorRaw<T>(async () =>
+		{
+			T result = await executor();
+			return Ok(result);
+		});
+	}
 
+	protected async Task<ActionResult<T>> InternalWrapForErrorRaw<T>(Func<Task<ActionResult<T>>> executor)
+	{
+		try
+		{
+			return await executor();
+		}
+		catch (DomainHttpCodeException ex)
+		{
+			Services.GetRequiredService<ILogService>().Warning(x => x
+				.WriteProperty("message", $"DomainHttpCodeException: Code={ex.Code}, Message={ex.Message}")
+				.WriteProperty("status", ex.Code)
+				.WriteProperty("exceptionMessage", ex.Message)
+				.WriteProperty("errorCode", ex.ErrorCode)
+				.WriteProperty("errorMessage", ex.ErrorMessage)
+				.WriteException(ex.InnerException, "inner")
+			);
+
+			return StatusCode(ex.Code, new Response
+			{
+				IsSuccess = false,
+				ErrorCode = ex.ErrorCode.ValueIfNullOrEmpty("GENERIC_HTTP_ERROR"),
+				ErrorMessage = ex.ErrorMessage
+			});
+		}
+		catch (DomainException ex)
+		{
+			Services.GetRequiredService<ILogService>().Warning(x => x
+				.WriteProperty("message", $"DomainException: ErrorCode={ex.ErrorCode}, ErrorMessage={ex.ErrorMessage}")
+				.WriteProperty("errorCode", ex.ErrorCode)
+				.WriteProperty("errorMessage", ex.ErrorMessage)
+				.WriteException(ex.InnerException, "inner")
+			);
+
+			return Ok(new Response
+			{
+				IsSuccess = false,
+				ErrorCode = ex.ErrorCode,
+				ErrorMessage = ex.ErrorMessage
+			});
+		}
+		catch (Exception ex)
+		{
+			Services.GetRequiredService<ILogService>().Critical(x => x
+				.WriteException(ex)
+				.WriteProperty("controller", GetType().FullName)
+			);
+
+			if (!EnvironmentHelper.IsAvailableClient)
+			{
+				throw;
+			}
+
+			return StatusCode((int)HttpStatusCode.InternalServerError, new Response
+			{
+				IsSuccess = false,
+				ErrorCode = "GENERIC_HTTP_ERROR",
+				ErrorMessage = $"Exception: {ex}"
+			});
+		}
+	}
 }

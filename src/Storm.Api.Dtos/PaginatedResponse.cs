@@ -1,18 +1,18 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Storm.Api.Dtos;
 
 public class PaginatedResponse<T> : Response
 {
-	[JsonProperty("data")]
+	[JsonPropertyName("data")]
 	public T[]? Data { get; set; }
 
-	[JsonProperty("page")]
+	[JsonPropertyName("page")]
 	public int Page { get; set; }
 
-	[JsonProperty("count")]
+	[JsonPropertyName("count")]
 	public int Count { get; set; }
 
-	[JsonProperty("total_count")]
+	[JsonPropertyName("total_count")]
 	public int TotalCount { get; set; }
 }

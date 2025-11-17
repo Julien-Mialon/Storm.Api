@@ -161,12 +161,12 @@ csharp_preserve_single_line_blocks = true
 ##########################
 
 # define styles
-dotnet_naming_style.ALL_UPPER.word_separator = _
-dotnet_naming_style.ALL_UPPER.capitalization = all_upper
+dotnet_naming_style.all_upper.word_separator = _
+dotnet_naming_style.all_upper.capitalization = all_upper
 
-dotnet_naming_style.PascalCase.capitalization = pascal_case
+dotnet_naming_style.pascalcase.capitalization = pascal_case
 
-dotnet_naming_style.camelCase.capitalization = camel_case
+dotnet_naming_style.camelcase.capitalization = camel_case
 
 #### Namespace ####
 dotnet_naming_symbols.namespace.applicable_kinds = namespace
@@ -186,8 +186,8 @@ dotnet_naming_rule.class_name.severity = warning
 dotnet_naming_rule.interface_name.symbols = interface
 dotnet_naming_rule.interface_name.style = InterfaceName
 dotnet_naming_rule.interface_name.severity = warning
-dotnet_naming_style.InterfaceName.capitalization = pascal_case
-dotnet_naming_style.InterfaceName.required_prefix = I
+dotnet_naming_style.interfacename.capitalization = pascal_case
+dotnet_naming_style.interfacename.required_prefix = I
 
 dotnet_naming_rule.delegate_name.symbols = delegate
 dotnet_naming_rule.delegate_name.style = PascalCase
@@ -227,8 +227,8 @@ dotnet_naming_symbols.generic_type.applicable_kinds = type_parameter
 dotnet_naming_rule.variable_name.symbols = generic_type
 dotnet_naming_rule.variable_name.style = GenericTypeName
 dotnet_naming_rule.variable_name.severity = error
-dotnet_naming_style.GenericTypeName.capitalization = pascal_case
-dotnet_naming_style.GenericTypeName.required_prefix = T
+dotnet_naming_style.generictypename.capitalization = pascal_case
+dotnet_naming_style.generictypename.required_prefix = T
 
 # define fields types
 dotnet_naming_symbols.const_fields.applicable_kinds = field
@@ -260,8 +260,12 @@ dotnet_naming_rule.non_private_field_name.severity = error
 dotnet_naming_rule.private_field_name.symbols = private_fields
 dotnet_naming_rule.private_field_name.style = PrivateFieldName
 dotnet_naming_rule.private_field_name.severity = error
-dotnet_naming_style.PrivateFieldName.capitalization = camel_case
-dotnet_naming_style.PrivateFieldName.required_prefix = _
+dotnet_naming_style.privatefieldname.capitalization = camel_case
+dotnet_naming_style.privatefieldname.required_prefix = _
+
+# ReSharper properties
+resharper_trailing_comma_in_multiline_lists = true
+resharper_wrap_object_and_collection_initializer_style = chop_always
 
 [*.{Localization,ComponentColor}.cs]
 csharp_style_expression_bodied_methods = true:none

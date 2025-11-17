@@ -1,0 +1,49 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <ServiceStackVersion>8.10.0</ServiceStackVersion>
+    <AspNetVersion>9.0.11</AspNetVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- utils -->
+    <PackageVersion Include="PolySharp" Version="1.15.0" />
+    <PackageVersion Include="Resend" Version="0.2.1" />
+    <PackageVersion Include="VaultSharp" Version="1.17.5.1" />
+    <PackageVersion Include="System.Text.Json" Version="$(AspNetVersion)" />
+    <!-- aspnet -->
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="$(AspNetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(AspNetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(AspNetVersion)" />
+    <!-- swagger -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNetVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(AspNetVersion)" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.6" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Newtonsoft" Version="9.0.6" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.10.3" />
+    <!-- logs -->
+    <PackageVersion Include="Elastic.Clients.Elasticsearch" Version="8.19.12" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <!-- service stack -->
+    <PackageVersion Include="ServiceStack.OrmLite" Version="$(ServiceStackVersion)" />
+    <PackageVersion Include="ServiceStack.OrmLite.SqlServer.Data" Version="$(ServiceStackVersion)" />
+    <PackageVersion Include="ServiceStack.OrmLite.Sqlite" Version="$(ServiceStackVersion)" />
+    <PackageVersion Include="ServiceStack.OrmLite.MySql" Version="$(ServiceStackVersion)" />
+    <PackageVersion Include="ServiceStack.OrmLite.PostgreSQL" Version="$(ServiceStackVersion)" />
+    <!-- redis -->
+    <PackageVersion Include="StackExchange.Redis" Version="2.9.32" />
+    <!-- jwt -->
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+    <!-- images -->
+    <PackageVersion Include="SixLabors.ImageSharp" Version="2.1.9" />
+    <!-- sentry -->
+    <PackageVersion Include="Sentry" Version="5.16.2" />
+    <PackageVersion Include="Sentry.AspNetCore" Version="5.16.2" />
+    <!-- nuget source link -->
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <!-- Source generators -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
+  </ItemGroup>
+</Project>
