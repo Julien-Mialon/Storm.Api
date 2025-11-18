@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <ServiceStackVersion>8.10.0</ServiceStackVersion>
-    <AspNetVersion>9.0.11</AspNetVersion>
+    <AspNetVersion>10.0.0</AspNetVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- utils -->
@@ -17,7 +17,7 @@
     <!-- swagger -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNetVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(AspNetVersion)" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.0.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.6" />
     <PackageVersion Include="Swashbuckle.AspNetCore.Newtonsoft" Version="9.0.6" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.10.3" />

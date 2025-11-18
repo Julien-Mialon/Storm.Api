@@ -12,9 +12,9 @@ public static class AppendersExtensions
 		return logService.WithAppender(new TimestampLogAppender());
 	}
 
-	public static ILogService WithRequestContextAppender(this ILogService logService, IActionContextAccessor actionContextAccessor)
+	public static ILogService WithRequestContextAppender(this ILogService logService, IHttpContextAccessor httpContextAccessor)
 	{
-		return logService.WithAppender(new RequestContextAppender(actionContextAccessor));
+		return logService.WithAppender(new RequestContextAppender(httpContextAccessor));
 	}
 
 	public static IObjectWriter WriteRequestContext(this IObjectWriter logEntry, HttpContext context)

@@ -28,7 +28,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageId>$(MSBuildProjectName)</PackageId>
 		<Title>$(MSBuildProjectName)</Title>
-		<Version>9.0.0</Version>
+		<Version>10.0.0</Version>
 		<PackageVersion>$(Version)</PackageVersion>
 		<Authors>Julien-Mialon</Authors>
 		<Company>Arcanit</Company>

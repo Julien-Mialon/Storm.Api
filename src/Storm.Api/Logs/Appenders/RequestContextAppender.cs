@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Primitives;
 using Storm.Api.Logs.Interfaces;
@@ -16,21 +17,23 @@ public class RequestContextAppender : ILogAppender
 		//TODO: see if we want to hide more headers (either sensitive or useless)
 	};
 
-	private readonly IActionContextAccessor _actionContextAccessor;
+	private readonly IHttpContextAccessor _httpContextAccessor;
 
 	public bool MultipleAllowed => false;
 
-	public RequestContextAppender(IActionContextAccessor actionContextAccessor)
+	public RequestContextAppender(IHttpContextAccessor httpContextAccessor)
 	{
-		_actionContextAccessor = actionContextAccessor;
+		_httpContextAccessor = httpContextAccessor;
 	}
 
 	public void Append(IObjectWriter logEntry)
 	{
-		ActionContext? actionContext = _actionContextAccessor.ActionContext;
-		if (actionContext is not null)
+		if (_httpContextAccessor.HttpContext is { } httpContext &&
+		    httpContext.GetEndpoint() is { } endpoints &&
+		    endpoints.Metadata.GetMetadata<ActionDescriptor>() is { } actionDescriptor
+		   )
 		{
-			DumpRequestContext(actionContext.HttpContext, actionContext.ActionDescriptor.RouteValues, logEntry);
+			DumpRequestContext(httpContext, actionDescriptor.RouteValues, logEntry);
 		}
 	}
 

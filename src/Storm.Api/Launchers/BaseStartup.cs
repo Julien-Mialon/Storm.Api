@@ -63,8 +63,7 @@ public abstract class BaseStartup
 
 		services.AddSingleton<IDateService, DateService>()
 			.AddSingleton<IScopedServiceAccessor, ScopedServiceAccessor>()
-			.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
-			.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+			.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 		// frameworks
 		services.AddMvc().AddJsonLibrary();
@@ -148,7 +147,7 @@ public abstract class BaseStartup
 			});
 		}
 
-		LogService.WithRequestContextAppender(app.ApplicationServices.GetRequiredService<IActionContextAccessor>());
+		LogService.WithRequestContextAppender(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
 
 		if (_migrationModules is { Length: > 0 })
 		{
