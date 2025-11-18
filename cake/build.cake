@@ -17,10 +17,9 @@ Configure()
         .UseDotNetCoreTooling()
         .WithDotNetCoreOutputType(OutputType.Copy)
         .UseFilesTransformation(transformation => transformation
-            .OnFile("misc/Storm.Api.Core.nuspec")
             .OnFile("misc/Storm.Api.Dtos.nuspec")
             .OnFile("misc/Storm.Api.nuspec")
-            .OnFile("misc/Storm.SqlMigrations.nuspec")
+            .OnFile("misc/Storm.Api.SourceGenerators.nuspec")
 
             .Replace("{storm.api}", MODULE_VERSION)
         )
@@ -46,24 +45,6 @@ Configure()
             .WithReleaseNotesFile("misc/Storm.Api.Dtos.md")
         )
     )
-    .AddApplication("core", c => c
-        .WithProject("src/Storm.Api.Core/Storm.Api.Core.csproj")
-        .WithVersion(MODULE_VERSION)
-        .UseNugetPack(n => n
-            .WithNuspec("misc/Storm.Api.Core.nuspec")
-            .WithPackageId("Storm.Api.Core")
-            .WithReleaseNotesFile("misc/Storm.Api.Core.md")
-        )
-    )
-    .AddApplication("migrations", c => c
-        .WithProject("src/Storm.SqlMigrations/Storm.SqlMigrations.csproj")
-        .WithVersion(MODULE_VERSION)
-        .UseNugetPack(n => n
-            .WithNuspec("misc/Storm.SqlMigrations.nuspec")
-            .WithPackageId("Storm.SqlMigrations")
-            .WithReleaseNotesFile("misc/Storm.SqlMigrations.md")
-        )
-    )
     .AddApplication("api", c => c
         .WithProject("src/Storm.Api/Storm.Api.csproj")
         .WithVersion(MODULE_VERSION)
@@ -73,13 +54,13 @@ Configure()
             .WithReleaseNotesFile("misc/Storm.Api.md")
         )
     )
-	.AddApplication("vault", c => c
-        .WithProject("src/Storm.Api.Vaults/Storm.Api.Vaults.csproj")
+	.AddApplication("generators", c => c
+        .WithProject("src/Storm.Api.SourceGenerators/Storm.Api.SourceGenerators.csproj")
         .WithVersion(MODULE_VERSION)
         .UseNugetPack(n => n
-            .WithNuspec("misc/Storm.Api.Vaults.nuspec")
-            .WithPackageId("Storm.Api.Vaults")
-            .WithReleaseNotesFile("misc/Storm.Api.Vaults.md")
+            .WithNuspec("misc/Storm.Api.SourceGenerators.nuspec")
+            .WithPackageId("Storm.Api.SourceGenerators")
+            .WithReleaseNotesFile("misc/Storm.Api.SourceGenerators.md")
         )
     )
     .Build();

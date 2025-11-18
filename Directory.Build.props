@@ -1,6 +1,5 @@
 <Project>
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -29,7 +28,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageId>$(MSBuildProjectName)</PackageId>
 		<Title>$(MSBuildProjectName)</Title>
-		<Version>9.0.0-alpha</Version>
+		<Version>9.0.0</Version>
 		<PackageVersion>$(Version)</PackageVersion>
 		<Authors>Julien-Mialon</Authors>
 		<Company>Arcanit</Company>
@@ -49,7 +48,7 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<EmbedAllSources>true</EmbedAllSources>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<IncludeSymbols>true</IncludeSymbols>
+		<IncludeSymbols>false</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	</PropertyGroup>

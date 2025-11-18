@@ -1,35 +1,37 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
     <Description>Storm framework for API with aspnet core</Description>
-		<PackageTags>storm api aspnet aspnetcore cqrs</PackageTags>
-		<PackageReleaseNotes>release</PackageReleaseNotes>
+    <PackageTags>storm api aspnet aspnetcore cqrs</PackageTags>
+    <PackageReleaseNotes>release</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-		<PackageReference Include="Resend" />
-		<PackageReference Include="Swashbuckle.AspNetCore" />
-		<PackageReference Include="System.Text.Json" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" />
-		<PackageReference Include="Sentry" />
-		<PackageReference Include="Sentry.AspNetCore" />
-		<PackageReference Include="StackExchange.Redis" />
-		<PackageReference Include="Scalar.AspNetCore" />
-		<PackageReference Include="Serilog.Sinks.Console" />
-		<PackageReference Include="Serilog.Sinks.File" />
-		<PackageReference Include="ServiceStack.OrmLite" />
-		<PackageReference Include="ServiceStack.OrmLite.MySql" />
-		<PackageReference Include="ServiceStack.OrmLite.PostgreSQL" />
-		<PackageReference Include="ServiceStack.OrmLite.Sqlite" />
-		<PackageReference Include="ServiceStack.OrmLite.SqlServer.Data" />
-		<PackageReference Include="Elastic.Clients.Elasticsearch" />
-		<PackageReference Include="VaultSharp" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Resend" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="Sentry" />
+    <PackageReference Include="Sentry.AspNetCore" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="ServiceStack.OrmLite" />
+    <PackageReference Include="ServiceStack.OrmLite.MySql" />
+    <PackageReference Include="ServiceStack.OrmLite.PostgreSQL" />
+    <PackageReference Include="ServiceStack.OrmLite.Sqlite" />
+    <PackageReference Include="ServiceStack.OrmLite.SqlServer.Data" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch" />
+    <PackageReference Include="VaultSharp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Storm.Api.Dtos\Storm.Api.Dtos.csproj" />

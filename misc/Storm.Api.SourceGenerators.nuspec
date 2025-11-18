@@ -3,20 +3,15 @@
 	<metadata>
 		<id>{id}</id>
 		<version>{version}</version>
-		<title>Storm.Api.Vaults</title>
+		<title>Storm.Api.SourceGenerators</title>
 		<authors>{author}</authors>
 		<owners>Storm</owners>
 		<license type="expression">MIT</license>
 		<projectUrl>https://github.com/Julien-Mialon/Storm.Api</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>Storm framework for API with aspnet core, hashicorp vault component</description>
+		<description>Storm framework for API with aspnet core, source generators</description>
 		<releaseNotes>{release_notes}</releaseNotes>
 		<copyright>Copyright 2022</copyright>
 		<tags>storm api aspnet aspnetcore cqrs</tags>
-		<dependencies>
-			<group targetFramework="net9.0">
-
-			</group>
-		</dependencies>
 	</metadata>
 </package>
