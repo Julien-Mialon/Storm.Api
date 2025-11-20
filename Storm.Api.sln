@@ -7,11 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DDE6086C-9CD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storm.Api", "src\Storm.Api\Storm.Api.csproj", "{AB62A975-9D5D-4645-A4CB-79A57F37CF11}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cake", "cake", "{541244DB-4EE2-4EAC-88D2-995B2DBEB249}"
-ProjectSection(SolutionItems) = preProject
-	cake\build.cake = cake\build.cake
-EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storm.Api.Dtos", "src\Storm.Api.Dtos\Storm.Api.Dtos.csproj", "{559F99AD-80EA-4F7A-B650-099846A4C5DB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{7C7F881D-5825-4B3A-BDAC-E421E2716284}"

@@ -11,7 +11,6 @@ public static class DatabaseBootstrapper
 {
 	public static IServiceCollection AddDatabaseModule(this IServiceCollection services, DatabaseConfigurationBuilder databaseConfigurationBuilder, bool skipLicenceCheck = false)
 	{
-		ServiceStackOverride.Override();
 		if (LicenseUtils.HasLicensedFeature(LicenseFeature.OrmLite) is false && skipLicenceCheck is false)
 		{
 			throw new InvalidOperationException("You need a license to use OrmLite");
