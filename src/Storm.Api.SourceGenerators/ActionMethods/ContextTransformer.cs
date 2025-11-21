@@ -83,6 +83,10 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 			}
 
 			List<MethodArgumentContext> arguments = [];
+			Dictionary<string, IPropertySymbol> parameterProperties = actionParameterType.GetMembers()
+				.OfType<IPropertySymbol>()
+				.Where(x => x.SetMethod is not null)
+				.ToDictionary(x => x.Name, x => x);
 
 			foreach (IParameterSymbol parameter in methodSymbol.Parameters)
 			{
@@ -94,10 +98,40 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 
 				if (TryGetAttribute(parameter, types.MapToAttribute, out AttributeData? mapToAttribute))
 				{
-					argumentContext.MapTo = mapToAttribute.ConstructorArguments[0].Value as string;
+					string? parameterProperty = mapToAttribute.ConstructorArguments[0].Value as string;
+					argumentContext.MapTo = parameterProperty;
+					if (string.IsNullOrEmpty(parameterProperty) is false)
+					{
+						parameterProperties.Remove(parameterProperty!);
+					}
 				}
 
 				arguments.Add(argumentContext);
+			}
+
+			List<IPropertySymbol> remainingProperties = parameterProperties.Values.ToList();
+			if (remainingProperties.Count > 0)
+			{
+				for (int index = 0 ; index < arguments.Count ; index++)
+				{
+					MethodArgumentContext argument = arguments[index];
+					if (string.IsNullOrEmpty(argument.MapTo) is false)
+					{
+						continue;
+					}
+
+					IPropertySymbol? pickedProperty = remainingProperties
+						.Where(x => x.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == argument.Type)
+						.OrderByDescending(x => string.Equals(x.Name, argument.Name, StringComparison.OrdinalIgnoreCase) ? 1 : 0)
+						.FirstOrDefault();
+
+					if (pickedProperty is null)
+					{
+						continue;
+					}
+
+					arguments[index] = argument with { MapTo = pickedProperty.Name };
+				}
 			}
 
 			MethodContext methodContext = new()
@@ -108,7 +142,7 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 				ActionType = actionType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
 				ActionParameterType = actionParameterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
 				ActionResultType = actionReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-				Arguments = arguments.ToImmutableList(),
+				Arguments = arguments.Where(x => string.IsNullOrEmpty(x.MapTo) is false).ToImmutableList(),
 				Type = type,
 				ActionResultTypeSymbol = actionReturnType,
 			};

@@ -9,6 +9,14 @@ namespace Storm.Api.Sample.Controllers;
 public partial class DslControllerSample(IServiceProvider services) : BaseController(services)
 {
 	[HttpGet("/hello/{name}")]
+	[WithAction<HelloQuery>]
+	public partial Task<ActionResult<Response<string>>> HelloWorld([FromRoute] string name);
+
+	[HttpGet("/ids/{id}")]
+	[WithAction<AutoMapQuery>]
+	public partial Task<ActionResult<Response>> HelloWorld([FromRoute] int id, [FromBody] AutoMapRequest request, [FromHeader(Name = "X-Date")] DateTime? date);
+
+	[HttpGet("/hello/{name}")]
 	[WithAction<SumQuery>]
 	public partial Task<ActionResult<Response<int>>> HelloWorldA(
 		[FromQuery(Name = "a"), MapTo(nameof(SumQueryParameter.A))] int a,

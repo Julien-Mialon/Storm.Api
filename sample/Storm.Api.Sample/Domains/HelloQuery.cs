@@ -69,3 +69,25 @@ public class UnitQuery(IServiceProvider services) : BaseAuthenticatedAction<RawQ
 		return Unit.Default.AsTask();
 	}
 }
+
+public class AutoMapRequest
+{
+	public int Id { get; init; }
+
+	public required string Name { get; init; }
+}
+
+public class AutoMapQueryParameter
+{
+	public DateTime? Date { get; init; }
+	public required AutoMapRequest Data { get; init; }
+	public int Id { get; init; }
+}
+
+public class AutoMapQuery(IServiceProvider services) : BaseAction<AutoMapQueryParameter, Unit>(services)
+{
+	protected override Task<Unit> Action(AutoMapQueryParameter parameter)
+	{
+		return Unit.Default.AsTask();
+	}
+}

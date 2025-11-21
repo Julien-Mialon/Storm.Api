@@ -447,4 +447,4 @@ tab_width = 4
 # ReSharper properties
 resharper_instance_members_qualify_declared_in = base_class
 resharper_wrap_after_property_in_chained_method_calls = true
-resharper_wrap_list_pattern = chop_always
+resharper_wrap_list_pattern = chop_if_long
