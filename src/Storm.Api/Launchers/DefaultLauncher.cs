@@ -11,6 +11,7 @@ public static class DefaultLauncherOptions
 	public static bool SetDatabaseDebug { get; set; }
 	public static bool UseVault { get; set; }
 	public static bool UseNewtonsoftJson { get; set; }
+	public static bool UseOldMigrations { get; set; }
 }
 
 public static class DefaultLauncher<TStartup>

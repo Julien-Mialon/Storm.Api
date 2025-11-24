@@ -4,6 +4,7 @@ using Storm.Api.Databases.Connections;
 using Storm.Api.Databases.Extensions;
 using Storm.Api.Databases.Migrations.Models;
 using Storm.Api.Databases.Services;
+using Storm.Api.Launchers;
 using Migration = Storm.Api.Databases.Migrations.Models.Migration;
 
 namespace Storm.Api.Databases.Migrations;
@@ -21,7 +22,14 @@ public class MigrationEngine
 	{
 		IDbConnection connection = await databaseService.Connection;
 
-		connection.CreateTableIfNotExists<Migration>();
+		if (DefaultLauncherOptions.UseOldMigrations)
+		{
+			connection.CreateTableIfNotExists<OldMigration>();
+		}
+		else
+		{
+			connection.CreateTableIfNotExists<Migration>();
+		}
 
 		using IDatabaseTransaction transaction = await databaseService.CreateTransaction();
 		try
@@ -61,13 +69,25 @@ public class MigrationEngine
 			{
 				await operation.Apply(connection);
 
-				await connection.InsertAsync(new Migration
+				if (DefaultLauncherOptions.UseOldMigrations)
 				{
-					Id = Guid.NewGuid(),
-					Module = module.Name,
-					Number = operation.Number,
-					MigrationDate = DateTime.UtcNow,
-				});
+					await connection.InsertAsync(new OldMigration
+					{
+						Module = module.Name,
+						Number = operation.Number,
+						EntityCreatedDate = DateTime.UtcNow,
+					});
+				}
+				else
+				{
+					await connection.InsertAsync(new Migration
+					{
+						Id = Guid.NewGuid(),
+						Module = module.Name,
+						Number = operation.Number,
+						MigrationDate = DateTime.UtcNow,
+					});
+				}
 			}
 
 			await module.EndMigrationOnModule(connection);
@@ -82,11 +102,23 @@ public class MigrationEngine
 
 	private static async Task<int?> GetLastAppliedMigration(IDbConnection connection, string moduleName)
 	{
-		Migration? lastMigration = await connection.From<Migration>()
-			.Where(x => x.Module == moduleName)
-			.OrderByDescending(x => x.Number)
-			.AsSingleAsync(connection);
+		if (DefaultLauncherOptions.UseOldMigrations)
+		{
+			OldMigration? lastMigration = await connection.From<OldMigration>()
+				.Where(x => x.Module == moduleName)
+				.OrderByDescending(x => x.Number)
+				.AsSingleAsync(connection);
 
-		return lastMigration?.Number;
+			return lastMigration?.Number;
+		}
+		else
+		{
+			Migration? lastMigration = await connection.From<Migration>()
+				.Where(x => x.Module == moduleName)
+				.OrderByDescending(x => x.Number)
+				.AsSingleAsync(connection);
+
+			return lastMigration?.Number;
+		}
 	}
 }
