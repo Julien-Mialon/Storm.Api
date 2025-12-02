@@ -10,6 +10,7 @@
     <PackageVersion Include="Resend" Version="0.2.1" />
     <PackageVersion Include="VaultSharp" Version="1.17.5.1" />
     <PackageVersion Include="System.Text.Json" Version="$(AspNetVersion)" />
+		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <!-- aspnet -->
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="$(AspNetVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(AspNetVersion)" />
