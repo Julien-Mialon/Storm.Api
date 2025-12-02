@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="10.0.3"
+version="10.0.4"
 
 rm -rf build artifacts
 dotnet build -c Release /property:Version=$version
