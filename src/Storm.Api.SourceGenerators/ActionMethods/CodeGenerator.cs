@@ -126,7 +126,16 @@ internal class CodeGenerator
 		List<MethodArgumentContext> mapArguments = method.Arguments.Where(x => string.IsNullOrEmpty(x.Name) == false).ToList();
 		if (mapArguments.Count == 0)
 		{
-			builder.Add("new()");
+			if (method.ActionParameterType == _context.Types.Unit.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
+			{
+				builder.Add(method.ActionParameterType);
+				builder.Add(".Default");
+			}
+			else
+			{
+				builder.Add("new()");
+			}
+
 			return;
 		}
 

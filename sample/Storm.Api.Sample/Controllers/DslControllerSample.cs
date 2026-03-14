@@ -8,6 +8,10 @@ namespace Storm.Api.Sample.Controllers;
 
 public partial class DslControllerSample(IServiceProvider services) : BaseController(services)
 {
+	[HttpGet("/hello-clean")]
+	[WithAction<InUnitQuery>]
+	public partial Task<ActionResult<Response<string>>> HelloWorld();
+
 	[HttpGet("/hello/{name}")]
 	[WithAction<HelloQuery>]
 	public partial Task<ActionResult<Response<string>>> HelloWorld([FromRoute] string name);

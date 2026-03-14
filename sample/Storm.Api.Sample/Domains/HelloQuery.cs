@@ -10,6 +10,14 @@ public class HelloQueryParameter
 	public required string Name { get; init; }
 }
 
+public class InUnitQuery(IServiceProvider services) : BaseAction<Unit, string>(services)
+{
+	protected override Task<string> Action(Unit parameter)
+	{
+		return "Hello".AsTask();
+	}
+}
+
 public class HelloQuery(IServiceProvider services) : BaseAction<HelloQueryParameter, string>(services)
 {
 	protected override Task<string> Action(HelloQueryParameter parameter)
