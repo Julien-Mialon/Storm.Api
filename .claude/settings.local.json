@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git * log*)",
+      "Bash(dotnet *)",
+      "Read(**)",
+      "Edit(**)",
+      "Bash(grep *)",
+      "Bash(ls *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Edit(.git/**)",
+      "Edit(.claude/settings.local.json)"
+    ]
+  }
+}
