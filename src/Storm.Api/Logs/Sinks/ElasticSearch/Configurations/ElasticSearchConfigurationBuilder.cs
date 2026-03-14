@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Storm.Api.Logs.Interfaces;
 using Storm.Api.Logs.Sinks.ElasticSearch.Senders;
@@ -6,13 +7,13 @@ namespace Storm.Api.Logs.Sinks.ElasticSearch.Configurations;
 
 internal class ElasticSearchConfigurationBuilder : IElasticSearchConfigurationBuilder
 {
-	private ElasticSearchConfiguration? _configuration = new();
-	private ElasticSearchConfiguration Configuration => _configuration ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()");
+	[AllowNull]
+	private ElasticSearchConfiguration Configuration { get => field ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()"); set; } = new();
 
 	public ElasticSearchConfiguration Build()
 	{
 		ElasticSearchConfiguration configuration = Configuration;
-		_configuration = null;
+		Configuration = null;
 		return configuration;
 	}
 

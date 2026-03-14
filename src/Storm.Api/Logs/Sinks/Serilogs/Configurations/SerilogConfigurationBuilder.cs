@@ -1,16 +1,17 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace Storm.Api.Logs.Sinks.Serilogs.Configurations;
 
 internal class SerilogConfigurationBuilder : ISerilogConfigurationBuilder
 {
-	private SerilogConfiguration? _configuration = new();
-	private SerilogConfiguration Configuration => _configuration ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()");
+	[AllowNull]
+	private SerilogConfiguration Configuration { get => field ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()"); set; } = new();
 
 	public SerilogConfiguration Build()
 	{
 		SerilogConfiguration configuration = Configuration;
-		_configuration = null;
+		Configuration = null;
 		return configuration;
 	}
 
