@@ -15,7 +15,10 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter, IDisposable, IAsyncD
 	{
 		_extraLine = extraLine;
 
-		_jsonWriter = new(_memoryStream, new() { Indented = indented });
+		_jsonWriter = new(_memoryStream, new()
+		{
+			Indented = indented,
+		});
 		_jsonWriter.WriteStartObject();
 	}
 

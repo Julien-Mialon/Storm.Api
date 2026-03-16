@@ -12,6 +12,8 @@ internal sealed class DummyTransaction : IDatabaseTransaction
 	}
 
 	public void Dispose() { }
+
 	public void Rollback() { }
+
 	public void Commit() { }
 }

@@ -17,9 +17,9 @@ public static class JsonExtensions
 			{
 				options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
 				options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-				options.SerializerSettings.ContractResolver = new DefaultContractResolver()
+				options.SerializerSettings.ContractResolver = new DefaultContractResolver
 				{
-					NamingStrategy = new DefaultNamingStrategy()
+					NamingStrategy = new DefaultNamingStrategy(),
 				};
 			});
 		}

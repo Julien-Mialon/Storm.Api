@@ -25,7 +25,7 @@ internal struct GeneratorContext : IEquatable<GeneratorContext>
 	{
 		unchecked
 		{
-			var hashCode = (Namespace != null ? Namespace.GetHashCode() : 0);
+			int hashCode = Namespace != null ? Namespace.GetHashCode() : 0;
 			hashCode = (hashCode * 397) ^ ClassName.GetHashCode();
 			hashCode = (hashCode * 397) ^ (int)ClassAccessibility;
 			hashCode = (hashCode * 397) ^ Methods.GetHashCode();

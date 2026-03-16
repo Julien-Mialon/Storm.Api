@@ -5,7 +5,7 @@ namespace Storm.Api.SourceGenerators.Bases;
 public class CodeBuilder
 {
 	private readonly char _indentChar;
-	private readonly StringBuilder _content = new StringBuilder();
+	private readonly StringBuilder _content = new();
 
 	private int _indentLevel;
 	private bool _isStartLine = true;

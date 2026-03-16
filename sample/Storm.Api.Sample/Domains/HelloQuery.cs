@@ -41,10 +41,7 @@ public class SumQuery(IServiceProvider services) : BaseAction<SumQueryParameter,
 	}
 }
 
-public class RawQueryParameter
-{
-
-}
+public class RawQueryParameter { }
 
 public class RawQuery(IServiceProvider services) : BaseAction<RawQueryParameter, Response>(services)
 {
@@ -88,7 +85,9 @@ public class AutoMapRequest
 public class AutoMapQueryParameter
 {
 	public DateTime? Date { get; init; }
+
 	public required AutoMapRequest Data { get; init; }
+
 	public int Id { get; init; }
 }
 

@@ -19,9 +19,7 @@ public class AppMetricsHostedService : BasePeriodicRunHostedService
 				.WriteProperty("completed_work_item_count", ThreadPool.CompletedWorkItemCount)
 				.WriteProperty("pending_work_item_count", ThreadPool.PendingWorkItemCount)
 				.WriteProperty("gc_total_memory", GC.GetTotalMemory(false))
-				.WriteProperty("gc_total_allocated_bytes", GC.GetTotalAllocatedBytes(false))
-			)
-		);
+				.WriteProperty("gc_total_allocated_bytes", GC.GetTotalAllocatedBytes())));
 
 		return Task.CompletedTask;
 	}

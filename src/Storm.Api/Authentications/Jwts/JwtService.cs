@@ -11,9 +11,9 @@ public class JwtService<TAccount>
 		_configuration = configuration;
 	}
 
-	public (string token, TimeSpan duration) GenerateToken(Guid accountId)
+	public (string token, TimeSpan duration) GenerateToken(Guid accountId, IReadOnlyDictionary<string, string>? additionalClaims = null)
 	{
-		string token = _tokenService.GenerateToken(accountId, _configuration.Audience, _configuration.Issuer, _configuration.Duration, _configuration.Key);
+		string token = _tokenService.GenerateToken(accountId, _configuration.Audience, _configuration.Issuer, _configuration.Duration, _configuration.Key, additionalClaims);
 		return (token, _configuration.Duration);
 	}
 

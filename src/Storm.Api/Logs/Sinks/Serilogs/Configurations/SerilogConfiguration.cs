@@ -10,6 +10,7 @@ public class SerilogConfiguration
 	internal string? LogFileName { get; set; } = null;
 
 	internal bool EnableConsoleLogging { get; set; } = false;
+
 	internal LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
 
 	public ILogService CreateService()
@@ -35,5 +36,6 @@ public class SerilogConfiguration
 		return new SerilogSink(loggerConfiguration.CreateLogger());
 	}
 
-	public static ISerilogConfigurationBuilder CreateBuilder() => new SerilogConfigurationBuilder();
+	public static ISerilogConfigurationBuilder CreateBuilder()
+		=> new SerilogConfigurationBuilder();
 }

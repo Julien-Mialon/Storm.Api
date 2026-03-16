@@ -8,7 +8,11 @@ namespace Storm.Api.Logs.Sinks.ElasticSearch.Configurations;
 internal class ElasticSearchConfigurationBuilder : IElasticSearchConfigurationBuilder
 {
 	[AllowNull]
-	private ElasticSearchConfiguration Configuration { get => field ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()"); set; } = new();
+	private ElasticSearchConfiguration Configuration
+	{
+		get => field ?? throw new InvalidOperationException("You can not change parameters in builder after calling Build()");
+		set;
+	} = new();
 
 	public ElasticSearchConfiguration Build()
 	{
@@ -29,7 +33,8 @@ internal class ElasticSearchConfigurationBuilder : IElasticSearchConfigurationBu
 		return this;
 	}
 
-	public IElasticSearchConfigurationBuilder WithNodes(params string[] nodes) => WithNodes((IEnumerable<string>)nodes);
+	public IElasticSearchConfigurationBuilder WithNodes(params string[] nodes)
+		=> WithNodes((IEnumerable<string>)nodes);
 
 	public IElasticSearchConfigurationBuilder WithNodes(IEnumerable<string> nodes)
 	{

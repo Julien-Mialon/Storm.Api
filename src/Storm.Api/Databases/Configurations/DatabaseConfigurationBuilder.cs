@@ -75,7 +75,8 @@ public class DatabaseConfigurationBuilder
 	/// Configure to use SQLite with in memory configuration (useful for testing)
 	/// </summary>
 	/// <returns>this</returns>
-	public DatabaseConfigurationBuilder UseInMemorySQLite() => UseSQLite(":memory:");
+	public DatabaseConfigurationBuilder UseInMemorySQLite()
+		=> UseSQLite(":memory:");
 
 	/// <summary>
 	/// Configure to use MySQL with specific connection string

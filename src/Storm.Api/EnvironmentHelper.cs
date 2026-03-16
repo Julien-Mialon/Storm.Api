@@ -4,6 +4,12 @@ public static class EnvironmentHelper
 {
 	public static EnvironmentSlot Slot { get; private set; }
 
+	public static bool IsAvailableClient => Slot is EnvironmentSlot.Alpha or EnvironmentSlot.Beta or EnvironmentSlot.Prod;
+
+	public static bool IsInternal => Slot is EnvironmentSlot.Dev or EnvironmentSlot.Test;
+
+	public static bool IsLocal => Slot == EnvironmentSlot.Local;
+
 	public static void Set(EnvironmentSlot slot)
 	{
 		Slot = slot;
@@ -14,7 +20,7 @@ public static class EnvironmentHelper
 		int delimiterIndex = environmentName.LastIndexOf('-');
 		if (delimiterIndex >= 0)
 		{
-			environmentName = environmentName.Substring(delimiterIndex + 1);
+			environmentName = environmentName[(delimiterIndex + 1)..];
 		}
 
 		Set(environmentName switch
@@ -27,10 +33,4 @@ public static class EnvironmentHelper
 			_ => EnvironmentSlot.Local,
 		});
 	}
-
-	public static bool IsAvailableClient => Slot is EnvironmentSlot.Alpha or EnvironmentSlot.Beta or EnvironmentSlot.Prod;
-
-	public static bool IsInternal => Slot is EnvironmentSlot.Dev or EnvironmentSlot.Test;
-
-	public static bool IsLocal => Slot == EnvironmentSlot.Local;
 }

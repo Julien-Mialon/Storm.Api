@@ -6,10 +6,10 @@ public static class FreeSmsConfigurationExtensions
 {
 	public static FreeSmsConfiguration LoadFreeSmsConfiguration(this IConfiguration configuration)
 	{
-		return new FreeSmsConfiguration()
+		return new()
 		{
 			User = configuration.GetValue<string>("User")!,
-			Password = configuration.GetValue<string>("Password")!
+			Password = configuration.GetValue<string>("Password")!,
 		};
 	}
 }

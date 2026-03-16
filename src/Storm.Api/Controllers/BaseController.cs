@@ -62,14 +62,13 @@ public abstract class BaseController : Controller
 				.WriteProperty("exceptionMessage", ex.Message)
 				.WriteProperty("errorCode", ex.ErrorCode)
 				.WriteProperty("errorMessage", ex.ErrorMessage)
-				.WriteException(ex.InnerException, "inner")
-			);
+				.WriteException(ex.InnerException, "inner"));
 
 			return StatusCode(ex.Code, new Response
 			{
 				IsSuccess = false,
 				ErrorCode = ex.ErrorCode.ValueIfNullOrEmpty("GENERIC_HTTP_ERROR"),
-				ErrorMessage = ex.ErrorMessage
+				ErrorMessage = ex.ErrorMessage,
 			});
 		}
 		catch (DomainException ex)
@@ -78,22 +77,20 @@ public abstract class BaseController : Controller
 				.WriteProperty("message", $"DomainException: ErrorCode={ex.ErrorCode}, ErrorMessage={ex.ErrorMessage}")
 				.WriteProperty("errorCode", ex.ErrorCode)
 				.WriteProperty("errorMessage", ex.ErrorMessage)
-				.WriteException(ex.InnerException, "inner")
-			);
+				.WriteException(ex.InnerException, "inner"));
 
 			return Ok(new Response
 			{
 				IsSuccess = false,
 				ErrorCode = ex.ErrorCode,
-				ErrorMessage = ex.ErrorMessage
+				ErrorMessage = ex.ErrorMessage,
 			});
 		}
 		catch (Exception ex)
 		{
 			Services.GetRequiredService<ILogService>().Critical(x => x
 				.WriteException(ex)
-				.WriteProperty("controller", GetType().FullName)
-			);
+				.WriteProperty("controller", GetType().FullName));
 
 			if (!EnvironmentHelper.IsAvailableClient)
 			{
@@ -104,7 +101,7 @@ public abstract class BaseController : Controller
 			{
 				IsSuccess = false,
 				ErrorCode = "GENERIC_HTTP_ERROR",
-				ErrorMessage = $"Exception: {ex}"
+				ErrorMessage = $"Exception: {ex}",
 			});
 		}
 	}
@@ -197,14 +194,13 @@ public abstract class BaseController : Controller
 				.WriteProperty("exceptionMessage", ex.Message)
 				.WriteProperty("errorCode", ex.ErrorCode)
 				.WriteProperty("errorMessage", ex.ErrorMessage)
-				.WriteException(ex.InnerException, "inner")
-			);
+				.WriteException(ex.InnerException, "inner"));
 
 			return StatusCode(ex.Code, new Response
 			{
 				IsSuccess = false,
 				ErrorCode = ex.ErrorCode.ValueIfNullOrEmpty("GENERIC_HTTP_ERROR"),
-				ErrorMessage = ex.ErrorMessage
+				ErrorMessage = ex.ErrorMessage,
 			});
 		}
 		catch (DomainException ex)
@@ -213,22 +209,20 @@ public abstract class BaseController : Controller
 				.WriteProperty("message", $"DomainException: ErrorCode={ex.ErrorCode}, ErrorMessage={ex.ErrorMessage}")
 				.WriteProperty("errorCode", ex.ErrorCode)
 				.WriteProperty("errorMessage", ex.ErrorMessage)
-				.WriteException(ex.InnerException, "inner")
-			);
+				.WriteException(ex.InnerException, "inner"));
 
 			return Ok(new Response
 			{
 				IsSuccess = false,
 				ErrorCode = ex.ErrorCode,
-				ErrorMessage = ex.ErrorMessage
+				ErrorMessage = ex.ErrorMessage,
 			});
 		}
 		catch (Exception ex)
 		{
 			Services.GetRequiredService<ILogService>().Critical(x => x
 				.WriteException(ex)
-				.WriteProperty("controller", GetType().FullName)
-			);
+				.WriteProperty("controller", GetType().FullName));
 
 			if (!EnvironmentHelper.IsAvailableClient)
 			{
@@ -239,7 +233,7 @@ public abstract class BaseController : Controller
 			{
 				IsSuccess = false,
 				ErrorCode = "GENERIC_HTTP_ERROR",
-				ErrorMessage = $"Exception: {ex}"
+				ErrorMessage = $"Exception: {ex}",
 			});
 		}
 	}

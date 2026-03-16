@@ -80,7 +80,7 @@ internal class BaseDeletableLongRepository<TEntity> : BaseDatabaseService, ILong
 			int lines = await connection.UpdateAsync<TEntity>(new
 			{
 				IsDeleted = true,
-				EntityDeletedDate = DateTime.UtcNow
+				EntityDeletedDate = DateTime.UtcNow,
 			}, x => x.Id == id);
 
 			return lines > 0;

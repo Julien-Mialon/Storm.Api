@@ -218,7 +218,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2) InternalMapper(T1? item1, T2? item2)
+		static (T1? item1, T2? item2) InternalMapper(T1? item1, T2? item2)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -234,7 +234,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3) InternalMapper(T1? item1, T2? item2, T3? item3)
+		static (T1? item1, T2? item2, T3? item3) InternalMapper(T1? item1, T2? item2, T3? item3)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -252,7 +252,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3, T4? item4) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4)
+		static (T1? item1, T2? item2, T3? item3, T4? item4) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -272,7 +272,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5)
+		static (T1? item1, T2? item2, T3? item3, T4? item4, T5? item5) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -294,7 +294,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6)
+		static (T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -318,7 +318,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7)
+		static (T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -344,7 +344,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8)
+		static (T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -372,7 +372,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9)
+		static (T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);
@@ -402,7 +402,7 @@ public static class ConnectionExtensions
 	{
 		return InternalMapper;
 
-		(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9, T10? item10) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9, T10? item10)
+		static (T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9, T10? item10) InternalMapper(T1? item1, T2? item2, T3? item3, T4? item4, T5? item5, T6? item6, T7? item7, T8? item8, T9? item9, T10? item10)
 		{
 			AssignNullIfNeeded(ref item1);
 			AssignNullIfNeeded(ref item2);

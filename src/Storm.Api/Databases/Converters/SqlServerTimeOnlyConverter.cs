@@ -7,7 +7,9 @@ public class SqlServerTimeOnlyConverter : OrmLiteConverter
 {
 	private const string STRING_INPUT_FORMAT = "HH:mm:ss";
 	private const string DB_FORMAT = "HH:mm:ss.fff";
+
 	public override DbType DbType => DbType.Time;
+
 	public override string ColumnDefinition => "TIME(3)";
 
 	public override object ToDbValue(Type fieldType, object value)

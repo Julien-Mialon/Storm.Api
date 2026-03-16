@@ -7,6 +7,7 @@ public class ExponentialBackOffStrategy : IRetryStrategy
 	private int _currentIteration;
 
 	public bool DiscardAfterFailedAttempts { get; }
+
 	public int AttemptsCountBeforeDiscard { get; }
 
 	public ExponentialBackOffStrategy(int baseMillisecondsCount, int maxIteration, int? attemptsCountBeforeDiscard)

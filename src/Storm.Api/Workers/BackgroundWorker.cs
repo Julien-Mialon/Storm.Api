@@ -56,8 +56,7 @@ public class BackgroundWorker
 		{
 			_logService.Error(x => x
 				.WriteMessage("Background worker stopped with exception")
-				.WriteException(ex)
-			);
+				.WriteException(ex));
 		}
 		finally
 		{

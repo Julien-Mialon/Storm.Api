@@ -34,9 +34,11 @@ internal class DatabaseTransaction : IDatabaseTransaction
 		_transaction.Dispose();
 	}
 
-	public void Commit() => EndTransaction(true);
+	public void Commit()
+		=> EndTransaction(true);
 
-	public void Rollback() => EndTransaction(false);
+	public void Rollback()
+		=> EndTransaction(false);
 
 	private void EndTransaction(bool commit)
 	{

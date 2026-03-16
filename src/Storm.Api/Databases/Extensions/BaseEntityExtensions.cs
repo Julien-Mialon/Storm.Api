@@ -8,8 +8,8 @@ public static class BaseEntityExtensions
 {
 	public static void CopyGenericPropertiesTo(this IDateTrackingEntity storage, IDateTrackingEntity source)
 	{
-		ArgumentNullException.ThrowIfNull(storage, nameof(storage));
-		ArgumentNullException.ThrowIfNull(source, nameof(source));
+		ArgumentNullException.ThrowIfNull(storage);
+		ArgumentNullException.ThrowIfNull(source);
 
 		storage.EntityCreatedDate = source.EntityCreatedDate;
 		storage.EntityUpdatedDate = source.EntityUpdatedDate;
@@ -17,8 +17,8 @@ public static class BaseEntityExtensions
 
 	public static void CopyGenericPropertiesTo(this ISoftDeleteEntity storage, ISoftDeleteEntity source)
 	{
-		ArgumentNullException.ThrowIfNull(storage, nameof(storage));
-		ArgumentNullException.ThrowIfNull(source, nameof(source));
+		ArgumentNullException.ThrowIfNull(storage);
+		ArgumentNullException.ThrowIfNull(source);
 
 		storage.EntityDeletedDate = source.EntityDeletedDate;
 		storage.IsDeleted = source.IsDeleted;
@@ -26,8 +26,8 @@ public static class BaseEntityExtensions
 
 	public static void CopyGenericPropertiesTo(this ILongEntity storage, ILongEntity source)
 	{
-		ArgumentNullException.ThrowIfNull(storage, nameof(storage));
-		ArgumentNullException.ThrowIfNull(source, nameof(source));
+		ArgumentNullException.ThrowIfNull(storage);
+		ArgumentNullException.ThrowIfNull(source);
 
 		storage.Id = source.Id;
 		storage.CollationId = source.CollationId;
@@ -35,8 +35,8 @@ public static class BaseEntityExtensions
 
 	public static void CopyGenericPropertiesFrom(this IGuidEntity storage, IGuidEntity source)
 	{
-		ArgumentNullException.ThrowIfNull(storage, nameof(storage));
-		ArgumentNullException.ThrowIfNull(source, nameof(source));
+		ArgumentNullException.ThrowIfNull(storage);
+		ArgumentNullException.ThrowIfNull(source);
 
 		storage.Id = source.Id;
 	}
@@ -83,7 +83,8 @@ public static class BaseEntityExtensions
 		return entity;
 	}
 
-	public static async Task<T?> NullIfDeleted<T>(this Task<T> entity) where T : ISoftDeleteEntity => (await entity).NullIfDeleted();
+	public static async Task<T?> NullIfDeleted<T>(this Task<T> entity) where T : ISoftDeleteEntity
+		=> (await entity).NullIfDeleted();
 
 	public static bool IsNotNullOrDefault([NotNullWhen(true)] this IDateTrackingEntity? entity)
 	{

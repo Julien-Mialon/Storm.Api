@@ -5,6 +5,7 @@ public class DelayRetryStrategy : IRetryStrategy
 	private readonly int _timeToWait;
 
 	public bool DiscardAfterFailedAttempts { get; }
+
 	public int AttemptsCountBeforeDiscard { get; }
 
 	public DelayRetryStrategy(int timeToWait, int? attemptsCountBeforeDiscard)

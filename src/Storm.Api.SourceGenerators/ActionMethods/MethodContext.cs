@@ -32,7 +32,7 @@ internal struct MethodContext : IEquatable<MethodContext>
 	{
 		unchecked
 		{
-			var hashCode = (int)Accessibility;
+			int hashCode = (int)Accessibility;
 			hashCode = (hashCode * 397) ^ Name.GetHashCode();
 			hashCode = (hashCode * 397) ^ ReturnType.GetHashCode();
 			hashCode = (hashCode * 397) ^ Arguments.GetHashCode();

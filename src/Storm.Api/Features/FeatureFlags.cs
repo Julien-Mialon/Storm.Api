@@ -5,11 +5,11 @@ namespace Storm.Api.Features;
 
 public static class FeatureFlags
 {
-	private static readonly Dictionary<string, bool> FLAGS = new();
+	private static readonly Dictionary<string, bool> FLAGS = [];
 
 	public static void Set(Dictionary<string, bool> flags)
 	{
-		foreach (KeyValuePair<string,bool> flag in flags)
+		foreach (KeyValuePair<string, bool> flag in flags)
 		{
 			FLAGS[flag.Key] = flag.Value;
 		}
@@ -30,7 +30,8 @@ public static class FeatureFlags
 		return FLAGS.GetValueOrDefault(flag, false);
 	}
 
-	public static bool IsDisabled(string flag) => !IsEnabled(flag);
+	public static bool IsDisabled(string flag)
+		=> !IsEnabled(flag);
 
 	public static void LoadFromConfiguration(IConfiguration configuration)
 	{

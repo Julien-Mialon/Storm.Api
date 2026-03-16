@@ -17,13 +17,19 @@ public class AttributeDefinition
 	} = "Storm.Api.SourceGenerators.Generated";
 
 	public required string Name { get; set; }
+
 	public required AttributeTargets Targets { get; set; }
+
 	public bool AllowMultiple { get; set; }
+
 	public bool Inherited { get; set; }
+
 	public List<AttributePropertyDefinition> Properties { get; set; } = [];
+
 	public List<AttributeGenericDefinition> Generics { get; set; } = [];
 
 	public string FullName => $"{Name}Attribute";
+
 	public string MetadataName
 	{
 		get

@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,9 +38,13 @@ public abstract class BaseStartup
 	];
 
 	protected IConfiguration Configuration { get; }
+
 	protected ServerConfiguration ServerConfiguration { get; }
+
 	protected IHostEnvironment Environment { get; }
+
 	protected ILogService LogService { get; private set; }
+
 	protected bool WaitForMigrationsBeforeStarting { get; set; } = true;
 
 	protected BaseStartup(IConfiguration configuration, IHostEnvironment environment)
@@ -51,7 +54,7 @@ public abstract class BaseStartup
 		LogService = new LogService(_ => new ConsoleLogSink(), LogLevel.Warning);
 
 		ServerConfiguration = Configuration.WithSection("Server", c => c.LoadServerConfiguration())
-		                      ?? ServerConfigurationExtensions.DEFAULT_SERVER_CONFIGURATION;
+			?? ServerConfigurationExtensions.DEFAULT_SERVER_CONFIGURATION;
 
 		AppContext.SetSwitch("System.Net.Http.EnableActivityPropagation", false);
 		DistributedContextPropagator.Current = DistributedContextPropagator.CreateNoOutputPropagator();
@@ -187,8 +190,7 @@ public abstract class BaseStartup
 	{
 		SetLogService(services, Configuration.GetSection(configurationSectionName)
 			.LoadSerilogConfiguration()
-			.CreateService()
-		);
+			.CreateService());
 	}
 
 	protected void RegisterConsoleLogger(IServiceCollection services, LogLevel minimumLogLevel = LogLevel.Debug)

@@ -22,7 +22,7 @@ public class TimeOnlyTypeHandler : SqlMapper.TypeHandler<TimeOnly>
 
 		if (value is TimeSpan timeSpan)
 		{
-			return new TimeOnly(timeSpan.Ticks);
+			return new(timeSpan.Ticks);
 		}
 
 		if (value is string str && TimeOnly.TryParseExact(str, DB_FORMAT, out timeOnly))

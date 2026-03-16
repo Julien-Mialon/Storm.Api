@@ -8,9 +8,9 @@ namespace Storm.Api.Logs;
 
 public class LogService : ILogService
 {
-	private Lazy<ILogSink> _sink;
 	private readonly LogLevel _minimumLogLevel;
-	private readonly List<ILogAppender> _appenders = new();
+	private readonly List<ILogAppender> _appenders = [];
+	private Lazy<ILogSink> _sink;
 
 	public LogService(Func<ILogService, ILogSink> senderFactory, LogLevel minimumLogLevel)
 	{

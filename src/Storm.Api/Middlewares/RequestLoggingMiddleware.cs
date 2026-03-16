@@ -17,8 +17,7 @@ public static class RequestLoggingMiddleware
 				.WriteProperty("filter", "HTTP_LOG")
 				.WriteProperty("route", context.Request.Path.ToString())
 				.WriteProperty("method", context.Request.Method)
-				.WriteRequestContext(context)
-			);
+				.WriteRequestContext(context));
 
 			return next();
 		});

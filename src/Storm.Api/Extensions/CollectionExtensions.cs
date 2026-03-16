@@ -23,16 +23,20 @@ public static class CollectionExtensions
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<IEnumerable<TInput>> source, Func<TInput, TOutput> mapper) => (await source).ConvertAll(mapper);
+	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<IEnumerable<TInput>> source, Func<TInput, TOutput> mapper)
+		=> (await source).ConvertAll(mapper);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<ICollection<TInput>> source, Func<TInput, TOutput> mapper) => (await source).ConvertAll(mapper);
+	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<ICollection<TInput>> source, Func<TInput, TOutput> mapper)
+		=> (await source).ConvertAll(mapper);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<IList<TInput>> source, Func<TInput, TOutput> mapper) => (await source).ConvertAll(mapper);
+	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<IList<TInput>> source, Func<TInput, TOutput> mapper)
+		=> (await source).ConvertAll(mapper);
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<List<TInput>> source, Func<TInput, TOutput> mapper) => (await source).ConvertAll(mapper);
+	public static async Task<List<TOutput>> ConvertAll<TInput, TOutput>(this Task<List<TInput>> source, Func<TInput, TOutput> mapper)
+		=> (await source).ConvertAll(mapper);
 
 	public static bool None<T>(this IEnumerable<T> source)
 	{
@@ -65,7 +69,7 @@ public static class CollectionExtensions
 
 	public static Dictionary<TKey, TElement> ToSafeDictionary<TSource, TKey, TElement>(this IEnumerable<TSource>? source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
 	{
-		Dictionary<TKey, TElement> result = new Dictionary<TKey, TElement>();
+		Dictionary<TKey, TElement> result = [];
 
 		if (source != null)
 		{
@@ -80,7 +84,7 @@ public static class CollectionExtensions
 
 	public static List<T> ToListOrDefault<T>(this IEnumerable<T>? source)
 	{
-		return source?.ToList() ?? new List<T>();
+		return source?.ToList() ?? [];
 	}
 
 	public static int IndexOfMin<T, TKey>(this IReadOnlyList<T> source, Func<T, TKey> selector, IComparer<TKey>? comparer = null)
@@ -95,7 +99,7 @@ public static class CollectionExtensions
 		TKey minValue = selector(source[0]);
 		int minIndex = 0;
 
-		for (int i = 1; i < source.Count; i++)
+		for (int i = 1 ; i < source.Count ; i++)
 		{
 			TKey value = selector(source[i]);
 			if (comparer.Compare(value, minValue) < 0)
@@ -120,7 +124,7 @@ public static class CollectionExtensions
 		TKey maxValue = selector(source[0]);
 		int maxIndex = 0;
 
-		for (int i = 1; i < source.Count; i++)
+		for (int i = 1 ; i < source.Count ; i++)
 		{
 			TKey value = selector(source[i]);
 			if (comparer.Compare(value, maxValue) > 0)

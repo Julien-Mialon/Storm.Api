@@ -9,12 +9,13 @@ internal static class ActionMethod
 		Namespace = ActionMethodCodeGenerator.GeneratedNamespace,
 		Name = "WithAction",
 		Targets = AttributeTargets.Method,
-		Generics = [
+		Generics =
+		[
 			new()
 			{
-				Name = "TAction"
-			}
-		]
+				Name = "TAction",
+			},
+		],
 	};
 
 	public static readonly AttributeDefinition MAP_TO_ATTRIBUTE = new()
@@ -29,7 +30,7 @@ internal static class ActionMethod
 				Name = "FieldName",
 				Type = typeof(string),
 				InConstructor = true,
-			}
-		]
+			},
+		],
 	};
 }

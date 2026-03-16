@@ -18,10 +18,6 @@ public class FileParameter : IDisposable, IAsyncDisposable
 
 	public Stream? InputStream { get; set; }
 
-	public FileParameter()
-	{
-	}
-
 	public async Task<FileParameter> LoadFrom(IFormFile? file, bool copyStream = false)
 	{
 		if (file == null || file.Length == 0)

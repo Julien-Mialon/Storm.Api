@@ -147,6 +147,5 @@ internal class CodeGenerator
 		}
 
 		builder.Unindent().Add("}");
-
 	}
 }

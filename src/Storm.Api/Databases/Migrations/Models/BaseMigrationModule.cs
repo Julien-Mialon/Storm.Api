@@ -4,14 +4,14 @@ namespace Storm.Api.Databases.Migrations.Models;
 
 public abstract class BaseMigrationModule : IMigrationModule
 {
+	public string Name { get; }
+
+	public abstract List<IMigration> Operations { get; }
+
 	protected BaseMigrationModule(string name)
 	{
 		Name = name;
 	}
-
-	public string Name { get; }
-
-	public abstract List<IMigration> Operations { get; }
 
 	public virtual Task StartMigrationOnModule(IDbConnection db)
 	{

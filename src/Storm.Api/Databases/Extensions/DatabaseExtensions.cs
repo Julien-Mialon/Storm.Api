@@ -82,7 +82,7 @@ public static class DatabaseExtensions
 		return await connection.UpdateAsync(new
 		{
 			IsDeleted = true,
-			EntityDeletedDate = DateTime.UtcNow
+			EntityDeletedDate = DateTime.UtcNow,
 		}, whereClause);
 	}
 }

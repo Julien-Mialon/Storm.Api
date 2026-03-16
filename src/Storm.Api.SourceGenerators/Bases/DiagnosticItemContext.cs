@@ -29,7 +29,7 @@ public struct DiagnosticItemContext : IEquatable<DiagnosticItemContext>
 	{
 		unchecked
 		{
-			var hashCode = Id.GetHashCode();
+			int hashCode = Id.GetHashCode();
 			hashCode = (hashCode * 397) ^ Title.GetHashCode();
 			hashCode = (hashCode * 397) ^ MessageFormat.GetHashCode();
 			hashCode = (hashCode * 397) ^ Category.GetHashCode();

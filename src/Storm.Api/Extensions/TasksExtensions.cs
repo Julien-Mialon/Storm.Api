@@ -6,6 +6,7 @@ public static class TasksExtensions
 	{
 		return Task.FromResult(result);
 	}
+
 	public static Task<T?> AsTaskNullable<T>(this T result) where T : struct
 	{
 		return Task.FromResult<T?>(result);
@@ -18,7 +19,7 @@ public static class TasksExtensions
 
 	public static Task WaitForCancellation(this CancellationToken cancellationToken)
 	{
-		if(cancellationToken.IsCancellationRequested)
+		if (cancellationToken.IsCancellationRequested)
 		{
 			return Task.CompletedTask;
 		}

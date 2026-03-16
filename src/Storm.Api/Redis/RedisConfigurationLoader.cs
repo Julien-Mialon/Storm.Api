@@ -6,7 +6,7 @@ public static class RedisConfigurationLoader
 {
 	public static RedisConfiguration LoadRedisConfiguration(this IConfiguration configuration)
 	{
-		return new RedisConfiguration
+		return new()
 		{
 			Endpoints = configuration.GetSection("Endpoints").Get<string[]>()?.ToList() ?? throw new ArgumentException("Missing Redis endpoints"),
 			User = configuration.GetValue<string>("User") ?? throw new ArgumentException("Missing Redis user"),
@@ -18,7 +18,7 @@ public static class RedisConfigurationLoader
 			ClientName = configuration.GetValue<string>("ClientName"),
 			KeepAliveSeconds = configuration.GetValue<int>("KeepAliveSeconds", 60),
 			AbortOnConnectFail = configuration.GetValue<bool>("AbortOnConnectFail", false),
-			ChannelPrefix = configuration.GetValue<string>("ChannelPrefix")
+			ChannelPrefix = configuration.GetValue<string>("ChannelPrefix"),
 		};
 	}
 }

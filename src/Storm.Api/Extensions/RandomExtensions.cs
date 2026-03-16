@@ -15,14 +15,16 @@ public static class RandomExtensions
 		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 	];
 
-	public static string RandomAlphaString(this int length) => RandomString(length, ALPHA_CHARS);
+	public static string RandomAlphaString(this int length)
+		=> RandomString(length, ALPHA_CHARS);
 
-	public static string RandomAlphaDigitsString(this int length) => RandomString(length, ALPHA_DIGITS_CHARS);
+	public static string RandomAlphaDigitsString(this int length)
+		=> RandomString(length, ALPHA_DIGITS_CHARS);
 
 	public static string RandomString(this int length, char[] charset)
 	{
 		char[] chars = new char[length];
-		for (int i = 0; i < length; i++)
+		for (int i = 0 ; i < length ; i++)
 		{
 			chars[i] = charset[System.Random.Shared.Next(charset.Length)];
 		}
@@ -37,7 +39,7 @@ public static class RandomExtensions
 
 	public static long Random(this long maxValue)
 	{
-		return (long) (System.Random.Shared.NextDouble() * maxValue);
+		return (long)(System.Random.Shared.NextDouble() * maxValue);
 	}
 
 	public static T RandomItem<T>(this List<T> items)

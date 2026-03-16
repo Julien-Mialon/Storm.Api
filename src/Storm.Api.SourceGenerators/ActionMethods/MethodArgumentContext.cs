@@ -20,7 +20,7 @@ internal struct MethodArgumentContext : IEquatable<MethodArgumentContext>
 	{
 		unchecked
 		{
-			var hashCode = Type.GetHashCode();
+			int hashCode = Type.GetHashCode();
 			hashCode = (hashCode * 397) ^ Name.GetHashCode();
 			hashCode = (hashCode * 397) ^ (MapTo != null ? MapTo.GetHashCode() : 0);
 			return hashCode;

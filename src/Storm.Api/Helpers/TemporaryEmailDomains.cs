@@ -5,8 +5,8 @@ public static class TemporaryEmailDomains
 	#region domain list (HashSet<string> DOMAINS)
 
 	// https://github.com/disposable-email-domains/disposable-email-domains/blob/master/disposable_email_blocklist.conf
-	private static readonly HashSet<string> DOMAINS = new()
-	{
+	private static readonly HashSet<string> DOMAINS =
+	[
 		"0-mail.com",
 		"027168.com",
 		"062e.com",
@@ -4804,7 +4804,7 @@ public static class TemporaryEmailDomains
 		"zzi.us",
 		"zzrgg.com",
 		"zzz.com",
-	};
+	];
 
 	#endregion
 
@@ -4817,7 +4817,7 @@ public static class TemporaryEmailDomains
 			return true;
 		}
 
-		string domain = email.Substring(indexOfAt + 1).ToLowerInvariant().Trim();
+		string domain = email[(indexOfAt + 1)..].ToLowerInvariant().Trim();
 		if (string.IsNullOrEmpty(domain) || domain.Length < 3)
 		{
 			return true;

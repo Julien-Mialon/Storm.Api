@@ -51,7 +51,7 @@ internal static class SqlFieldsOrdering
 		}
 
 		IEnumerable<FieldDefinition> result = fields;
-		if(collationIdField is not null)
+		if (collationIdField is not null)
 		{
 			result = result.Prepend(collationIdField);
 		}

@@ -7,11 +7,6 @@ public class ScopedServiceAccessor : IScopedServiceAccessor
 {
 	private readonly IHttpContextAccessor _accessor;
 
-	public ScopedServiceAccessor(IHttpContextAccessor contextAccessor)
-	{
-		_accessor = contextAccessor;
-	}
-
 	public IServiceProvider Services
 	{
 		get
@@ -25,6 +20,13 @@ public class ScopedServiceAccessor : IScopedServiceAccessor
 		}
 	}
 
+	public ScopedServiceAccessor(IHttpContextAccessor contextAccessor)
+	{
+		_accessor = contextAccessor;
+	}
+
 	public TService Get<TService>() where TService : notnull
-		=> Services.GetRequiredService<TService>();
+	{
+		return Services.GetRequiredService<TService>();
+	}
 }

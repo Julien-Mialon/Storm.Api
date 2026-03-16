@@ -16,7 +16,7 @@ public static class VaultExtensions
 			Address = configuration.GetValue<string>("Address")!,
 			Token = configuration.GetValue<string>("Token")!,
 			MountPoint = configuration.GetValue<string>("MountPoint")!,
-			Keys = []
+			Keys = [],
 		};
 
 		if (configuration.GetValue<string>("Keys") is { } multiKeysStrings)

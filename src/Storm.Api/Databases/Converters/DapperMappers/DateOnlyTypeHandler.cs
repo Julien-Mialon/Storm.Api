@@ -22,7 +22,7 @@ public class DateOnlyTypeHandler : SqlMapper.TypeHandler<DateOnly>
 
 		if (value is DateTime dateTime)
 		{
-			return new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day);
+			return new(dateTime.Year, dateTime.Month, dateTime.Day);
 		}
 
 		if (value is string str && DateOnly.TryParseExact(str, DB_FORMAT, out dateOnly))

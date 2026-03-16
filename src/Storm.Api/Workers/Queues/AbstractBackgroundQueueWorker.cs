@@ -67,8 +67,7 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 						.WriteProperty("type", GetType().FullName)
 						.WriteMethodInfo()
 						.WriteMessage($"Fail to process item {triesCopy} times")
-						.DumpObject("items", items)
-					);
+						.DumpObject("items", items));
 				}
 			}
 			catch (Exception ex)
@@ -76,8 +75,7 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 				_logService.Error(x => x
 					.WriteProperty("type", GetType().FullName)
 					.WriteMethodInfo()
-					.WriteException(ex)
-				);
+					.WriteException(ex));
 
 				await OnItemsError(items);
 				_onException?.Invoke(items, ex);

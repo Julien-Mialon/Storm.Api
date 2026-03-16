@@ -7,7 +7,6 @@ public class JwtRawAuthenticator : BaseTokenAuthenticator<Guid?>
 {
 	public JwtRawAuthenticator(IServiceProvider services, string? headerName, string? queryParameterName, string? tokenType) : base(services, headerName, queryParameterName, tokenType)
 	{
-		
 	}
 
 	protected override Task<Guid?> Authenticate(string token)

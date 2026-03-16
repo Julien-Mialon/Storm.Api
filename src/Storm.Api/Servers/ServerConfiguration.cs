@@ -23,7 +23,7 @@ public static class ServerConfigurationExtensions
 	private static readonly ServerCultureConfiguration DEFAULT_SERVER_CULTURE_CONFIGURATION = new()
 	{
 		DefaultCulture = "fr",
-		SupportedCultures = new() { "fr" },
+		SupportedCultures = ["fr"],
 	};
 
 	public static readonly ServerConfiguration DEFAULT_SERVER_CONFIGURATION = new()
@@ -45,14 +45,10 @@ public static class ServerConfigurationExtensions
 
 	private static ServerCultureConfiguration LoadServerCultureConfiguration(this IConfiguration configuration)
 	{
-		string[]? supportedCultures = null;
+		string[]? supportedCultures;
 		if (configuration.GetValue<string>("Supported") is { } multiKeysStrings)
 		{
-			supportedCultures = multiKeysStrings.Split(new[]
-			{
-				',',
-				';'
-			}, StringSplitOptions.RemoveEmptyEntries);
+			supportedCultures = multiKeysStrings.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries);
 		}
 		else
 		{
@@ -62,7 +58,7 @@ public static class ServerConfigurationExtensions
 		return new()
 		{
 			DefaultCulture = configuration.GetValue<string>("Default").ValueIfNullOrEmpty(DEFAULT_SERVER_CULTURE_CONFIGURATION.DefaultCulture),
-			SupportedCultures = supportedCultures?.ToList() ?? DEFAULT_SERVER_CULTURE_CONFIGURATION.SupportedCultures
+			SupportedCultures = supportedCultures?.ToList() ?? DEFAULT_SERVER_CULTURE_CONFIGURATION.SupportedCultures,
 		};
 	}
 

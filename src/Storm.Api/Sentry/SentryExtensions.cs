@@ -34,9 +34,10 @@ public static class SentryExtensions
 
 		if (message != null)
 		{
-			if (message.Length > 1024 * 50) //limit to 50kB (Sentry message limit is set to 200kB)
+			const int MAX_LENGTH = 1024 * 50;
+			if (message.Length > MAX_LENGTH) // limit to 50kB (Sentry message limit is set to 200kB)
 			{
-				message = message.Substring(0, 1024 * 50);
+				message = message[..MAX_LENGTH];
 			}
 
 			evt.Message = message;

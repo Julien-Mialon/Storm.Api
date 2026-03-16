@@ -18,7 +18,7 @@ public static class SqlServerIndexExtensions
 		    WHERE tables.name = @tableName AND columns.name = @columnName", new
 		{
 			tableName = typeof(TTable).TableName(),
-			columnName = columnName
+			columnName = columnName,
 		});
 
 		foreach (dynamic index in result)

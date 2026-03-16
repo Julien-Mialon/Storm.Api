@@ -8,9 +8,9 @@ namespace Storm.Api.SourceGenerators.ActionMethods;
 [Generator(LanguageNames.CSharp)]
 public class ActionMethodCodeGenerator : BaseCodeGenerator
 {
-	protected override List<AttributeDefinition> Attributes { get; } = [ActionMethod.WITH_ACTION_ATTRIBUTE, ActionMethod.MAP_TO_ATTRIBUTE];
-
 	public static string GeneratedNamespace => typeof(ActionMethodCodeGenerator).Namespace ?? string.Empty;
+
+	protected override List<AttributeDefinition> Attributes { get; } = [ActionMethod.WITH_ACTION_ATTRIBUTE, ActionMethod.MAP_TO_ATTRIBUTE];
 
 	public override void Initialize(IncrementalGeneratorInitializationContext context)
 	{
@@ -19,14 +19,12 @@ public class ActionMethodCodeGenerator : BaseCodeGenerator
 		IncrementalValuesProvider<(GeneratorContext? context, DiagnosticContext? diagnostics)> syntaxProvider = context.SyntaxProvider
 			.CreateSyntaxProvider(CouldBeAClassToGenerate, CreateSemanticContext);
 
-		context.RegisterSourceOutput(
-			syntaxProvider.Where(static x => x.diagnostics is { Items.Count: > 0 })
+		context.RegisterSourceOutput(syntaxProvider.Where(static x => x.diagnostics is { Items.Count: > 0 })
 				.Select(static (x, _) => x.diagnostics!.Value)
 				.WithComparer(EqualityComparer<DiagnosticContext>.Default),
 			GenerateDiagnostics);
 
-		context.RegisterSourceOutput(
-			syntaxProvider.Where(static x => x.context is not null)
+		context.RegisterSourceOutput(syntaxProvider.Where(static x => x.context is not null)
 				.Select(static (x, _) => x.context!.Value)
 				.WithComparer(EqualityComparer<GeneratorContext>.Default),
 			GenerateCode);
@@ -40,13 +38,11 @@ public class ActionMethodCodeGenerator : BaseCodeGenerator
 		}
 
 		return classDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword)
-		       && classDeclarationSyntax.Members.Any(member =>
-			       member is MethodDeclarationSyntax
-			       && member.AttributeLists.Count > 0
-			       && member.AttributeLists.Any(attributes =>
-				       attributes.Attributes.Any(attribute => attribute.Name.ToString().Contains(ActionMethod.WITH_ACTION_ATTRIBUTE.Name))
-			       )
-		       );
+			&& classDeclarationSyntax.Members.Any(member =>
+				member is MethodDeclarationSyntax
+				&& member.AttributeLists.Count > 0
+				&& member.AttributeLists.Any(attributes =>
+					attributes.Attributes.Any(attribute => attribute.Name.ToString().Contains(ActionMethod.WITH_ACTION_ATTRIBUTE.Name))));
 	}
 
 	private (GeneratorContext? context, DiagnosticContext? diagnostics) CreateSemanticContext(GeneratorSyntaxContext context, CancellationToken cancellationToken)

@@ -22,10 +22,8 @@ public partial class DslControllerSample(IServiceProvider services) : BaseContro
 
 	[HttpGet("/hello/{name}")]
 	[WithAction<SumQuery>]
-	public partial Task<ActionResult<Response<int>>> HelloWorldA(
-		[FromQuery(Name = "a"), MapTo(nameof(SumQueryParameter.A))] int a,
-		[FromQuery(Name = "b"), MapTo(nameof(SumQueryParameter.B))] int b
-		);
+	public partial Task<ActionResult<Response<int>>> HelloWorldA([FromQuery(Name = "a"), MapTo(nameof(SumQueryParameter.A))] int a,
+		[FromQuery(Name = "b"), MapTo(nameof(SumQueryParameter.B))] int b);
 
 	[HttpGet("/hello3/{name}")]
 	[WithAction<RawQuery>]
@@ -48,7 +46,6 @@ public partial class DslControllerSample(IServiceProvider services) : BaseContro
 	[ProducesResponseType<Response>(401)]
 	public partial Task<ActionResult<Response>> HelloWorldE();
 }
-
 
 public static class Urls
 {

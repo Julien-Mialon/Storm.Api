@@ -8,7 +8,7 @@ public static class ResendConfigurationExtensions
 	{
 		return new()
 		{
-			ApiKey = configuration.GetValue<string>("ApiKey") ?? throw new InvalidOperationException("No value for configuration Resend.ApiKey")
+			ApiKey = configuration.GetValue<string>("ApiKey") ?? throw new InvalidOperationException("No value for configuration Resend.ApiKey"),
 		};
 	}
 }

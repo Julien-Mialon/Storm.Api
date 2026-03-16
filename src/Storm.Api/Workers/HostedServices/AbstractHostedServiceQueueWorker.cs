@@ -52,8 +52,7 @@ public abstract class AbstractHostedServiceQueueWorker<TInput, TOutput, TQueue> 
 						.WriteProperty("type", GetType().FullName)
 						.WriteMethodInfo()
 						.WriteMessage($"Fail to process item {triesCopy} times")
-						.DumpObject("items", items)
-					);
+						.DumpObject("items", items));
 				}
 			}
 			catch (Exception ex)
@@ -61,8 +60,7 @@ public abstract class AbstractHostedServiceQueueWorker<TInput, TOutput, TQueue> 
 				Resolve<ILogService>().Error(x => x
 					.WriteProperty("type", GetType().FullName)
 					.WriteMethodInfo()
-					.WriteException(ex)
-				);
+					.WriteException(ex));
 
 				await OnItemsError(items);
 

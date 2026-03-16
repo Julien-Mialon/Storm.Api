@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Storm.Api.Logs.Appenders;
 using Storm.Api.Logs.Interfaces;
 

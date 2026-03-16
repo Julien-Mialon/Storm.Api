@@ -9,7 +9,7 @@ public interface IDateRange
 
 public static class DateTimeExtensions
 {
-	public static readonly DateTime DEFAULT = new DateTime(2000, 1, 1);
+	public static readonly DateTime DEFAULT = new(2000, 1, 1);
 
 	public static long ToTimestamp(this DateTime dateTime)
 	{
@@ -74,7 +74,7 @@ public static class DateTimeExtensions
 				DayOfWeek.Thursday => -3,
 				DayOfWeek.Friday => -4,
 				DayOfWeek.Saturday => -5,
-				_ => 0
+				_ => 0,
 			};
 
 			return date.Date.AddDays(daysToRemove);

@@ -6,7 +6,8 @@
       "Read(**)",
       "Edit(**)",
       "Bash(grep *)",
-      "Bash(ls *)"
+      "Bash(ls *)",
+      "Bash(mkdir *)"
     ],
     "deny": [
       "Bash(git push *)",

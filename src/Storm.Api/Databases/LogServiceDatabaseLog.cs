@@ -10,6 +10,7 @@ internal class LogServiceDatabaseLog : ILog
 	public static ILogService? LogService { get; set; }
 
 	private readonly string _type;
+
 	public bool IsDebugEnabled { get; }
 
 	public LogServiceDatabaseLog(bool isDebugEnabled, string type)
@@ -18,35 +19,50 @@ internal class LogServiceDatabaseLog : ILog
 		IsDebugEnabled = isDebugEnabled;
 	}
 
-	public void Debug(object message) => Log(LogLevel.Debug, message);
+	public void Debug(object message)
+		=> Log(LogLevel.Debug, message);
 
-	public void Debug(object message, Exception exception) => Log(LogLevel.Debug, message, exception);
+	public void Debug(object message, Exception exception)
+		=> Log(LogLevel.Debug, message, exception);
 
-	public void DebugFormat(string format, params object[] args) => Log(LogLevel.Debug, format, args);
+	public void DebugFormat(string format, params object[] args)
+		=> Log(LogLevel.Debug, format, args);
 
-	public void Error(object message) => Log(LogLevel.Error, message);
+	public void Error(object message)
+		=> Log(LogLevel.Error, message);
 
-	public void Error(object message, Exception exception) => Log(LogLevel.Error, message, exception);
+	public void Error(object message, Exception exception)
+		=> Log(LogLevel.Error, message, exception);
 
-	public void ErrorFormat(string format, params object[] args) => Log(LogLevel.Error, format, args);
+	public void ErrorFormat(string format, params object[] args)
+		=> Log(LogLevel.Error, format, args);
 
-	public void Fatal(object message) => Log(LogLevel.Critical, message);
+	public void Fatal(object message)
+		=> Log(LogLevel.Critical, message);
 
-	public void Fatal(object message, Exception exception) => Log(LogLevel.Critical, message, exception);
+	public void Fatal(object message, Exception exception)
+		=> Log(LogLevel.Critical, message, exception);
 
-	public void FatalFormat(string format, params object[] args) => Log(LogLevel.Critical, format, args);
+	public void FatalFormat(string format, params object[] args)
+		=> Log(LogLevel.Critical, format, args);
 
-	public void Info(object message) => Log(LogLevel.Information, message);
+	public void Info(object message)
+		=> Log(LogLevel.Information, message);
 
-	public void Info(object message, Exception exception) => Log(LogLevel.Information, message, exception);
+	public void Info(object message, Exception exception)
+		=> Log(LogLevel.Information, message, exception);
 
-	public void InfoFormat(string format, params object[] args) => Log(LogLevel.Information, format, args);
+	public void InfoFormat(string format, params object[] args)
+		=> Log(LogLevel.Information, format, args);
 
-	public void Warn(object message) => Log(LogLevel.Warning, message);
+	public void Warn(object message)
+		=> Log(LogLevel.Warning, message);
 
-	public void Warn(object message, Exception exception) => Log(LogLevel.Warning, message, exception);
+	public void Warn(object message, Exception exception)
+		=> Log(LogLevel.Warning, message, exception);
 
-	public void WarnFormat(string format, params object[] args) => Log(LogLevel.Warning, format, args);
+	public void WarnFormat(string format, params object[] args)
+		=> Log(LogLevel.Warning, format, args);
 
 	private void Log(LogLevel level, object message, Exception? ex = null)
 	{
@@ -54,16 +70,14 @@ internal class LogServiceDatabaseLog : ILog
 		{
 			LogService?.Log(level, x => x
 				.WriteProperty("loggerType", _type)
-				.WriteProperty("message", message.ToString())
-			);
+				.WriteProperty("message", message.ToString()));
 		}
 		else
 		{
 			LogService?.Log(level, x => x
 				.WriteProperty("loggerType", _type)
 				.WriteProperty("message", message.ToString())
-				.WriteException(ex)
-			);
+				.WriteException(ex));
 		}
 	}
 
@@ -79,7 +93,6 @@ internal class LogServiceDatabaseLog : ILog
 				{
 					y.WriteValue(arg.ToString());
 				}
-			})
-		);
+			}));
 	}
 }

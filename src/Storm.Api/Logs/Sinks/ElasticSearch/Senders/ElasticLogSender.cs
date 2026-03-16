@@ -8,6 +8,7 @@ namespace Storm.Api.Logs.Sinks.ElasticSearch.Senders;
 public interface IElasticSender
 {
 	Task<bool> Send(string entry);
+
 	Task<bool> Send(IReadOnlyList<string> entries);
 }
 
@@ -58,7 +59,7 @@ internal class ElasticLogSender : IElasticSender
 
 		foreach (string entry in entries)
 		{
-			content.Append($"{{\"index\":{{}}");
+			content.Append("{\"index\":{}");
 			content.Append("\n");
 			content.Append(entry);
 			content.Append("\n");

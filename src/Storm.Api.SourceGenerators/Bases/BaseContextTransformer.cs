@@ -46,7 +46,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 
 		return new()
 		{
-			Items = Diagnostics.ToImmutableList()
+			Items = Diagnostics.ToImmutableList(),
 		};
 	}
 
@@ -64,27 +64,53 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		});
 	}
 
-	protected void Error(string title, string message, string id = "SG0001") => Log(DiagnosticSeverity.Error, title, message, id);
-	protected void Warning(string title, string message, string id = "SG0001") => Log(DiagnosticSeverity.Warning, title, message, id);
-	protected void Info(string title, string message, string id = "SG0001") => Log(DiagnosticSeverity.Info, title, message, id);
-	protected void Debug(string title, string message, string id = "SG0001") => Log(DiagnosticSeverity.Hidden, title, message, id);
+	protected void Error(string title, string message, string id = "SG0001")
+		=> Log(DiagnosticSeverity.Error, title, message, id);
+
+	protected void Warning(string title, string message, string id = "SG0001")
+		=> Log(DiagnosticSeverity.Warning, title, message, id);
+
+	protected void Info(string title, string message, string id = "SG0001")
+		=> Log(DiagnosticSeverity.Info, title, message, id);
+
+	protected void Debug(string title, string message, string id = "SG0001")
+		=> Log(DiagnosticSeverity.Hidden, title, message, id);
 
 	protected INamedTypeSymbol GetRequiredTypeByMetadataName(string fullyQualifiedTypeName)
 	{
 		return Context.SemanticModel.Compilation.GetTypeByMetadataName(fullyQualifiedTypeName)
-		       ?? throw new Exception($"Type {fullyQualifiedTypeName} not found");
+			?? throw new($"Type {fullyQualifiedTypeName} not found");
 	}
 
-	protected INamedTypeSymbol GetInterfaceIAction() => GetRequiredTypeByMetadataName("Storm.Api.CQRS.IAction`2");
-	protected INamedTypeSymbol GetTypeTask() => GetRequiredTypeByMetadataName("System.Threading.Tasks.Task");
-	protected INamedTypeSymbol GetTypeTaskT() => GetRequiredTypeByMetadataName("System.Threading.Tasks.Task`1");
-	protected INamedTypeSymbol GetTypeUnit() => GetRequiredTypeByMetadataName("Storm.Api.Unit");
-	protected INamedTypeSymbol GetTypeResponse() => GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response");
-	protected INamedTypeSymbol GetTypeResponseT() => GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response`1");
-	protected INamedTypeSymbol GetTypeApiFileResult() => GetRequiredTypeByMetadataName("Storm.Api.CQRS.Domains.Results.ApiFileResult");
-	protected INamedTypeSymbol GetAspNetTypeFileResult() => GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.FileResult");
-	protected INamedTypeSymbol GetAspNetInterfaceIActionResult() => GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
-	protected INamedTypeSymbol GetAspNetTypeActionResultT() => GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ActionResult`1");
+	protected INamedTypeSymbol GetInterfaceIAction()
+		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.IAction`2");
+
+	protected INamedTypeSymbol GetTypeTask()
+		=> GetRequiredTypeByMetadataName("System.Threading.Tasks.Task");
+
+	protected INamedTypeSymbol GetTypeTaskT()
+		=> GetRequiredTypeByMetadataName("System.Threading.Tasks.Task`1");
+
+	protected INamedTypeSymbol GetTypeUnit()
+		=> GetRequiredTypeByMetadataName("Storm.Api.Unit");
+
+	protected INamedTypeSymbol GetTypeResponse()
+		=> GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response");
+
+	protected INamedTypeSymbol GetTypeResponseT()
+		=> GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response`1");
+
+	protected INamedTypeSymbol GetTypeApiFileResult()
+		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.Domains.Results.ApiFileResult");
+
+	protected INamedTypeSymbol GetAspNetTypeFileResult()
+		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.FileResult");
+
+	protected INamedTypeSymbol GetAspNetInterfaceIActionResult()
+		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
+
+	protected INamedTypeSymbol GetAspNetTypeActionResultT()
+		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ActionResult`1");
 
 	protected bool TryGetAttribute(ISymbol symbol, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? attributeData)
 	{
@@ -114,7 +140,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 			}
 		}
 
-		if (type.BaseType is {} baseType)
+		if (type.BaseType is { } baseType)
 		{
 			return TryGetGenericInterface(baseType, genericInterfaceType, out implementedInterfaceType);
 		}
@@ -130,7 +156,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 			return true;
 		}
 
-		if (type.BaseType is {} parentType)
+		if (type.BaseType is { } parentType)
 		{
 			return Inherits(parentType, baseType);
 		}

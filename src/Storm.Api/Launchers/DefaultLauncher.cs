@@ -9,8 +9,11 @@ namespace Storm.Api.Launchers;
 public static class DefaultLauncherOptions
 {
 	public static bool SetDatabaseDebug { get; set; }
+
 	public static bool UseVault { get; set; }
+
 	public static bool UseNewtonsoftJson { get; set; }
+
 	public static bool UseOldMigrations { get; set; }
 }
 
@@ -20,9 +23,8 @@ public static class DefaultLauncher<TStartup>
 	public static IHostBuilder WebHostBuilder(string[] args,
 		Action<IWebHostBuilder>? configureWebHost = null,
 		Action<WebHostBuilderContext, IConfigurationBuilder>? configureConfiguration = null,
-		Action<KestrelServerOptions>? configureKestrel = null
-	) =>
-		Host.CreateDefaultBuilder(args)
+		Action<KestrelServerOptions>? configureKestrel = null)
+		=> Host.CreateDefaultBuilder(args)
 			.ConfigureWebHostDefaults(webBuilder =>
 			{
 				webBuilder
@@ -40,7 +42,7 @@ public static class DefaultLauncher<TStartup>
 							configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>
 							{
 								["Database:debugLogging"] = "true",
-								["Database:useLogService"] = "false"
+								["Database:useLogService"] = "false",
 							});
 						}
 
@@ -61,12 +63,12 @@ public static class DefaultLauncher<TStartup>
 	public static IHost BuildWebHost(string[] args,
 		Action<IWebHostBuilder>? configureWebHost = null,
 		Action<WebHostBuilderContext, IConfigurationBuilder>? configureConfiguration = null,
-		Action<KestrelServerOptions>? configureKestrel = null
-	) => WebHostBuilder(args, configureWebHost, configureConfiguration, configureKestrel).Build();
+		Action<KestrelServerOptions>? configureKestrel = null)
+		=> WebHostBuilder(args, configureWebHost, configureConfiguration, configureKestrel).Build();
 
 	public static void RunWebHost(string[] args,
 		Action<IWebHostBuilder>? configureWebHost = null,
 		Action<WebHostBuilderContext, IConfigurationBuilder>? configureConfiguration = null,
-		Action<KestrelServerOptions>? configureKestrel = null
-	) => BuildWebHost(args, configureWebHost, configureConfiguration, configureKestrel).Run();
+		Action<KestrelServerOptions>? configureKestrel = null)
+		=> BuildWebHost(args, configureWebHost, configureConfiguration, configureKestrel).Run();
 }

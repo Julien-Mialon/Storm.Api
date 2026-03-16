@@ -6,7 +6,7 @@ namespace Storm.Api.Sample.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-	private static readonly string[] SUMMARIES = new[] {"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"};
+	private static readonly string[] SUMMARIES = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
 
 	private readonly ILogger<WeatherForecastController> _logger;
 
@@ -20,7 +20,13 @@ public class WeatherForecastController : ControllerBase
 	public IEnumerable<WeatherForecast> Get()
 	{
 		Random? rng = new();
-		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = SUMMARIES[rng.Next(SUMMARIES.Length)]})
+		return Enumerable.Range(1, 5)
+			.Select(index => new WeatherForecast
+			{
+				Date = DateTime.Now.AddDays(index),
+				TemperatureC = rng.Next(-20, 55),
+				Summary = SUMMARIES[rng.Next(SUMMARIES.Length)],
+			})
 			.ToArray();
 	}
 
@@ -28,7 +34,13 @@ public class WeatherForecastController : ControllerBase
 	public IEnumerable<WeatherForecast> GetAll()
 	{
 		Random? rng = new();
-		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = SUMMARIES[rng.Next(SUMMARIES.Length)]})
+		return Enumerable.Range(1, 5)
+			.Select(index => new WeatherForecast
+			{
+				Date = DateTime.Now.AddDays(index),
+				TemperatureC = rng.Next(-20, 55),
+				Summary = SUMMARIES[rng.Next(SUMMARIES.Length)],
+			})
 			.ToArray();
 	}
 
@@ -37,7 +49,13 @@ public class WeatherForecastController : ControllerBase
 	public IEnumerable<WeatherForecast> UploadFile(IFormFile file)
 	{
 		Random? rng = new();
-		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = SUMMARIES[rng.Next(SUMMARIES.Length)]})
+		return Enumerable.Range(1, 5)
+			.Select(index => new WeatherForecast
+			{
+				Date = DateTime.Now.AddDays(index),
+				TemperatureC = rng.Next(-20, 55),
+				Summary = SUMMARIES[rng.Next(SUMMARIES.Length)],
+			})
 			.ToArray();
 	}
 
@@ -46,7 +64,13 @@ public class WeatherForecastController : ControllerBase
 	public IEnumerable<WeatherForecast> GetFile()
 	{
 		Random? rng = new();
-		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = SUMMARIES[rng.Next(SUMMARIES.Length)]})
+		return Enumerable.Range(1, 5)
+			.Select(index => new WeatherForecast
+			{
+				Date = DateTime.Now.AddDays(index),
+				TemperatureC = rng.Next(-20, 55),
+				Summary = SUMMARIES[rng.Next(SUMMARIES.Length)],
+			})
 			.ToArray();
 	}
 
@@ -55,7 +79,13 @@ public class WeatherForecastController : ControllerBase
 	public IEnumerable<WeatherForecast> GetFile2()
 	{
 		Random? rng = new();
-		return Enumerable.Range(1, 5).Select(index => new WeatherForecast {Date = DateTime.Now.AddDays(index), TemperatureC = rng.Next(-20, 55), Summary = SUMMARIES[rng.Next(SUMMARIES.Length)]})
+		return Enumerable.Range(1, 5)
+			.Select(index => new WeatherForecast
+			{
+				Date = DateTime.Now.AddDays(index),
+				TemperatureC = rng.Next(-20, 55),
+				Summary = SUMMARIES[rng.Next(SUMMARIES.Length)],
+			})
 			.ToArray();
 	}
 }

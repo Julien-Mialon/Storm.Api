@@ -9,6 +9,6 @@ public class ConstantApiKeyAuthenticator<TAccount> : BaseConstantApiKeyAuthentic
 
 	protected override TAccount? CreateAccount()
 	{
-		return new TAccount();
+		return new();
 	}
 }

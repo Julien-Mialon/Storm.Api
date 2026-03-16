@@ -24,11 +24,11 @@ public static class Pbkdf2Passwords
 			return false; // Invalid format
 		}
 
-		if (int.TryParse(passwordParts[0], out int iterations) is false ||
-		    int.TryParse(passwordParts[1], out int keySize) is false ||
-		    passwordParts[2] is not "SHA256" and not "SHA512" ||
-		    TryConvertFromBase64(passwordParts[3], out byte[] salt) is false ||
-		    TryConvertFromBase64(passwordParts[4], out byte[] hash) is false)
+		if (int.TryParse(passwordParts[0], out int iterations) is false
+			|| int.TryParse(passwordParts[1], out int keySize) is false
+			|| passwordParts[2] is not "SHA256" and not "SHA512"
+			|| TryConvertFromBase64(passwordParts[3], out byte[] salt) is false
+			|| TryConvertFromBase64(passwordParts[4], out byte[] hash) is false)
 		{
 			return false; // Invalid format
 		}
@@ -37,7 +37,7 @@ public static class Pbkdf2Passwords
 		{
 			"SHA256" => HashAlgorithmName.SHA256,
 			"SHA512" => HashAlgorithmName.SHA512,
-			_ => throw new InvalidOperationException($"Unsupported hash algorithm {passwordParts[2]}")
+			_ => throw new InvalidOperationException($"Unsupported hash algorithm {passwordParts[2]}"),
 		};
 
 		byte[] inputHash = Hash(inputPassword, salt, iterations, keySize, hashAlgorithm);

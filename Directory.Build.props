@@ -58,7 +58,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(IsSample) == false">
-		<None Include="$(MSBuildThisFileDirectory)/README.md" Pack="true" PackagePath="/" Link="docs/README.md"/>
+		<None Include="$(MSBuildThisFileDirectory)/README.md" Pack="true" PackagePath="/" Link="docs/README.md" />
 		<None Include="$(MSBuildThisFileDirectory)/logo.png" Pack="true" PackagePath="/" Link="docs/logo.png" />
 	</ItemGroup>
 </Project>

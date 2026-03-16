@@ -4,16 +4,6 @@ namespace Storm.Api.Databases.Configurations;
 
 public static class DatabaseConfigurationLoader
 {
-	private enum DatabaseType
-	{
-		AzureSqlServer,
-		SqlServer,
-		MySql,
-		SQLite,
-		SQLiteMemory,
-		Postgres
-	}
-
 	public static DatabaseConfigurationBuilder LoadDatabaseConfiguration(this IConfiguration configuration)
 	{
 		/* configuration keys :
@@ -47,41 +37,33 @@ public static class DatabaseConfigurationLoader
 			{
 				case DatabaseType.AzureSqlServer:
 					return configurationBuilder
-						.UseAzureSqlServer(
-							configuration["host"]!,
+						.UseAzureSqlServer(configuration["host"]!,
 							configuration["database"]!,
 							configuration["user"]!,
 							configuration["password"]!,
 							configuration.GetValue("encrypt", false),
-							configuration.GetValue("timeout", 30)
-						);
+							configuration.GetValue("timeout", 30));
 				case DatabaseType.SqlServer:
 					return configurationBuilder
-						.UseSqlServer(
-							configuration["host"]!,
+						.UseSqlServer(configuration["host"]!,
 							configuration["database"]!,
 							configuration["user"]!,
 							configuration["password"]!,
 							configuration.GetValue("encrypt", false),
 							configuration.GetValue("integratedSecurity", false),
-							configuration.GetValue("timeout", 30)
-						);
+							configuration.GetValue("timeout", 30));
 				case DatabaseType.MySql:
 					return configurationBuilder
-						.UseMySQL(
-							configuration["host"]!,
+						.UseMySQL(configuration["host"]!,
 							configuration["database"]!,
 							configuration["user"]!,
-							configuration["password"]!
-						);
+							configuration["password"]!);
 				case DatabaseType.Postgres:
 					return configurationBuilder
-						.UsePostgres(
-							configuration["host"]!,
+						.UsePostgres(configuration["host"]!,
 							configuration["database"]!,
 							configuration["user"]!,
-							configuration["password"]!
-						);
+							configuration["password"]!);
 				case DatabaseType.SQLite:
 					return configurationBuilder
 						.UseSQLite(configuration["file"]!);
@@ -108,5 +90,15 @@ public static class DatabaseConfigurationLoader
 			default:
 				throw new ArgumentOutOfRangeException();
 		}
+	}
+
+	private enum DatabaseType
+	{
+		AzureSqlServer,
+		SqlServer,
+		MySql,
+		SQLite,
+		SQLiteMemory,
+		Postgres,
 	}
 }

@@ -60,25 +60,19 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 			else if (Inherits(actionReturnType, types.Unit))
 			{
 				// Task<ActionResult<Response>>
-				methodReturnType = types.TaskT.Construct(
-					types.AspNetActionResultT.Construct(
-						types.Response));
+				methodReturnType = types.TaskT.Construct(types.AspNetActionResultT.Construct(types.Response));
 				type = ActionType.Unit;
 			}
 			else if (Inherits(actionReturnType, types.Response))
 			{
 				// Task<ActionResult<TResponse>>
-				methodReturnType = types.TaskT.Construct(
-					types.AspNetActionResultT.Construct(
-						actionReturnType));
+				methodReturnType = types.TaskT.Construct(types.AspNetActionResultT.Construct(actionReturnType));
 				type = ActionType.Response;
 			}
 			else
 			{
 				// Task<ActionResult<Response<TReturnType>>>
-				methodReturnType = types.TaskT.Construct(
-					types.AspNetActionResultT.Construct(
-						types.ResponseT.Construct(actionReturnType)));
+				methodReturnType = types.TaskT.Construct(types.AspNetActionResultT.Construct(types.ResponseT.Construct(actionReturnType)));
 				type = ActionType.Regular;
 			}
 
@@ -130,7 +124,10 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 						continue;
 					}
 
-					arguments[index] = argument with { MapTo = pickedProperty.Name };
+					arguments[index] = argument with
+					{
+						MapTo = pickedProperty.Name,
+					};
 				}
 			}
 

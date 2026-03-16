@@ -17,7 +17,7 @@ public static class DatabaseConverters
 
 		_isInitialized = true;
 		IOrmLiteDialectProvider[] sqlServerProviders =
-		{
+		[
 			SqlServerDialect.Provider,
 			SqlServer2008Dialect.Provider,
 			SqlServer2012Dialect.Provider,
@@ -26,7 +26,7 @@ public static class DatabaseConverters
 			SqlServer2017Dialect.Provider,
 			SqlServer2019Dialect.Provider,
 			SqlServer2022Dialect.Provider,
-		};
+		];
 
 		foreach (IOrmLiteDialectProvider sqlServerProvider in sqlServerProviders)
 		{

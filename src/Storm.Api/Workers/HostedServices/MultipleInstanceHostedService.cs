@@ -10,7 +10,7 @@ public class MultipleInstanceHostedService<THostedService> : IHostedService, IDi
 
 	public MultipleInstanceHostedService(IServiceProvider services, int count)
 	{
-		for (int i = 0; i < count; i++)
+		for (int i = 0 ; i < count ; i++)
 		{
 			_services.Add(services.Create<THostedService>());
 		}
@@ -18,7 +18,7 @@ public class MultipleInstanceHostedService<THostedService> : IHostedService, IDi
 
 	public MultipleInstanceHostedService(IServiceProvider services, int count, Func<IServiceProvider, THostedService> factory)
 	{
-		for (int i = 0; i < count; i++)
+		for (int i = 0 ; i < count ; i++)
 		{
 			_services.Add(factory(services));
 		}

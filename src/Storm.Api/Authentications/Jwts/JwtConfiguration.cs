@@ -5,8 +5,11 @@ namespace Storm.Api.Authentications.Jwts;
 public class JwtConfiguration<TAccount>
 {
 	public required byte[] Key { get; init; }
+
 	public required string Issuer { get; init; }
+
 	public required string Audience { get; init; }
+
 	public required TimeSpan Duration { get; init; }
 }
 

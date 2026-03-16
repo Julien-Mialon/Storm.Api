@@ -7,7 +7,9 @@ public class SqlServerDateOnlyConverter : DateOnlyConverter
 {
 	private const string STRING_INPUT_FORMAT = "yyyy-MM-dd";
 	private const string DB_FORMAT = "yyyy-MM-dd";
+
 	public override DbType DbType => DbType.Date;
+
 	public override string ColumnDefinition => "DATE";
 
 	public override object ToDbValue(Type fieldType, object value)

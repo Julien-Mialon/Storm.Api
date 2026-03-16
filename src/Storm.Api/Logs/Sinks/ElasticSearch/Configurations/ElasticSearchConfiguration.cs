@@ -8,7 +8,7 @@ namespace Storm.Api.Logs.Sinks.ElasticSearch.Configurations;
 
 public class ElasticSearchConfiguration
 {
-	private readonly List<string> _nodes = new();
+	private readonly List<string> _nodes = [];
 	private string? _username;
 	private string? _password;
 	private Func<IElasticSender, ILogService, ILogSink>? _sinkFactory;
@@ -16,9 +16,11 @@ public class ElasticSearchConfiguration
 
 	internal LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
 
-	internal void AddNode(string node) => _nodes.Add(node);
+	internal void AddNode(string node)
+		=> _nodes.Add(node);
 
-	internal void AddNodes(IEnumerable<string> nodes) => _nodes.AddRange(nodes);
+	internal void AddNodes(IEnumerable<string> nodes)
+		=> _nodes.AddRange(nodes);
 
 	internal void UseBasicAuthentication(string username, string password)
 	{
@@ -70,5 +72,6 @@ public class ElasticSearchConfiguration
 		return logSender;
 	}
 
-	public static IElasticSearchConfigurationBuilder CreateBuilder() => new ElasticSearchConfigurationBuilder();
+	public static IElasticSearchConfigurationBuilder CreateBuilder()
+		=> new ElasticSearchConfigurationBuilder();
 }
