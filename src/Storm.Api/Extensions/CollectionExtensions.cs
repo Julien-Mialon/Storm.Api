@@ -9,7 +9,7 @@ public static class CollectionExtensions
 		ArgumentNullException.ThrowIfNull(source);
 		ArgumentNullException.ThrowIfNull(mapper);
 
-		return new(source.Select(mapper));
+		return source.Select(mapper).ToList();
 	}
 
 	public static List<TOutput> ConvertAll<TInput, TOutput>(this ICollection<TInput> source, Func<TInput, TOutput> mapper)
