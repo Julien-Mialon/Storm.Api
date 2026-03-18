@@ -13,6 +13,7 @@ public class ElasticSearchConfiguration
 	private string? _password;
 	private Func<IElasticSender, ILogService, ILogSink>? _sinkFactory;
 	private string? _index;
+	private TimeProvider _timeProvider = TimeProvider.System;
 
 	internal LogLevel MinimumLogLevel { get; set; } = LogLevel.Information;
 
@@ -36,6 +37,11 @@ public class ElasticSearchConfiguration
 	internal void UseIndex(string index)
 	{
 		_index = index;
+	}
+
+	internal void UseTimeProvider(TimeProvider timeProvider)
+	{
+		_timeProvider = timeProvider;
 	}
 
 	public ILogService CreateService()
@@ -67,7 +73,7 @@ public class ElasticSearchConfiguration
 
 		configuration.ConnectionLimit(-1);
 		ElasticsearchClient client = new(configuration);
-		ElasticLogSender logSender = new(client, _index!);
+		ElasticLogSender logSender = new(client, _index!, _timeProvider);
 
 		return logSender;
 	}

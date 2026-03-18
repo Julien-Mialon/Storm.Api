@@ -34,7 +34,7 @@ public abstract class BaseLoginAction<TParameter, TAccount>(IServiceProvider ser
 		LoginResponse response = new()
 		{
 			AccessToken = accessToken,
-			ExpiresAt = DateTime.UtcNow.Add(accessDuration),
+			ExpiresAt = Resolve<TimeProvider>().GetUtcNow().UtcDateTime.Add(accessDuration),
 		};
 
 		await handler.StoreAndEmitAsync(account.Id, refreshToken, jti, refreshDuration, response);

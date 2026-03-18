@@ -25,6 +25,7 @@ public class DatabaseConfigurationBuilder
 
 	private DatabaseInterceptorDelegate? _onInsert;
 	private DatabaseInterceptorDelegate? _onUpdate;
+	private TimeProvider _timeProvider = TimeProvider.System;
 
 	/// <summary>
 	/// Create database factory from configuration
@@ -54,7 +55,7 @@ public class DatabaseConfigurationBuilder
 		OrmLiteConfig.DialectProvider.GetStringConverter().UseUnicode = true;
 
 		DatabaseConverters.Initialize();
-		OrmLiteInterceptors.Initialize(_onInsert, _onUpdate);
+		OrmLiteInterceptors.Initialize(_onInsert, _onUpdate, _timeProvider);
 		SqlFieldsOrdering.Enable();
 		return factory;
 	}
@@ -192,6 +193,12 @@ public class DatabaseConfigurationBuilder
 	public DatabaseConfigurationBuilder UseInterceptorOnUpdate(DatabaseInterceptorDelegate onUpdate)
 	{
 		_onUpdate = onUpdate;
+		return this;
+	}
+
+	public DatabaseConfigurationBuilder UseTimeProvider(TimeProvider timeProvider)
+	{
+		_timeProvider = timeProvider;
 		return this;
 	}
 }

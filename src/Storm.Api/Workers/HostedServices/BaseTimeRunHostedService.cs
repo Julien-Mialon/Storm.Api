@@ -49,7 +49,7 @@ public abstract class BaseTimeRunHostedService : BaseHostedService
 
 	private async Task AwaitNextRun(CancellationToken token)
 	{
-		DateTime now = DateTime.UtcNow;
+		DateTime now = Resolve<TimeProvider>().GetUtcNow().UtcDateTime;
 		DateTime waitDate = _runTimes.Select(x =>
 		{
 			DateTime r = new(now.Year, now.Month, now.Day, x.Hour, x.Minute, x.Second);

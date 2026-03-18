@@ -23,11 +23,13 @@ public class JwtRefreshCookieService : IJwtRefreshCookieService
 {
 	private readonly IHttpContextAccessor _contextAccessor;
 	private readonly JwtRefreshCookieConfiguration _cookieConfig;
+	private readonly TimeProvider _timeProvider;
 
-	public JwtRefreshCookieService(IHttpContextAccessor contextAccessor, JwtRefreshCookieConfiguration cookieConfig)
+	public JwtRefreshCookieService(IHttpContextAccessor contextAccessor, JwtRefreshCookieConfiguration cookieConfig, TimeProvider timeProvider)
 	{
 		_contextAccessor = contextAccessor;
 		_cookieConfig = cookieConfig;
+		_timeProvider = timeProvider;
 	}
 
 	public bool TryReadRefreshToken([NotNullWhen(true)] out string? token)
@@ -54,7 +56,7 @@ public class JwtRefreshCookieService : IJwtRefreshCookieService
 			Secure = _cookieConfig.Secure,
 			SameSite = _cookieConfig.SameSite,
 			Path = _cookieConfig.CookiePath,
-			Expires = DateTimeOffset.UtcNow.Add(duration),
+			Expires = _timeProvider.GetUtcNow().Add(duration),
 			IsEssential = true,
 		});
 	}

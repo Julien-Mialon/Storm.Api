@@ -1,6 +1,7 @@
 namespace Storm.Api.Services;
 
-public class DateService : IDateService
+[Obsolete("This service is deprecated. Please use TimeProvider instead.")]
+public class DateService(TimeProvider timeProvider) : IDateService
 {
-	public DateTime Now => DateTime.UtcNow;
+	public DateTime Now => timeProvider.GetUtcNow().UtcDateTime;
 }

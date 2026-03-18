@@ -16,14 +16,16 @@ internal class ElasticLogSender : IElasticSender
 {
 	private readonly ElasticsearchClient _client;
 	private readonly string _index;
+	private readonly TimeProvider _timeProvider;
 
 	private string _currentIndex;
 	private DateTime _indexExpirationDate;
 
-	public ElasticLogSender(ElasticsearchClient client, string index)
+	public ElasticLogSender(ElasticsearchClient client, string index, TimeProvider timeProvider)
 	{
 		_client = client;
 		_index = index;
+		_timeProvider = timeProvider;
 
 		if (_index.Contains("{year}") || _index.Contains("{month}") || _index.Contains("{day}"))
 		{
@@ -33,7 +35,7 @@ internal class ElasticLogSender : IElasticSender
 		else
 		{
 			_currentIndex = _index;
-			_indexExpirationDate = DateTime.UtcNow.AddYears(100);
+			_indexExpirationDate = _timeProvider.GetUtcNow().UtcDateTime.AddYears(100);
 		}
 	}
 
@@ -82,7 +84,7 @@ internal class ElasticLogSender : IElasticSender
 
 	private void UpdateCurrentIndex()
 	{
-		DateTime date = DateTime.UtcNow;
+		DateTime date = _timeProvider.GetUtcNow().UtcDateTime;
 		if (date < _indexExpirationDate)
 		{
 			return;
@@ -91,6 +93,6 @@ internal class ElasticLogSender : IElasticSender
 		_currentIndex = _index.Replace("{year}", date.ToString("yyyy"))
 			.Replace("{month}", date.ToString("MM"))
 			.Replace("{day}", date.ToString("dd"));
-		_indexExpirationDate = date.AddMinutes(5);
+		_indexExpirationDate = date.Date.AddDays(1);
 	}
 }

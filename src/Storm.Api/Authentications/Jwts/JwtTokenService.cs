@@ -26,7 +26,7 @@ public interface IJwtTokenService
 	bool IsValid(string token, string audience, string issuer, byte[] signatureKey);
 }
 
-internal class JwtTokenService : IJwtTokenService
+internal class JwtTokenService(TimeProvider timeProvider) : IJwtTokenService
 {
 	public string GenerateToken(Guid idClaim, string audience, string issuer, TimeSpan duration, byte[] signatureKey)
 	{
@@ -61,7 +61,7 @@ internal class JwtTokenService : IJwtTokenService
 			Subject = new ClaimsIdentity(claims),
 			Audience = audience,
 			Issuer = issuer,
-			Expires = DateTime.UtcNow.Add(duration),
+			Expires = timeProvider.GetUtcNow().UtcDateTime.Add(duration),
 			SigningCredentials = new(new SymmetricSecurityKey(signatureKey), SecurityAlgorithms.HmacSha256),
 		};
 

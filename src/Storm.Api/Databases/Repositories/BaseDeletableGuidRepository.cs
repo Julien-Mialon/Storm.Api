@@ -77,10 +77,11 @@ internal class BaseDeletableGuidRepository<TEntity> : BaseDatabaseService, IGuid
 	{
 		return await UseWriteConnection(async connection =>
 		{
+			DateTime now = Resolve<TimeProvider>().GetUtcNow().UtcDateTime;
 			int lines = await connection.UpdateAsync<TEntity>(new
 			{
 				IsDeleted = true,
-				EntityDeletedDate = DateTime.UtcNow,
+				EntityDeletedDate = now,
 			}, x => x.Id == id);
 
 			return lines > 0;

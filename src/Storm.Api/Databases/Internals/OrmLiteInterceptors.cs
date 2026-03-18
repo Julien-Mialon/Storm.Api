@@ -10,11 +10,13 @@ internal static class OrmLiteInterceptors
 {
 	private static DatabaseInterceptorDelegate? _onInsert;
 	private static DatabaseInterceptorDelegate? _onUpdate;
+	private static TimeProvider _timeProvider = TimeProvider.System;
 
-	public static void Initialize(DatabaseInterceptorDelegate? onInsert, DatabaseInterceptorDelegate? onUpdate)
+	public static void Initialize(DatabaseInterceptorDelegate? onInsert, DatabaseInterceptorDelegate? onUpdate, TimeProvider? timeProvider = null)
 	{
 		_onInsert = onInsert;
 		_onUpdate = onUpdate;
+		_timeProvider = timeProvider ?? TimeProvider.System;
 
 		OrmLiteConfig.InsertFilter = OnInsert;
 		OrmLiteConfig.UpdateFilter = OnUpdate;
@@ -32,7 +34,7 @@ internal static class OrmLiteInterceptors
 		}
 		if (item is IDateTrackingEntity dateTrackingEntity)
 		{
-			dateTrackingEntity.MarkAsCreated();
+			dateTrackingEntity.MarkAsCreated(_timeProvider);
 		}
 
 		_onInsert?.Invoke(command, item);
@@ -44,16 +46,16 @@ internal static class OrmLiteInterceptors
 		{
 			if (deletableEntity.IsDeleted)
 			{
-				deletableEntity.MarkAsDeleted();
+				deletableEntity.MarkAsDeleted(_timeProvider);
 			}
 			else if (item is IDateTrackingEntity dateTrackingEntity)
 			{
-				dateTrackingEntity.MarkAsUpdated();
+				dateTrackingEntity.MarkAsUpdated(_timeProvider);
 			}
 		}
 		else if (item is IDateTrackingEntity dateTrackingEntity)
 		{
-			dateTrackingEntity.MarkAsUpdated();
+			dateTrackingEntity.MarkAsUpdated(_timeProvider);
 		}
 
 		_onUpdate?.Invoke(command, item);

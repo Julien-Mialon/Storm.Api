@@ -41,9 +41,9 @@ public static class BaseEntityExtensions
 		storage.Id = source.Id;
 	}
 
-	internal static void MarkAsCreated(this IDateTrackingEntity entity)
+	internal static void MarkAsCreated(this IDateTrackingEntity entity, TimeProvider timeProvider)
 	{
-		entity.EntityCreatedDate = DateTime.UtcNow;
+		entity.EntityCreatedDate = timeProvider.GetUtcNow().UtcDateTime;
 	}
 
 	internal static void MarkAsCreated(this ILongEntity entity)
@@ -62,15 +62,15 @@ public static class BaseEntityExtensions
 		}
 	}
 
-	internal static void MarkAsUpdated(this IDateTrackingEntity entity)
+	internal static void MarkAsUpdated(this IDateTrackingEntity entity, TimeProvider timeProvider)
 	{
-		entity.EntityUpdatedDate = DateTime.UtcNow;
+		entity.EntityUpdatedDate = timeProvider.GetUtcNow().UtcDateTime;
 	}
 
-	internal static void MarkAsDeleted(this ISoftDeleteEntity entity)
+	internal static void MarkAsDeleted(this ISoftDeleteEntity entity, TimeProvider timeProvider)
 	{
 		entity.IsDeleted = true;
-		entity.EntityDeletedDate = DateTime.UtcNow;
+		entity.EntityDeletedDate = timeProvider.GetUtcNow().UtcDateTime;
 	}
 
 	public static T? NullIfDeleted<T>(this T entity) where T : ISoftDeleteEntity

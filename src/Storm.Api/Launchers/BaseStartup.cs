@@ -64,7 +64,10 @@ public abstract class BaseStartup
 	{
 		Configuration.OnSection("Features", FeatureFlags.LoadFromConfiguration);
 
-		services.AddSingleton<IDateService, DateService>()
+		services.AddSingleton(TimeProvider.System)
+#pragma warning disable CS0618 // Type or member is obsolete
+			.AddSingleton<IDateService, DateService>()
+#pragma warning restore CS0618 // Type or member is obsolete
 			.AddSingleton<IScopedServiceAccessor, ScopedServiceAccessor>()
 			.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

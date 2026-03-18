@@ -7,10 +7,12 @@
       "Edit(**)",
       "Bash(grep *)",
       "Bash(ls *)",
-      "Bash(mkdir *)"
+      "Bash(mkdir *)",
+      "Bash(xargs grep *)"
     ],
     "deny": [
       "Bash(git push *)",
+      "Bash(git commit *)",
       "Edit(.git/**)",
       "Edit(.claude/settings.local.json)"
     ]

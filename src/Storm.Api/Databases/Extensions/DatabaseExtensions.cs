@@ -77,12 +77,13 @@ public static class DatabaseExtensions
 		return connection.GetDialectProvider().SqlLimit(offset, count);
 	}
 
-	public static async Task<int> SoftDeleteAsync<TEntity>(this IDbConnection connection, Expression<Func<TEntity, bool>> whereClause) where TEntity : IDateTrackingEntity
+	public static async Task<int> SoftDeleteAsync<TEntity>(this IDbConnection connection, Expression<Func<TEntity, bool>> whereClause, TimeProvider? timeProvider = null) where TEntity : ISoftDeleteEntity
 	{
+		DateTime now = (timeProvider ?? TimeProvider.System).GetUtcNow().UtcDateTime;
 		return await connection.UpdateAsync(new
 		{
 			IsDeleted = true,
-			EntityDeletedDate = DateTime.UtcNow,
+			EntityDeletedDate = now,
 		}, whereClause);
 	}
 }

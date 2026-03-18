@@ -12,10 +12,12 @@ namespace Storm.Api.Databases.Migrations;
 public class MigrationEngine
 {
 	private readonly IReadOnlyList<IMigrationModule> _modules;
+	private readonly TimeProvider _timeProvider;
 
-	public MigrationEngine(IReadOnlyList<IMigrationModule> modules)
+	public MigrationEngine(IReadOnlyList<IMigrationModule> modules, TimeProvider timeProvider)
 	{
 		_modules = modules;
+		_timeProvider = timeProvider;
 	}
 
 	public async Task<bool> Run(IDatabaseService databaseService)
@@ -36,7 +38,7 @@ public class MigrationEngine
 		{
 			foreach (IMigrationModule module in _modules)
 			{
-				if (!await MigrateModule(connection, module))
+				if (!await MigrateModule(connection, module, _timeProvider))
 				{
 					return false;
 				}
@@ -52,7 +54,7 @@ public class MigrationEngine
 		return true;
 	}
 
-	private static async Task<bool> MigrateModule(IDbConnection connection, IMigrationModule module)
+	private static async Task<bool> MigrateModule(IDbConnection connection, IMigrationModule module, TimeProvider timeProvider)
 	{
 		int lastAppliedMigration = await GetLastAppliedMigration(connection, module.Name) ?? -1;
 		List<IMigration> migrationsToApply = module.Operations.OrderBy(x => x.Number).SkipWhile(x => x.Number <= lastAppliedMigration).ToList();
@@ -75,7 +77,7 @@ public class MigrationEngine
 					{
 						Module = module.Name,
 						Number = operation.Number,
-						EntityCreatedDate = DateTime.UtcNow,
+						EntityCreatedDate = timeProvider.GetUtcNow().UtcDateTime,
 					});
 				}
 				else
@@ -85,7 +87,7 @@ public class MigrationEngine
 						Id = Guid.NewGuid(),
 						Module = module.Name,
 						Number = operation.Number,
-						MigrationDate = DateTime.UtcNow,
+						MigrationDate = timeProvider.GetUtcNow().UtcDateTime,
 					});
 				}
 			}

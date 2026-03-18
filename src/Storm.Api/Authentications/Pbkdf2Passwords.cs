@@ -11,14 +11,14 @@ public static class Pbkdf2Passwords
 	private static readonly HashAlgorithmName HASH_ALGORITHM = HashAlgorithmName.SHA512;
 
 
-	public static bool IsValid(string inputPassword, string password)
+	public static bool IsValid(string inputPassword, string hashedPassword)
 	{
-		if (password.IsNullOrEmpty())
+		if (hashedPassword.IsNullOrEmpty())
 		{
 			return false;
 		}
 
-		string[] passwordParts = password.Split('.');
+		string[] passwordParts = hashedPassword.Split('.');
 		if (passwordParts.Length != 5)
 		{
 			return false; // Invalid format

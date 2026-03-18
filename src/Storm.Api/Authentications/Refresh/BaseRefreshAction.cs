@@ -70,7 +70,7 @@ public abstract class BaseRefreshAction<TAccount>(IServiceProvider services)
 		LoginResponse response = new()
 		{
 			AccessToken = newAccessToken,
-			ExpiresAt = DateTime.UtcNow.Add(accessDuration),
+			ExpiresAt = Resolve<TimeProvider>().GetUtcNow().UtcDateTime.Add(accessDuration),
 		};
 
 		await handler.StoreAndEmitAsync(account.Id, newRefreshToken, newJti, refreshDuration, response);

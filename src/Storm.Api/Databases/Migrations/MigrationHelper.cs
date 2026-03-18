@@ -11,7 +11,8 @@ public static class MigrationHelper
 	{
 		return await services.ExecuteWithScope(async scopedServices =>
 		{
-			MigrationEngine migrations = new(modules);
+			TimeProvider timeProvider = scopedServices.GetRequiredService<TimeProvider>();
+			MigrationEngine migrations = new(modules, timeProvider);
 			using IDatabaseService databaseService = scopedServices.GetRequiredService<IDatabaseService>();
 			return await migrations.Run(databaseService);
 		});

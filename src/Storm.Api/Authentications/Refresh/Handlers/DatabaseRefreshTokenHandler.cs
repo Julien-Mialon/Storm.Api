@@ -6,10 +6,12 @@ namespace Storm.Api.Authentications.Refresh.Handlers;
 internal class DatabaseRefreshTokenHandler : IRefreshTokenHandler
 {
 	private readonly IRefreshTokenStore _store;
+	private readonly TimeProvider _timeProvider;
 
-	public DatabaseRefreshTokenHandler(IRefreshTokenStore store)
+	public DatabaseRefreshTokenHandler(IRefreshTokenStore store, TimeProvider timeProvider)
 	{
 		_store = store;
+		_timeProvider = timeProvider;
 	}
 
 	public string? ReadInboundToken(RefreshTokenParameter parameter)
@@ -27,10 +29,9 @@ internal class DatabaseRefreshTokenHandler : IRefreshTokenHandler
 		return _store.ExistsAsync(jti);
 	}
 
-	public async Task StoreAndEmitAsync(Guid accountId, string refreshToken, string jti,
-		TimeSpan duration, LoginResponse response)
+	public async Task StoreAndEmitAsync(Guid accountId, string refreshToken, string jti, TimeSpan duration, LoginResponse response)
 	{
-		await _store.StoreAsync(accountId, jti, DateTime.UtcNow.Add(duration));
+		await _store.StoreAsync(accountId, jti, _timeProvider.GetUtcNow().UtcDateTime.Add(duration));
 		response.RefreshToken = refreshToken;
 	}
 

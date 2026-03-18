@@ -14,13 +14,13 @@ internal class RefreshTokenStore : BaseDatabaseService, IRefreshTokenStore
 	{
 		await UseWriteConnection(async connection =>
 		{
+			DateTime now = Resolve<TimeProvider>().GetUtcNow().UtcDateTime;
 			await connection.InsertAsync(new RefreshTokenEntity
 			{
 				Id = Guid.NewGuid(),
 				AccountId = accountId,
 				Jti = jti,
 				ExpiresAt = expiresAt,
-				EntityCreatedDate = DateTime.UtcNow,
 			});
 		});
 	}
@@ -29,8 +29,9 @@ internal class RefreshTokenStore : BaseDatabaseService, IRefreshTokenStore
 	{
 		return await UseReadConnection(async connection =>
 		{
+			DateTime now = Resolve<TimeProvider>().GetUtcNow().UtcDateTime;
 			return await connection.From<RefreshTokenEntity>()
-				.Where(x => x.Jti == jti && x.ExpiresAt > DateTime.UtcNow)
+				.Where(x => x.Jti == jti && x.ExpiresAt > now)
 				.AsExistsAsync(connection);
 		});
 	}
@@ -55,7 +56,8 @@ internal class RefreshTokenStore : BaseDatabaseService, IRefreshTokenStore
 	{
 		await UseWriteConnection(async connection =>
 		{
-			await connection.DeleteAsync<RefreshTokenEntity>(x => x.ExpiresAt <= DateTime.UtcNow);
+			DateTime now = Resolve<TimeProvider>().GetUtcNow().UtcDateTime;
+			await connection.DeleteAsync<RefreshTokenEntity>(x => x.ExpiresAt <= now);
 		});
 	}
 }

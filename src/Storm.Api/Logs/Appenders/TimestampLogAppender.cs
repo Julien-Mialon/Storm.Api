@@ -9,8 +9,14 @@ public sealed class TimestampLogAppender : ILogAppender
 
 	public bool MultipleAllowed => false;
 
-	public TimestampLogAppender(string fieldName = "timestamp") : this(() => DateTime.UtcNow, fieldName)
+	public TimestampLogAppender(string fieldName = "timestamp") : this(TimeProvider.System, fieldName)
 	{
+	}
+
+	public TimestampLogAppender(TimeProvider timeProvider, string fieldName = "timestamp")
+	{
+		_timestamp = () => timeProvider.GetUtcNow().UtcDateTime;
+		_fieldName = fieldName;
 	}
 
 	public TimestampLogAppender(Func<DateTime> timestamp, string fieldName = "timestamp")
