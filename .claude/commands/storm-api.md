@@ -13,9 +13,10 @@ Storm.Api is an opinionated ASP.NET Core framework built on CQRS. Business logic
 For specific patterns, use the focused commands:
 - `/storm-api-init` — new project setup (NuGet packages, Program.cs, Startup.cs, code style)
 - `/storm-api-endpoint` — actions, controllers, exceptions, response DTOs
-- `/storm-api-auth` — IActionAuthenticator, JWT, API key, custom authenticators
+- `/storm-api-auth` — IActionAuthenticator, JWT, API key, custom authenticators, refresh tokens
 - `/storm-api-database` — entities, OrmLite queries, repositories
 - `/storm-api-database-migrations` — writing and registering migrations
+- `/storm-api-email` — email sending with Resend, temporary email detection
 
 ---
 
