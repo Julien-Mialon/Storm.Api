@@ -11,3 +11,4 @@ source="https://api.nuget.org/v3/index.json"
 nuget push artifacts/Storm.Api.$version.nupkg -Source $source -ApiKey $apiKey
 nuget push artifacts/Storm.Api.Dtos.$version.nupkg -Source $source -ApiKey $apiKey
 nuget push artifacts/Storm.Api.SourceGenerators.$version.nupkg -Source $source -ApiKey $apiKey
+nuget push artifacts/Storm.Api.Tools.$version.nupkg -Source $source -ApiKey $apiKey
