@@ -17,6 +17,9 @@ For specific patterns, use the focused commands:
 - `/storm-api-database` — entities, OrmLite queries, repositories
 - `/storm-api-database-migrations` — writing and registering migrations
 - `/storm-api-email` — email sending with Resend, temporary email detection
+- `/storm-api-workers` — background tasks, periodic/scheduled hosted services, retry strategies
+- `/storm-api-redis` — Redis caching, key-value storage, pub/sub messaging
+- `/storm-api-queues` — in-memory queues, buffered/throttled batching, queue workers
 
 ---
 

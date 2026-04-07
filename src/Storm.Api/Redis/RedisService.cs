@@ -84,14 +84,14 @@ public class RedisService : IRedisService, IAsyncDisposable
 	{
 		IConnectionMultiplexer connection = await GetConnectionAsync();
 		IDatabase database = connection.GetDatabase();
-		return await database.StringSetAsync(key, value, expiry);
+		return await database.StringSetAsync(key, value, expiry, When.Always);
 	}
 
 	public async Task<bool> SetAsync(string key, byte[] value, TimeSpan? expiry = null)
 	{
 		IConnectionMultiplexer connection = await GetConnectionAsync();
 		IDatabase database = connection.GetDatabase();
-		return await database.StringSetAsync(key, value, expiry);
+		return await database.StringSetAsync(key, value, expiry, When.Always);
 	}
 
 	public async Task<string?> GetStringAsync(string key)
