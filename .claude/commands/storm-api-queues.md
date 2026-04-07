@@ -1,4 +1,6 @@
-You are helping implement in-memory queues using the **Storm.Api** framework. Follow all patterns below exactly.
+You are helping implement in-memory queues using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
+
+The user's request: $ARGUMENTS
 
 ---
 
@@ -181,6 +183,13 @@ public class LogWorker(IServiceProvider services)
 | Batch items but don't wait forever for a full batch | `ThrottledBufferedItemQueue<T>` | `BackgroundThrottledBufferedQueueWorker<T>` or hosted worker |
 | Long-running worker managed by ASP.NET host | Any queue subclass | `AbstractHostedServiceQueueWorker` |
 | Short-lived fire-and-forget within a service | `ItemQueue<T>` (internal) | `BackgroundQueueWorker<T>` (creates its own queue) |
+
+---
+
+## When NOT to Use In-Memory Queues
+
+- If queued items must survive app restarts or crashes, use Redis pub/sub (`/storm-api-redis`) or an external message broker instead — in-memory queues are lost on shutdown.
+- If multiple app instances need to share a queue, use Redis or an external broker — in-memory queues are per-process.
 
 ---
 

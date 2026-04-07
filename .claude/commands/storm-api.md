@@ -1,5 +1,7 @@
 You are helping implement a C# backend using the **Storm.Api** framework. Follow all patterns and constraints below exactly — they are non-negotiable.
 
+The user's request: $ARGUMENTS
+
 ---
 
 ## Framework Overview
@@ -10,7 +12,7 @@ Storm.Api is an opinionated ASP.NET Core framework built on CQRS. Business logic
 - `Storm.Api.Dtos` — response types, shared with clients (netstandard2.0)
 - `Storm.Api.SourceGenerators` — Roslyn generator for `[WithAction<T>]` (netstandard2.0)
 
-For specific patterns, use the focused commands:
+For specific patterns, use the focused skills:
 - `/storm-api-init` — new project setup (NuGet packages, Program.cs, Startup.cs, code style)
 - `/storm-api-endpoint` — actions, controllers, exceptions, response DTOs
 - `/storm-api-auth` — IActionAuthenticator, JWT, API key, custom authenticators, refresh tokens

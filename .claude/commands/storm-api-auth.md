@@ -1,4 +1,6 @@
-You are helping implement authentication using the **Storm.Api** framework. Follow all patterns below exactly.
+You are helping implement authentication using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
+
+The user's request: $ARGUMENTS
 
 ---
 
@@ -292,4 +294,3 @@ public partial class AuthController(IServiceProvider services) : BaseController(
 | `services.AddScoped<IActionAuthenticator<T>, MyAuth>()` manually for JWT | `services.AddJwtAuthenticator<T>(config)` |
 | Null-check `account` inside `Action()` | Framework guarantees non-null; throw in `Authorize()` if needed |
 | Read auth token manually in an action | Implement `IActionAuthenticator<TAccount>` and let the framework call it |
-| Use `ILogger<T>` in authenticator | `Resolve<ILogService>()` |

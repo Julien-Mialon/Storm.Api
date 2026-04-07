@@ -1,4 +1,6 @@
-You are helping implement a C# endpoint using the **Storm.Api** framework. Follow all patterns below exactly.
+You are helping implement a C# endpoint using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
+
+The user's request: $ARGUMENTS
 
 ---
 
@@ -190,5 +192,3 @@ public partial Task<ActionResult<PaginatedResponse<UserDto>>> ListUsers(
 | Logic in controller | Logic in Action class |
 | Implement partial method manually | Let `[WithAction<T>]` generate it |
 | `if (x == null) throw new ...` | `.NotFoundIfNull()` / `.UnauthorizedIfNull()` etc. |
-| `Task.FromResult(value)` | `value.AsTask()` |
-| Constructor-inject services | `Resolve<T>()` inside methods |

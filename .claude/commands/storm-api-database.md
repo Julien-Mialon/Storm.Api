@@ -1,6 +1,8 @@
-You are helping implement database entities and repositories using the **Storm.Api** framework (ServiceStack.OrmLite). Follow all patterns below exactly.
+You are helping implement database entities and repositories using the **Storm.Api** framework (ServiceStack.OrmLite). Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
 
 **Never use Entity Framework or Dapper.** OrmLite is the only ORM.
+
+The user's request: $ARGUMENTS
 
 ---
 
@@ -12,7 +14,7 @@ All connection methods are available on `BaseAction` / `BaseDatabaseService`:
 // Read
 var entity = await UseReadConnection(db => db.SingleByIdAsync<MyEntity>(id));
 var list   = await UseReadConnection(db => db.SelectAsync<MyEntity>());
-var where  = await UseReadConnection(db => db.SelectAsync<MyEntity>(x => x.Active == true));
+var where  = await UseReadConnection(db => db.SelectAsync<MyEntity>(x => x.Active));
 
 // Write
 await UseWriteConnection(db => db.InsertAsync(entity));
@@ -145,5 +147,4 @@ await repo.Delete(id);                         // soft-delete if ISoftDeleteEnti
 |---|---|
 | Entity Framework / Dapper | ServiceStack.OrmLite |
 | `context.Database.OpenConnection()` | `UseConnection(db => ...)` |
-| Constructor-inject repositories | `Resolve<UserRepository>()` inside methods |
 | `services.AddScoped<UserRepository>()` alone | `services.AddRepository<UserEntity, UserRepository>()` |

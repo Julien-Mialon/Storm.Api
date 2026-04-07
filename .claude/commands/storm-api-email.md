@@ -1,4 +1,6 @@
-You are helping implement email sending using the **Storm.Api** framework. Follow all patterns below exactly.
+You are helping implement email sending using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
+
+The user's request: $ARGUMENTS
 
 ---
 
@@ -125,7 +127,6 @@ public class SendWelcomeEmailCommand(IServiceProvider services)
 
 | ❌ Wrong | ✅ Correct |
 |---|---|
-| Constructor-inject `IEmailService` in actions | `Resolve<IEmailService>()` inside methods |
 | Instantiate `ResendClient` directly | Use `IEmailService` via DI |
 | Use `SmtpClient` or other mail libraries | Use `IEmailService` with Resend provider |
 | Skip email validation on user input | Use `IsTemporaryEmailDomain()` to reject disposable emails |

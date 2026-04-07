@@ -1,4 +1,6 @@
-You are helping write a database migration using the **Storm.Api** framework. Follow all patterns below exactly.
+You are helping write a database migration using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
+
+The user's request: $ARGUMENTS
 
 ---
 

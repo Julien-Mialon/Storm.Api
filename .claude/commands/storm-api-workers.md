@@ -1,4 +1,6 @@
-You are helping implement background workers and hosted services using the **Storm.Api** framework. Follow all patterns below exactly.
+You are helping implement background workers and hosted services using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
+
+The user's request: $ARGUMENTS
 
 ---
 
@@ -185,6 +187,13 @@ services.AddHostedService<AppMetricsHostedService>();
 
 ---
 
+## When NOT to Use In-Process Workers
+
+- If you need work to survive app restarts, use an external queue (e.g., Redis pub/sub via `/storm-api-redis`) instead of in-memory queues.
+- If the task is a simple one-off async call within a request, just `await` it in the action — don't over-engineer with a hosted service.
+
+---
+
 ## Anti-Patterns to Avoid
 
 | ❌ Wrong | ✅ Correct |
@@ -192,4 +201,3 @@ services.AddHostedService<AppMetricsHostedService>();
 | Use `Task.Run()` for background work | Use a hosted service or `BackgroundWorker` |
 | Resolve scoped services from the constructor | Use the `services` parameter in `Run()`, or `Resolve<T>()` in workers |
 | Retry manually with `Thread.Sleep` | Use `IRetryStrategy` |
-| Catch and swallow exceptions | Override `OnException()` or let the base class log them |

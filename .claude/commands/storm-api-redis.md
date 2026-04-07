@@ -1,4 +1,6 @@
-You are helping implement Redis caching and pub/sub using the **Storm.Api** framework. Follow all patterns below exactly.
+You are helping implement Redis caching and pub/sub using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
+
+The user's request: $ARGUMENTS
 
 ---
 
@@ -29,18 +31,7 @@ Storm.Api wraps `StackExchange.Redis` behind an `IRedisService` interface provid
 }
 ```
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `Endpoints` | `List<string>` | **required** | Redis endpoints in `host:port` format |
-| `User` | `string` | **required** | Authentication user |
-| `Password` | `string` | **required** | Authentication password |
-| `DefaultDatabase` | `int` | `0` | Database index |
-| `ConnectTimeout` | `int` | `5000` | Connection timeout in milliseconds |
-| `ConnectRetry` | `int` | `3` | Number of connection retry attempts |
-| `ClientName` | `string?` | `null` | Client name for identification |
-| `KeepAliveSeconds` | `int` | `60` | Keep-alive interval in seconds |
-| `AbortOnConnectFail` | `bool` | `false` | Whether to fail fast on connection error |
-| `ChannelPrefix` | `string?` | `null` | Prefix for pub/sub channels |
+Required properties: `Endpoints` (list of `host:port`), `User`, `Password`. Optional: `DefaultDatabase` (default `0`), `ConnectTimeout` (default `5000`ms), `ConnectRetry` (default `3`), `ClientName`, `KeepAliveSeconds` (default `60`), `AbortOnConnectFail` (default `false`), `ChannelPrefix` (prefix for pub/sub channels). See `RedisConfiguration` class for full details.
 
 ### Register in Startup.ConfigureServices
 
@@ -197,6 +188,13 @@ Register:
 ```csharp
 services.AddHostedService<UserEventListener>();
 ```
+
+---
+
+## When NOT to Use Redis
+
+- For simple in-process decoupling (producer/consumer within one app instance), prefer in-memory queues (`/storm-api-queues`) — no external dependency needed.
+- For data that must be strongly consistent or transactional, use the database directly.
 
 ---
 
