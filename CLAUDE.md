@@ -95,3 +95,4 @@ Apps extend `BaseStartup` and `DefaultLauncher<TStartup>`. `BaseStartup` configu
 
 - `TreatWarningsAsErrors=true` and `EnforceCodeStyleInBuild=true` are set globally — all warnings must be resolved.
 - `Storm.Api.Dtos` and `Storm.Api.SourceGenerators` target .NET Standard 2.0 for broad compatibility; keep them free of .NET-only APIs.
+- Always use `TimeProvider` (registered in DI) instead of `DateTime.Now`, `DateTime.UtcNow`, or `DateTimeOffset.UtcNow`. In services with `Resolve<T>()`, use `Resolve<TimeProvider>().GetUtcNow().UtcDateTime`. In other classes, inject `TimeProvider` via constructor.

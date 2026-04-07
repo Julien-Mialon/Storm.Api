@@ -8,7 +8,8 @@
       "Bash(grep *)",
       "Bash(ls *)",
       "Bash(mkdir *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(git show:*)"
     ],
     "deny": [
       "Bash(git push *)",

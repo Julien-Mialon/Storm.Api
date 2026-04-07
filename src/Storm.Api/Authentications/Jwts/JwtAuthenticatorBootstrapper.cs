@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Storm.Api.CQRS;
 using Storm.Api.Databases.Models;
 
@@ -8,7 +9,7 @@ public static class JwtAuthenticatorBootstrapper
 {
 	public static IServiceCollection AddJwtSupportServices(this IServiceCollection services)
 	{
-		services.AddSingleton<IJwtTokenService, JwtTokenService>();
+		services.TryAddSingleton<IJwtTokenService, JwtTokenService>();
 
 		return services;
 	}

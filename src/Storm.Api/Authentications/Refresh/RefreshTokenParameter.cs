@@ -2,5 +2,5 @@ namespace Storm.Api.Authentications.Refresh;
 
 public class RefreshTokenParameter
 {
-	public string RefreshToken { get; set; } = "";
+	public required string RefreshToken { get; set; }
 }

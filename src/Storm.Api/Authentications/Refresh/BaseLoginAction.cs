@@ -1,7 +1,8 @@
-using System.Net;
 using Storm.Api.Authentications.Jwts;
+using Storm.Api.Authentications.Refresh.Storage;
+using Storm.Api.Authentications.Refresh.Transport;
 using Storm.Api.CQRS;
-using Storm.Api.CQRS.Exceptions;
+using Storm.Api.CQRS.Extensions;
 using Storm.Api.Databases.Models;
 using Storm.Api.Dtos;
 
@@ -13,31 +14,31 @@ public abstract class BaseLoginAction<TParameter, TAccount>(IServiceProvider ser
 {
 	protected sealed override async Task<LoginResponse> Action(TParameter parameter)
 	{
-		TAccount? account = await AuthenticateCredentials(parameter);
-		if (account is null)
-		{
-			throw new DomainHttpCodeException(HttpStatusCode.Unauthorized);
-		}
+		TAccount account = await AuthenticateCredentials(parameter).UnauthorizedIfNull();
 
-		IRefreshTokenHandler handler = Resolve<IRefreshTokenHandlerResolver>().Resolve();
+		IRefreshTokenStorage storage = Resolve<IRefreshTokenStorage>();
+		IRefreshTokenTransport transport = Resolve<IRefreshTokenTransportResolver>().Resolve();
 		JwtService<TAccount> accessSvc = Resolve<JwtService<TAccount>>();
 		JwtService<RefreshTokenMarker> refreshSvc = Resolve<JwtService<RefreshTokenMarker>>();
 
 		(string accessToken, TimeSpan accessDuration) = accessSvc.GenerateToken(account.Id);
-
 		string jti = Guid.NewGuid().ToString("N");
 		(string refreshToken, TimeSpan refreshDuration) = refreshSvc.GenerateToken(account.Id, new Dictionary<string, string>
 		{
 			["jti"] = jti,
 		});
 
+		DateTime utcNow = Resolve<TimeProvider>().GetUtcNow().UtcDateTime;
+
+		await storage.StoreAsync(account.Id, jti, utcNow.Add(refreshDuration));
+
 		LoginResponse response = new()
 		{
 			AccessToken = accessToken,
-			ExpiresAt = Resolve<TimeProvider>().GetUtcNow().UtcDateTime.Add(accessDuration),
+			ExpiresAt = utcNow.Add(accessDuration),
 		};
 
-		await handler.StoreAndEmitAsync(account.Id, refreshToken, jti, refreshDuration, response);
+		transport.EmitToken(refreshToken, refreshDuration, response);
 
 		return response;
 	}
