@@ -86,4 +86,4 @@ var keyed = ResolveKeyed<IMyService>("key");
 | `ILogger<T>` | `ILogService` |
 | Entity Framework / Dapper | ServiceStack.OrmLite |
 | Logic in controller | Logic in Action class |
-| Use DateTime.Now | Always use DateTime.UtcNow |
+| `DateTime.Now` / `DateTime.UtcNow` / `DateTimeOffset.UtcNow` | `Resolve<TimeProvider>().GetUtcNow().UtcDateTime` (or inject `TimeProvider` via constructor in non-`Resolve` classes) |
