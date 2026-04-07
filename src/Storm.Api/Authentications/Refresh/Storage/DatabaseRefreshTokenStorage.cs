@@ -17,7 +17,6 @@ internal class DatabaseRefreshTokenStorage : BaseDatabaseService, IRefreshTokenS
 			DateTime now = Resolve<TimeProvider>().GetUtcNow().UtcDateTime;
 			await connection.InsertAsync(new RefreshTokenEntity
 			{
-				Id = Guid.NewGuid(),
 				AccountId = accountId,
 				Jti = jti,
 				ExpiresAt = expiresAt,
@@ -49,7 +48,6 @@ internal class DatabaseRefreshTokenStorage : BaseDatabaseService, IRefreshTokenS
 
 			await connection.InsertAsync(new RefreshTokenEntity
 			{
-				Id = Guid.NewGuid(),
 				AccountId = accountId,
 				Jti = newJti,
 				ExpiresAt = newExpiresAt,

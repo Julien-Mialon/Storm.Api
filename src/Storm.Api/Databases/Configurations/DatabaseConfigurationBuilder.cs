@@ -20,6 +20,7 @@ public class DatabaseConfigurationBuilder
 
 	private bool _enableDebug;
 	private bool _useLogService;
+	private bool _isSqlServer;
 	private string? _connectionString;
 	private IOrmLiteDialectProvider? _dialectProvider;
 
@@ -56,6 +57,7 @@ public class DatabaseConfigurationBuilder
 
 		DatabaseConverters.Initialize();
 		OrmLiteInterceptors.Initialize(_onInsert, _onUpdate, _timeProvider);
+		SequentialGuid.Initialize(_isSqlServer, _timeProvider);
 		SqlFieldsOrdering.Enable();
 		return factory;
 	}
@@ -121,6 +123,7 @@ public class DatabaseConfigurationBuilder
 	{
 		_connectionString = connectionString;
 		_dialectProvider = SqlServer2022Dialect.Provider;
+		_isSqlServer = true;
 		return this;
 	}
 

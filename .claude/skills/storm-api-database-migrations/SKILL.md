@@ -30,7 +30,7 @@ internal class Migration001() : BaseMigration(1)
 
         await db.InsertAsync(new UserEntity
         {
-            Id = Guid.NewGuid(),
+            Id = SequentialGuid.NewGuid(),
             Email = "admin@example.com",
             Name = "Admin",
         });

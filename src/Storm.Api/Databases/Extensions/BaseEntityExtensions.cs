@@ -50,7 +50,7 @@ public static class BaseEntityExtensions
 	{
 		if (entity.CollationId == Guid.Empty)
 		{
-			entity.CollationId = Guid.NewGuid();
+			entity.CollationId = SequentialGuid.NewGuid();
 		}
 	}
 
@@ -58,7 +58,7 @@ public static class BaseEntityExtensions
 	{
 		if (entity.Id == Guid.Empty)
 		{
-			entity.Id = Guid.NewGuid();
+			entity.Id = SequentialGuid.NewGuid();
 		}
 	}
 

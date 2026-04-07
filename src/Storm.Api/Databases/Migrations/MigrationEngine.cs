@@ -84,7 +84,7 @@ public class MigrationEngine
 				{
 					await connection.InsertAsync(new Migration
 					{
-						Id = Guid.NewGuid(),
+						Id = SequentialGuid.NewGuid(),
 						Module = module.Name,
 						Number = operation.Number,
 						MigrationDate = timeProvider.GetUtcNow().UtcDateTime,
