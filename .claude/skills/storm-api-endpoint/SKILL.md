@@ -1,3 +1,10 @@
+---
+name: storm-api-endpoint
+description: Implement a C# endpoint using the Storm.Api framework with CQRS actions, controllers, source generators, exceptions, and response DTOs.
+user-invocable: true
+disable-model-invocation: false
+---
+
 You are helping implement a C# endpoint using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
 
 The user's request: $ARGUMENTS
@@ -47,7 +54,6 @@ public class SecureCommand(IServiceProvider services)
 
     protected override async Task<Unit> Action(SecureCommandParameter parameter, CurrentUser account)
     {
-        // account is already authenticated and authorized
         return Unit.Default;
     }
 }
@@ -123,65 +129,13 @@ var data   = Load(id).ForbiddenIfNull();
 
 All endpoints return framework response wrappers. Never return raw objects.
 
-```csharp
-// Success with data
-{ "is_success": true, "data": { ... } }
-
-// Business error
-{ "is_success": false, "error_code": "SOME_ERROR", "error_message": "..." }
-
-// Paginated list
-{ "is_success": true, "data": [...], "page": 1, "count": 20, "total_count": 150 }
-```
-
 Types (from `Storm.Api.Dtos`):
-- `Response` — no data
-- `Response<T>` — with typed data payload
+- `Response` — no data (`{ "is_success": true }`)
+- `Response<T>` — with typed data payload (`{ "is_success": true, "data": { ... } }`)
 - `PaginatedResponse<T>` — for paginated lists (has `Page`, `Count`, `TotalCount`)
 - `ApiFileResult` — for file downloads: `ApiFileResult.Create(bytes, "application/pdf", "file.pdf")`
 
-### PaginatedResponse example
-
-The action's output type is `PaginatedResponse<T>` directly — the framework detects it as a `Response` subtype and sets `IsSuccess = true` automatically without double-wrapping.
-
-```csharp
-public class ListUsersParameter
-{
-    public required int Page { get; init; }
-    public required int Count { get; init; }
-}
-
-public class ListUsersQuery(IServiceProvider services)
-    : BaseAction<ListUsersParameter, PaginatedResponse<UserDto>>(services)
-{
-    protected override async Task<PaginatedResponse<UserDto>> Action(ListUsersParameter parameter)
-    {
-        var total = await UseReadConnection(db => db.CountAsync<UserEntity>());
-        var items = await UseReadConnection(db => db.SelectAsync<UserEntity>(
-            db.From<UserEntity>()
-              .Skip((parameter.Page - 1) * parameter.Count)
-              .Take(parameter.Count)));
-
-        return new PaginatedResponse<UserDto>
-        {
-            Data = items.Select(x => new UserDto { Id = x.Id, Name = x.Name }).ToArray(),
-            Page = parameter.Page,
-            Count = items.Count,
-            TotalCount = (int)total,
-        };
-    }
-}
-```
-
-Controller method uses `PaginatedResponse<T>` as the return type:
-
-```csharp
-[HttpGet]
-[WithAction<ListUsersQuery>]
-public partial Task<ActionResult<PaginatedResponse<UserDto>>> ListUsers(
-    [FromQuery] int page,
-    [FromQuery] int count);
-```
+For a full paginated response example (action + controller), see [examples/paginated-response.md](examples/paginated-response.md).
 
 ---
 
@@ -192,3 +146,4 @@ public partial Task<ActionResult<PaginatedResponse<UserDto>>> ListUsers(
 | Logic in controller | Logic in Action class |
 | Implement partial method manually | Let `[WithAction<T>]` generate it |
 | `if (x == null) throw new ...` | `.NotFoundIfNull()` / `.UnauthorizedIfNull()` etc. |
+| `if (x == false) throw new ...` | `.NotFoundIfFalse()` / `.UnauthorizedIfFalse()` etc. |

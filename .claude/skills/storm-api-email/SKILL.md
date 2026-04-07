@@ -1,3 +1,10 @@
+---
+name: storm-api-email
+description: Implement email sending using the Storm.Api framework with Resend provider and temporary email detection. Use when sending emails or validating email addresses.
+user-invocable: true
+disable-model-invocation: false
+---
+
 You are helping implement email sending using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
 
 The user's request: $ARGUMENTS

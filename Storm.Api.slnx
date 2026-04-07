@@ -16,6 +16,7 @@
   <Folder Name="/src/">
     <Project Path="src/Storm.Api.Dtos/Storm.Api.Dtos.csproj" />
     <Project Path="src/Storm.Api.SourceGenerators/Storm.Api.SourceGenerators.csproj" />
+    <Project Path="src/Storm.Api.Tools/Storm.Api.Tools.csproj" />
     <Project Path="src/Storm.Api/Storm.Api.csproj" />
   </Folder>
 </Solution>

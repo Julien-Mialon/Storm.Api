@@ -133,6 +133,7 @@ public abstract class BaseStartup
 			app.UseHttpsRedirection();
 		}
 
+		app.UseResponseCompression();
 		app.UseDatabaseModule();
 		app.UseRequestLogging();
 		app.UseRequestLocalization(options.Value);

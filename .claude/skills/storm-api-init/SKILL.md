@@ -1,3 +1,10 @@
+---
+name: storm-api-init
+description: Initialize a new Storm.Api project with NuGet packages, Program.cs, Startup.cs, and code style configuration. Use when setting up a new project from scratch.
+user-invocable: true
+disable-model-invocation: false
+---
+
 You are helping initialize a new **Storm.Api** project. Follow all patterns below exactly — this covers the one-time project setup. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
 
 The user's request: $ARGUMENTS
@@ -30,12 +37,10 @@ DefaultLauncher<Startup>.RunWebHost(args);
 
 With options:
 ```csharp
-DefaultLauncher<Startup>.RunWebHost(args, options =>
-{
-    options.UseNewtonsoftJson = true; // only if Newtonsoft is explicitly required
-    options.UseVault = true;          // load vault.local.json + Hashicorp Vault
-    options.SetDatabaseDebug = true;  // verbose OrmLite SQL logging
-});
+DefaultLauncher.UseNewtonsoftJson = true; // only if Newtonsoft is explicitly required
+DefaultLauncher.UseVault = true;          // load vault.local.json + Hashicorp Vault
+DefaultLauncher.SetDatabaseDebug = true;  // verbose OrmLite SQL logging
+DefaultLauncher<Startup>.RunWebHost(args);
 ```
 
 Always prefer `System.Text.Json` — only set `UseNewtonsoftJson` when explicitly instructed.

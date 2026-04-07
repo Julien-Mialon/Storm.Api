@@ -1,3 +1,10 @@
+---
+name: storm-api
+description: Implement a C# backend using the Storm.Api framework. Use when writing business logic, logging, extension methods, or general Storm.Api patterns.
+user-invocable: true
+disable-model-invocation: false
+---
+
 You are helping implement a C# backend using the **Storm.Api** framework. Follow all patterns and constraints below exactly — they are non-negotiable.
 
 The user's request: $ARGUMENTS

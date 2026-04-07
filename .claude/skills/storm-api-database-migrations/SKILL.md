@@ -1,3 +1,10 @@
+---
+name: storm-api-database-migrations
+description: Write a database migration using the Storm.Api framework with BaseMigration and OrmLite. Use when creating or modifying database tables, columns, or seed data.
+user-invocable: true
+disable-model-invocation: false
+---
+
 You are helping write a database migration using the **Storm.Api** framework. Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
 
 The user's request: $ARGUMENTS

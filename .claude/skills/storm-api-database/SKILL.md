@@ -1,3 +1,10 @@
+---
+name: storm-api-database
+description: Implement database entities and repositories using the Storm.Api framework with ServiceStack.OrmLite. Use when creating entities, repositories, or database queries.
+user-invocable: true
+disable-model-invocation: false
+---
+
 You are helping implement database entities and repositories using the **Storm.Api** framework (ServiceStack.OrmLite). Follow all patterns below exactly. For global rules (logging, extensions, anti-patterns), see `/storm-api`.
 
 **Never use Entity Framework or Dapper.** OrmLite is the only ORM.
