@@ -4,7 +4,7 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net10.0</TargetFramework>
 		<PackAsTool>true</PackAsTool>
-		<ToolCommandName>Storm.Api.Tools</ToolCommandName>
+		<ToolCommandName>storm-api-tool</ToolCommandName>
 		<Description>CLI tool for Storm.Api framework — generates Claude Code skills and other utilities.</Description>
 	</PropertyGroup>
 
