@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="10.0.5"
+version="10.0.6"
 
 rm -rf build artifacts
 dotnet build -c Release /property:Version=$version
@@ -8,7 +8,7 @@ dotnet build -c Release /property:Version=$version
 apiKey=$NUGET_API_KEY
 source="https://api.nuget.org/v3/index.json"
 
-nuget push artifacts/Storm.Api.$version.nupkg -Source $source -ApiKey $apiKey
-nuget push artifacts/Storm.Api.Dtos.$version.nupkg -Source $source -ApiKey $apiKey
-nuget push artifacts/Storm.Api.SourceGenerators.$version.nupkg -Source $source -ApiKey $apiKey
-nuget push artifacts/Storm.Api.Tools.$version.nupkg -Source $source -ApiKey $apiKey
+dotnet nuget push artifacts/Storm.Api.$version.nupkg --source $source --api-key $apiKey
+dotnet nuget push artifacts/Storm.Api.Dtos.$version.nupkg --source $source --api-key $apiKey
+dotnet nuget push artifacts/Storm.Api.SourceGenerators.$version.nupkg --source $source --api-key $apiKey
+dotnet nuget push artifacts/Storm.Api.Tools.$version.nupkg --source $source --api-key $apiKey
