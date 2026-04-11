@@ -11,18 +11,18 @@ using Storm.Api.Dtos;
 
 namespace Storm.Api.Authentications.Refresh;
 
-public abstract class BaseRefreshAction<TAccount>(IServiceProvider services)
-	: BaseAction<RefreshTokenParameter, LoginResponse>(services)
+public abstract class BaseRefreshAction<TParameter, TAccount>(IServiceProvider services) : BaseAction<TParameter, LoginResponse>(services)
 	where TAccount : IGuidEntity
+	where TParameter : IRefreshTokenParameterConvertible
 {
-	protected sealed override async Task<LoginResponse> Action(RefreshTokenParameter parameter)
+	protected sealed override async Task<LoginResponse> Action(TParameter parameter)
 	{
 		IRefreshTokenStorage storage = Resolve<IRefreshTokenStorage>();
 		IRefreshTokenTransport transport = Resolve<IRefreshTokenTransportResolver>().Resolve();
 		JwtService<RefreshTokenMarker> refreshSvc = Resolve<JwtService<RefreshTokenMarker>>();
 
 		// 1. Read inbound token via transport
-		string inboundToken = transport.ReadToken(parameter).UnauthorizedIfNull();
+		string inboundToken = transport.ReadToken(parameter.AsRefreshTokenParameter()).UnauthorizedIfNull();
 
 		// 2. Validate transport-level security (CSRF for cookies)
 		transport.ValidateTransport(inboundToken).UnauthorizedIfFalse();

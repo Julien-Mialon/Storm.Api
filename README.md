@@ -3,6 +3,10 @@ Framework to build APIs
 
 ## Changelog
 
+### 10.0.8 (April 12th)
+
+- Fix **BaseRefreshAction** / **BaseLogoutAction** to have generic input parameters
+
 ### 10.0.7 (April 11th)
 
 - **IRepository.ExistsById** - New function added to check for existence
