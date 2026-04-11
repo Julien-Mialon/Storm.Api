@@ -3,6 +3,10 @@ Framework to build APIs
 
 ## Changelog
 
+### 10.0.7 (April 11th)
+
+- **IRepository.ExistsById** - New function added to check for existence
+
 ### 10.0.6 (April 11th)
 
 #### New Features
