@@ -2,6 +2,8 @@
 
 public interface IRepository<TEntity, TKey>
 {
+	Task<bool> ExistsById(TKey id);
+
 	Task<TEntity?> GetById(TKey id);
 
 	Task<List<TEntity>> List();

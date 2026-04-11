@@ -12,6 +12,11 @@ public class BaseLongRepository<TEntity> : BaseDatabaseService, ILongRepository<
 		_longRepositoryImplementation = RepositoryShenanigans.CreateLongRepository<TEntity>(services);
 	}
 
+	public Task<bool> ExistsById(long id)
+	{
+		return _longRepositoryImplementation.ExistsById(id);
+	}
+
 	public Task<TEntity?> GetById(long id)
 	{
 		return _longRepositoryImplementation.GetById(id);

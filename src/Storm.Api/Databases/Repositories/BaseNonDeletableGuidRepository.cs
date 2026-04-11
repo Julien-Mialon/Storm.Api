@@ -18,6 +18,16 @@ internal class BaseNonDeletableGuidRepository<TEntity> : BaseDatabaseService, IG
 #endif
 	}
 
+	public async Task<bool> ExistsById(Guid id)
+	{
+		return await UseReadConnection(async connection =>
+		{
+			return await connection.From<TEntity>()
+				.Where(x => x.Id == id)
+				.AsExistsAsync(connection);
+		});
+	}
+
 	public async Task<TEntity?> GetById(Guid id)
 	{
 		return await UseReadConnection(async connection =>

@@ -18,6 +18,17 @@ internal class BaseDeletableLongRepository<TEntity> : BaseDatabaseService, ILong
 #endif
 	}
 
+	public async Task<bool> ExistsById(long id)
+	{
+		return await UseReadConnection(async connection =>
+		{
+			return await connection.From<TEntity>()
+				.Where(x => x.Id == id)
+				.NotDeleted()
+				.AsExistsAsync(connection);
+		});
+	}
+
 	public async Task<TEntity?> GetById(long id)
 	{
 		return await UseReadConnection(async connection =>

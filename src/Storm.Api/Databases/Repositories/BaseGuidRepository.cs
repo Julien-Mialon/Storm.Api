@@ -12,6 +12,11 @@ public class BaseGuidRepository<TEntity> : BaseDatabaseService, IGuidRepository<
 		_guidRepositoryImplementation = RepositoryShenanigans.CreateGuidRepository<TEntity>(services);
 	}
 
+	public Task<bool> ExistsById(Guid id)
+	{
+		return _guidRepositoryImplementation.ExistsById(id);
+	}
+
 	public Task<TEntity?> GetById(Guid id)
 	{
 		return _guidRepositoryImplementation.GetById(id);

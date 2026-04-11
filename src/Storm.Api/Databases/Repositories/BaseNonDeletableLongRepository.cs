@@ -18,6 +18,16 @@ internal class BaseNonDeletableLongRepository<TEntity> : BaseDatabaseService, IL
 #endif
 	}
 
+	public async Task<bool> ExistsById(long id)
+	{
+		return await UseReadConnection(async connection =>
+		{
+			return await connection.From<TEntity>()
+				.Where(x => x.Id == id)
+				.AsExistsAsync(connection);
+		});
+	}
+
 	public async Task<TEntity?> GetById(long id)
 	{
 		return await UseReadConnection(async connection =>
