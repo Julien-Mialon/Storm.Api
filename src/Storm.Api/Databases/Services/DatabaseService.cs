@@ -41,7 +41,7 @@ public class DatabaseService : IDatabaseService
 
 		IDbTransaction transaction = isolationLevel.HasValue ? connection.OpenTransaction(isolationLevel.Value) : connection.OpenTransaction();
 
-		return _transaction = new DatabaseTransaction(transaction, this);
+		return _transaction = new DatabaseTransaction(connection, transaction, this);
 	}
 
 	public async Task InTransaction(Func<IDatabaseTransaction, Task> action, IsolationLevel? isolationLevel = null, CancellationToken ct = default)

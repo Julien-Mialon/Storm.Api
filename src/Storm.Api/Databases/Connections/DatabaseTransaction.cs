@@ -10,10 +10,11 @@ internal class DatabaseTransaction : IDatabaseTransaction
 	private bool _finalized;
 	private bool _disposed;
 
-	public IDbConnection Connection => _transaction.Connection!;
+	public IDbConnection Connection { get; }
 
-	public DatabaseTransaction(IDbTransaction transaction, DatabaseService databaseService)
+	public DatabaseTransaction(IDbConnection connection, IDbTransaction transaction, DatabaseService databaseService)
 	{
+		Connection = connection;
 		_transaction = transaction;
 		_databaseService = databaseService;
 	}
