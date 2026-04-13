@@ -3,6 +3,10 @@ Framework to build APIs
 
 ## Changelog
 
+### 10.0.9 (April 13th)
+
+- Fix function **WithDatabaseTransaction** to pass the correct connection in the callback
+
 ### 10.0.8 (April 12th)
 
 - Fix **BaseRefreshAction** / **BaseLogoutAction** to have generic input parameters
