@@ -18,6 +18,12 @@ public static class DatabaseConfigurationLoader
 			- connectionString: (only if you want to provide the full connection string for mysql or sqlserver)
 			- debugLogging: (bool) enable debug logging
 			- useLogService: (bool) enable log service
+			- HighAvailability (SQL Server only, optional):
+				- healthCheckIntervalSeconds: (int, default 5)
+				- probeConnectTimeoutSeconds: (int, default 2)
+				- allowReadsOnAsyncReplicas: (bool, default false)
+				- allowReadFallbackToPrimary: (bool, default true)
+				- replicas: array of { host, port } OR { connectionString }
 		*/
 
 		if (!Enum.TryParse(configuration["type"], out DatabaseType databaseType))
@@ -36,22 +42,22 @@ public static class DatabaseConfigurationLoader
 			switch (databaseType)
 			{
 				case DatabaseType.AzureSqlServer:
-					return configurationBuilder
-						.UseAzureSqlServer(configuration["host"]!,
-							configuration["database"]!,
-							configuration["user"]!,
-							configuration["password"]!,
-							configuration.GetValue("encrypt", false),
-							configuration.GetValue("timeout", 30));
+					configurationBuilder.UseAzureSqlServer(configuration["host"]!,
+						configuration["database"]!,
+						configuration["user"]!,
+						configuration["password"]!,
+						configuration.GetValue("encrypt", false),
+						configuration.GetValue("timeout", 30));
+					break;
 				case DatabaseType.SqlServer:
-					return configurationBuilder
-						.UseSqlServer(configuration["host"]!,
-							configuration["database"]!,
-							configuration["user"]!,
-							configuration["password"]!,
-							configuration.GetValue("encrypt", false),
-							configuration.GetValue("integratedSecurity", false),
-							configuration.GetValue("timeout", 30));
+					configurationBuilder.UseSqlServer(configuration["host"]!,
+						configuration["database"]!,
+						configuration["user"]!,
+						configuration["password"]!,
+						configuration.GetValue("encrypt", false),
+						configuration.GetValue("integratedSecurity", false),
+						configuration.GetValue("timeout", 30));
+					break;
 				case DatabaseType.MySql:
 					return configurationBuilder
 						.UseMySQL(configuration["host"]!,
@@ -74,21 +80,76 @@ public static class DatabaseConfigurationLoader
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-
-		switch (databaseType)
+		else
 		{
-			case DatabaseType.SqlServer:
-			case DatabaseType.AzureSqlServer:
-				return configurationBuilder.UseSqlServer(connectionString);
-			case DatabaseType.MySql:
-				return configurationBuilder.UseMySQL(connectionString);
-			case DatabaseType.Postgres:
-				return configurationBuilder.UsePostgres(connectionString);
-			case DatabaseType.SQLite:
-			case DatabaseType.SQLiteMemory:
-				throw new InvalidOperationException($"Connection string not supported for {nameof(DatabaseType.SQLite)}, {nameof(DatabaseType.SQLiteMemory)}");
-			default:
-				throw new ArgumentOutOfRangeException();
+			switch (databaseType)
+			{
+				case DatabaseType.SqlServer:
+				case DatabaseType.AzureSqlServer:
+					configurationBuilder.UseSqlServer(connectionString);
+					break;
+				case DatabaseType.MySql:
+					return configurationBuilder.UseMySQL(connectionString);
+				case DatabaseType.Postgres:
+					return configurationBuilder.UsePostgres(connectionString);
+				case DatabaseType.SQLite:
+				case DatabaseType.SQLiteMemory:
+					throw new InvalidOperationException($"Connection string not supported for {nameof(DatabaseType.SQLite)}, {nameof(DatabaseType.SQLiteMemory)}");
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		ApplyHighAvailabilitySection(configurationBuilder, configuration.GetSection("HighAvailability"));
+		return configurationBuilder;
+	}
+
+	private static void ApplyHighAvailabilitySection(DatabaseConfigurationBuilder builder, IConfigurationSection haSection)
+	{
+		if (!haSection.Exists())
+		{
+			return;
+		}
+
+		int intervalSeconds = haSection.GetValue("healthCheckIntervalSeconds", 0);
+		if (intervalSeconds > 0)
+		{
+			builder.UseReplicaHealthCheckInterval(TimeSpan.FromSeconds(intervalSeconds));
+		}
+
+		int probeTimeoutSeconds = haSection.GetValue("probeConnectTimeoutSeconds", 0);
+		if (probeTimeoutSeconds > 0)
+		{
+			builder.UseReplicaProbeConnectTimeout(TimeSpan.FromSeconds(probeTimeoutSeconds));
+		}
+
+		if (haSection.GetValue<bool?>("allowReadsOnAsyncReplicas") is { } allowAsync)
+		{
+			builder.AllowReadsOnAsyncReplicas(allowAsync);
+		}
+
+		if (haSection.GetValue<bool?>("allowReadFallbackToPrimary") is { } allowFallback)
+		{
+			builder.AllowReadFallbackToPrimary(allowFallback);
+		}
+
+		foreach (IConfigurationSection replicaSection in haSection.GetSection("replicas").GetChildren())
+		{
+			string? replicaCs = replicaSection["connectionString"];
+			if (!string.IsNullOrWhiteSpace(replicaCs))
+			{
+				builder.AddReadReplica(replicaCs);
+				continue;
+			}
+
+			string? host = replicaSection["host"];
+			if (string.IsNullOrWhiteSpace(host))
+			{
+				throw new InvalidOperationException("Each HighAvailability replica must provide either 'host' or 'connectionString'.");
+			}
+
+			int port = replicaSection.GetValue("port", 1433);
+			builder.AddReadReplica(host, port);
 		}
 	}
 

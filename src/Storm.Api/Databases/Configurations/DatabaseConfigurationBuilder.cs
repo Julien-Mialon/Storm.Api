@@ -1,7 +1,10 @@
+using Microsoft.Data.SqlClient;
 using ServiceStack.Logging;
 using ServiceStack.MiniProfiler.Data;
 using ServiceStack.OrmLite;
+using Storm.Api.Databases.Configurations.HighAvailability;
 using Storm.Api.Databases.Connections;
+using Storm.Api.Databases.Connections.HighAvailability;
 using Storm.Api.Databases.Converters;
 using Storm.Api.Databases.DialectProviders;
 using Storm.Api.Databases.Internals;
@@ -28,6 +31,12 @@ public class DatabaseConfigurationBuilder
 	private DatabaseInterceptorDelegate? _onUpdate;
 	private TimeProvider _timeProvider = TimeProvider.System;
 
+	private readonly List<ReplicaDefinition> _replicas = new();
+
+	internal IReadOnlyList<ReplicaDefinition> ReplicaDefinitions => _replicas;
+	internal HighAvailabilityOptions? HighAvailabilityOptionsOrNull { get; private set; }
+	internal IDatabaseReplicaManager? BuiltManager { get; private set; }
+
 	/// <summary>
 	/// Create database factory from configuration
 	/// </summary>
@@ -52,7 +61,31 @@ public class DatabaseConfigurationBuilder
 			connectionFactory.ConnectionFilter = x => new ProfiledConnection(x, new DebugSqlProfiler());
 		}
 
-		IDatabaseConnectionFactory factory = new DatabaseConnectionFactory(connectionFactory);
+		IDatabaseConnectionFactory factory;
+		if (_replicas.Count > 0)
+		{
+			if (!_isSqlServer)
+			{
+				throw new InvalidOperationException("Read replicas are only supported on SQL Server. Call UseSqlServer(...) first.");
+			}
+
+			HighAvailabilityOptions haOptions = HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+			(string primaryHost, int primaryPort) = ParseSqlServerDataSource(connectionString);
+			List<ReplicaDefinition> all = new(_replicas.Count + 1)
+			{
+				new ReplicaDefinition(primaryHost, primaryPort, connectionString),
+			};
+			all.AddRange(_replicas);
+
+			DatabaseReplicaManager manager = new(all, provider, haOptions, logService: null);
+			BuiltManager = manager;
+			factory = new HighAvailabilityDatabaseConnectionFactory(connectionFactory, manager);
+		}
+		else
+		{
+			factory = new DatabaseConnectionFactory(connectionFactory);
+		}
+
 		OrmLiteConfig.DialectProvider.GetStringConverter().UseUnicode = true;
 
 		DatabaseConverters.Initialize();
@@ -203,5 +236,152 @@ public class DatabaseConfigurationBuilder
 	{
 		_timeProvider = timeProvider;
 		return this;
+	}
+
+	// ------------------------------------------------------------------
+	// SQL Server High Availability configuration
+	// ------------------------------------------------------------------
+
+	/// <summary>
+	/// Tweak advanced high-availability options (health check interval, probe timeout, callbacks).
+	/// Requires <see cref="UseSqlServer(string)"/> or one of its overloads first.
+	/// </summary>
+	public DatabaseConfigurationBuilder UseSqlServerHighAvailability(Action<HighAvailabilityOptions> configure)
+	{
+		EnsureSqlServer();
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		configure(HighAvailabilityOptionsOrNull);
+		return this;
+	}
+
+	/// <summary>
+	/// Register a read replica reusing the credentials and database of the primary connection string,
+	/// swapping only the data source host/port.
+	/// </summary>
+	public DatabaseConfigurationBuilder AddReadReplica(string host, int port = 1433)
+	{
+		EnsureSqlServer();
+		string primaryConnectionString = _connectionString ?? throw new InvalidOperationException("AddReadReplica(host, port) must be called after UseSqlServer(...).");
+		SqlConnectionStringBuilder builder = new(primaryConnectionString)
+		{
+			DataSource = port is 1433 or 0 ? host : $"{host},{port.ToString(System.Globalization.CultureInfo.InvariantCulture)}",
+		};
+		_replicas.Add(new ReplicaDefinition(host, port == 0 ? 1433 : port, builder.ConnectionString));
+		return this;
+	}
+
+	/// <summary>
+	/// Register a read replica with a full connection string (useful when replicas use different credentials).
+	/// </summary>
+	public DatabaseConfigurationBuilder AddReadReplica(string connectionString)
+	{
+		EnsureSqlServer();
+		(string host, int port) = ParseSqlServerDataSource(connectionString);
+		_replicas.Add(new ReplicaDefinition(host, port, connectionString));
+		return this;
+	}
+
+	/// <summary>
+	/// Allow routing reads to secondaries even if they're not in SYNCHRONOUS_COMMIT / SYNCHRONIZED mode.
+	/// Default: false (only synchronous replicas are eligible).
+	/// </summary>
+	public DatabaseConfigurationBuilder AllowReadsOnAsyncReplicas(bool value = true)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.AllowReadsOnAsyncReplicas = value;
+		return this;
+	}
+
+	/// <summary>
+	/// Control whether <c>UseReadConnection</c> falls back to the primary when no eligible secondary
+	/// is available. Default: true.
+	/// </summary>
+	public DatabaseConfigurationBuilder AllowReadFallbackToPrimary(bool value = true)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.AllowReadFallbackToPrimary = value;
+		return this;
+	}
+
+	/// <summary>Set how frequently the health worker probes every configured replica.</summary>
+	public DatabaseConfigurationBuilder UseReplicaHealthCheckInterval(TimeSpan interval)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.HealthCheckInterval = interval;
+		return this;
+	}
+
+	/// <summary>Set the connect timeout applied to each health probe attempt.</summary>
+	public DatabaseConfigurationBuilder UseReplicaProbeConnectTimeout(TimeSpan timeout)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.ProbeConnectTimeout = timeout;
+		return this;
+	}
+
+	public DatabaseConfigurationBuilder OnPrimarySwitched(OnPrimarySwitched callback)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.PrimarySwitched = callback;
+		return this;
+	}
+
+	public DatabaseConfigurationBuilder OnPrimaryUnavailable(OnPrimaryUnavailable callback)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.PrimaryUnavailable = callback;
+		return this;
+	}
+
+	public DatabaseConfigurationBuilder OnPrimaryRestored(OnPrimaryRestored callback)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.PrimaryRestored = callback;
+		return this;
+	}
+
+	public DatabaseConfigurationBuilder OnReplicaStateChanged(OnReplicaStateChanged callback)
+	{
+		HighAvailabilityOptionsOrNull ??= new HighAvailabilityOptions();
+		HighAvailabilityOptionsOrNull.ReplicaStateChanged = callback;
+		return this;
+	}
+
+	private void EnsureSqlServer()
+	{
+		if (!_isSqlServer)
+		{
+			throw new InvalidOperationException("High availability features are only supported for SQL Server. Call UseSqlServer(...) first.");
+		}
+	}
+
+	internal static (string Host, int Port) ParseSqlServerDataSource(string connectionString)
+	{
+		SqlConnectionStringBuilder builder = new(connectionString);
+		string dataSource = builder.DataSource ?? string.Empty;
+		if (dataSource.StartsWith("tcp:", StringComparison.OrdinalIgnoreCase))
+		{
+			dataSource = dataSource[4..];
+		}
+
+		string hostPart = dataSource;
+		int port = 1433;
+		int commaIdx = dataSource.IndexOf(',');
+		if (commaIdx >= 0)
+		{
+			hostPart = dataSource[..commaIdx];
+			if (!int.TryParse(dataSource[(commaIdx + 1)..], System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out port) || port == 0)
+			{
+				port = 1433;
+			}
+		}
+
+		int backslashIdx = hostPart.IndexOf('\\');
+		if (backslashIdx >= 0)
+		{
+			hostPart = hostPart[..backslashIdx];
+		}
+
+		return (hostPart, port);
 	}
 }

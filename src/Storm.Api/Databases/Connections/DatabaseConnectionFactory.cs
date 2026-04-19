@@ -22,6 +22,10 @@ internal class DatabaseConnectionFactory : IDatabaseConnectionFactory
 		=> _factory.CreateDbConnection();
 
 	/// <inheritdoc />
-	public Task<IDbConnection> Open(CancellationToken ct)
+	public Task<IDbConnection> OpenWrite(CancellationToken ct)
+		=> _factory.OpenAsync(ct);
+
+	/// <inheritdoc />
+	public Task<IDbConnection> OpenRead(CancellationToken ct)
 		=> _factory.OpenAsync(ct);
 }

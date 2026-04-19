@@ -14,38 +14,47 @@ public abstract class BaseDatabaseService : BaseServiceContainer
 
 	protected async Task<T> UseConnection<T>(Func<IDbConnection, Task<T>> executor)
 	{
-		IDbConnection connection = await DatabaseService.Connection;
+		IDbConnection connection = await DatabaseService.GetWriteConnection();
 		return await executor(connection);
 	}
 
 	protected async Task UseConnection(Func<IDbConnection, Task> executor)
 	{
-		IDbConnection connection = await DatabaseService.Connection;
+		IDbConnection connection = await DatabaseService.GetWriteConnection();
 		await executor(connection);
 	}
 
 	protected async Task<T> UseReadConnection<T>(Func<IDbConnection, Task<T>> executor)
 	{
-		IDbConnection connection = await DatabaseService.Connection;
+		IDbConnection connection = await DatabaseService.GetReadConnection();
 		return await executor(connection);
 	}
 
 	protected async Task UseReadConnection(Func<IDbConnection, Task> executor)
 	{
-		IDbConnection connection = await DatabaseService.Connection;
+		IDbConnection connection = await DatabaseService.GetReadConnection();
 		await executor(connection);
 	}
 
 	protected async Task<T> UseWriteConnection<T>(Func<IDbConnection, Task<T>> executor)
 	{
-		IDbConnection connection = await DatabaseService.Connection;
+		IDbConnection connection = await DatabaseService.GetWriteConnection();
 		return await executor(connection);
 	}
 
 	protected async Task UseWriteConnection(Func<IDbConnection, Task> executor)
 	{
-		IDbConnection connection = await DatabaseService.Connection;
+		IDbConnection connection = await DatabaseService.GetWriteConnection();
 		await executor(connection);
+	}
+
+	/// <summary>
+	/// Write gate. Throws <see cref="CQRS.Exceptions.DomainDatabaseException"/> when no primary
+	/// replica is available. No-op in single-node setups.
+	/// </summary>
+	protected void EnsurePrimaryAvailable()
+	{
+		Resolve<IDatabaseConnectionFactory>().EnsurePrimaryAvailable();
 	}
 
 	protected async Task<T> WithDatabaseTransaction<T>(Func<IDbConnection, IDatabaseTransaction, Task<T>> executor, IsolationLevel? isolationLevel = null)
