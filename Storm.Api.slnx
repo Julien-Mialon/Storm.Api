@@ -19,4 +19,7 @@
     <Project Path="src/Storm.Api.Tools/Storm.Api.Tools.csproj" />
     <Project Path="src/Storm.Api/Storm.Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Storm.Api.Tests/Storm.Api.Tests.csproj" />
+  </Folder>
 </Solution>

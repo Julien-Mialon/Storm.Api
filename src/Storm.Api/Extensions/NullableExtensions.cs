@@ -22,7 +22,7 @@ public static class NullableExtensions
 
 	public static void LetIf<T>(this T? value, Func<T, bool> condition, Action<T> action) where T : struct
 	{
-		if (value.HasValue)
+		if (value.HasValue && condition(value.Value))
 		{
 			action(value.Value);
 		}
@@ -30,7 +30,7 @@ public static class NullableExtensions
 
 	public static void LetIf<T>(this T? value, Func<T, bool> condition, Action<T> action) where T : class
 	{
-		if (value is not null)
+		if (value is not null &&  condition(value))
 		{
 			action(value);
 		}
