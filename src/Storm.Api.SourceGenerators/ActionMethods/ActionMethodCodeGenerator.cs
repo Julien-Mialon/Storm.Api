@@ -10,7 +10,18 @@ public class ActionMethodCodeGenerator : BaseCodeGenerator
 {
 	public static string GeneratedNamespace => typeof(ActionMethodCodeGenerator).Namespace ?? string.Empty;
 
-	protected override List<AttributeDefinition> Attributes { get; } = [ActionMethod.WITH_ACTION_ATTRIBUTE, ActionMethod.MAP_TO_ATTRIBUTE];
+	protected override List<AttributeDefinition> Attributes { get; } =
+	[
+		ActionMethod.WITH_ACTION_ATTRIBUTE,
+		ActionMethod.MAP_TO_ATTRIBUTE,
+		ActionMethod.SUCCESS_CODE_ATTRIBUTE,
+		ActionMethod.MEDIA_TYPE_ATTRIBUTE,
+		ActionMethod.ERROR_CODE_ATTRIBUTE,
+		ActionMethod.HTTP_ERROR_ATTRIBUTE,
+		ActionMethod.DESCRIPTION_ATTRIBUTE,
+		ActionMethod.SUMMARY_ATTRIBUTE,
+		ActionMethod.INTERNAL_ACTION_CALL_ATTRIBUTE,
+	];
 
 	public override void Initialize(IncrementalGeneratorInitializationContext context)
 	{

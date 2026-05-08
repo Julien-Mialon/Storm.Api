@@ -26,6 +26,7 @@ using Storm.Api.Logs.Sinks.ElasticSearch.HostedServices;
 using Storm.Api.Logs.Sinks.ElasticSearch.Senders;
 using Storm.Api.Logs.Sinks.Serilogs.Configurations;
 using Storm.Api.Middlewares;
+using Storm.Api.OpenApis;
 using Storm.Api.Servers;
 using Storm.Api.Services;
 
@@ -74,7 +75,7 @@ public abstract class BaseStartup
 		// frameworks
 		services.AddMvc().AddJsonLibrary();
 		services.AddCors();
-		services.AddOpenApi();
+		services.AddStormOpenApi();
 
 		services.Configure<FormOptions>(x =>
 		{

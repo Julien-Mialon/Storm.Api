@@ -50,11 +50,11 @@ Always prefer `System.Text.Json` — only set `UseNewtonsoftJson` when explicitl
 ## Startup.cs
 
 ```csharp
-public class Startup(IConfiguration configuration, IWebHostEnvironment env)
-    : BaseStartup(configuration, env)
+public class Startup : BaseStartup
 {
-    // Register migration modules in the constructor (not in ConfigureServices)
+    public Startup(IConfiguration configuration, IWebHostEnvironment env) : base(configuration, env)
     {
+        // Register migration modules in the constructor (not in ConfigureServices)
         UseMigrationModules(new AppMigrationModule());
 
         // Block HTTP traffic until migrations finish (optional)
@@ -88,6 +88,12 @@ public class Startup(IConfiguration configuration, IWebHostEnvironment env)
 
 ---
 
+## Migration Module stub
+
+Check /storm-api-database-migrations for examples of writing migrations, seeding data, and checking schema existence
+
+---
+
 ## Code Style (Enforced Globally)
 
 Set these in your `.csproj` or `Directory.Build.props`:
@@ -98,3 +104,17 @@ Set these in your `.csproj` or `Directory.Build.props`:
 <LangVersion>latest</LangVersion>
 <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 ```
+
+---
+
+## Key Namespaces (Storm.Api 10.x)
+
+| Type | Namespace |
+|------|-----------|
+| `DefaultLauncher<TStartup>`, `BaseStartup` | `Storm.Api.Launchers` |
+| `BaseMigrationModule`, `BaseMigration`, `IMigration`, `IMigrationModule` | `Storm.Api.Databases.Migrations.Models` |
+| `IActionAuthenticator<T>`, `JwtAuthenticator`, refresh-token base actions | `Storm.Api.Authentications.*` |
+| Repository DI extensions (`AddRepository`, `AddLongRepository`) | `Storm.Api.Databases.Extensions` |
+| `ILogService` | `Storm.Api.Logs` |
+
+If a symbol is missing from `BaseStartup` or a Storm.Api type doesn't resolve, inspect the DLL under `~/.nuget/packages/storm.api/<version>/lib/<tfm>/Storm.Api.dll` — the namespaces above are authoritative for 10.x and supersede older docs.

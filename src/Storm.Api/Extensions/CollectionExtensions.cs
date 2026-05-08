@@ -136,4 +136,9 @@ public static class CollectionExtensions
 
 		return maxIndex;
 	}
+
+	public static List<T>? NullIfEmpty<T>(this List<T> source)
+	{
+		return source.Count == 0 ? null : source;
+	}
 }

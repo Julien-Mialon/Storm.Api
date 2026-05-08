@@ -8,5 +8,7 @@ public class AttributePropertyDefinition
 
 	public bool InConstructor { get; set; }
 
+	public bool IsNullable { get; set; }
+
 	public string ConstructorArgumentName => $"{(char)(Name[0] ^ 32)}{Name[1..]}";
 }

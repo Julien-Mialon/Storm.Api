@@ -10,20 +10,30 @@ public partial class DslControllerSample(IServiceProvider services) : BaseContro
 {
 	[HttpGet("/hello-clean")]
 	[WithAction<InUnitQuery>]
+	[Tags("Hello")]
 	public partial Task<ActionResult<Response<string>>> HelloWorld();
 
 	[HttpGet("/hello/{name}")]
 	[WithAction<HelloQuery>]
-	public partial Task<ActionResult<Response<string>>> HelloWorld([FromRoute] string name);
+	[Tags("Hello")]
+	public partial Task<ActionResult<Response<HelloResponse>>> HelloWorld([FromRoute] string name);
 
 	[HttpGet("/ids/{id}")]
 	[WithAction<AutoMapQuery>]
+	[Tags("Hello")]
 	public partial Task<ActionResult<Response>> HelloWorld([FromRoute] int id, [FromBody] AutoMapRequest request, [FromHeader(Name = "X-Date")] DateTime? date);
 
-	[HttpGet("/hello/{name}")]
+	[HttpGet("/hello2/{name}")]
 	[WithAction<SumQuery>]
+	[Tags("Hello")]
 	public partial Task<ActionResult<Response<int>>> HelloWorldA([FromQuery(Name = "a"), MapTo(nameof(SumQueryParameter.A))] int a,
 		[FromQuery(Name = "b"), MapTo(nameof(SumQueryParameter.B))] int b);
+
+	[HttpGet("/hello2.1/{name}")]
+	[WithAction<SumQuery>]
+	[Tags("Hello")]
+	public partial Task<ActionResult<Response<int>>> HelloWorldANoMap([FromQuery(Name = "a")] int a,
+		[FromQuery(Name = "b")] int b);
 
 	[HttpGet("/hello3/{name}")]
 	[WithAction<RawQuery>]
@@ -31,19 +41,14 @@ public partial class DslControllerSample(IServiceProvider services) : BaseContro
 
 	[HttpGet("/hello4/{name}")]
 	[WithAction<RawTQuery>]
-	[ProducesResponseType(statusCode: 400, type: typeof(Response))]
-	[ProducesResponseType(statusCode: 401, type: typeof(Response))]
 	public partial Task<ActionResult<Response<int>>> HelloWorldC();
 
 	[HttpGet("/hello5/{name}")]
 	[WithAction<FileQuery>]
-	[ProducesResponseType<FileResult>(statusCode: 200, contentType: "image/jpeg")]
 	public partial Task<IActionResult> HelloWorldD();
 
 	[HttpGet("/hello6/{name}")]
 	[WithAction<UnitQuery>]
-	[ProducesResponseType<Response>(400)]
-	[ProducesResponseType<Response>(401)]
 	public partial Task<ActionResult<Response>> HelloWorldE();
 }
 

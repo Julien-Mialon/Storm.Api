@@ -97,7 +97,7 @@ public abstract class BaseCodeGenerator : IIncrementalGenerator
 			List<AttributePropertyDefinition> constructorProperties = [];
 			foreach (AttributePropertyDefinition property in definition.Properties)
 			{
-				builder.AddLine($"public {property.Type.FullName} {property.Name} {{ get; set; }}")
+				builder.AddLine($"public {property.Type.FullName}{(property.IsNullable ? "?" : "")} {property.Name} {{ get; set; }}")
 					.AddLine();
 
 				if (property.InConstructor)
@@ -108,7 +108,7 @@ public abstract class BaseCodeGenerator : IIncrementalGenerator
 
 			if (constructorProperties.Count > 0)
 			{
-				builder.AddLine($"public {definition.FullName}({string.Join(", ", constructorProperties.Select(x => $"{x.Type.FullName} {x.ConstructorArgumentName}"))})")
+				builder.AddLine($"public {definition.FullName}({string.Join(", ", constructorProperties.Select(x => $"{x.Type.FullName}{(x.IsNullable ? "?" : "")} {x.ConstructorArgumentName}"))})")
 					.AddLine("{")
 					.Indent();
 

@@ -9,26 +9,29 @@ namespace Storm.Api.Launchers;
 
 public static class JsonExtensions
 {
-	public static IMvcBuilder AddJsonLibrary(this IMvcBuilder builder)
+	extension(IMvcBuilder builder)
 	{
-		if (DefaultLauncherOptions.UseNewtonsoftJson)
+		public IMvcBuilder AddJsonLibrary()
 		{
-			return builder.AddNewtonsoftJson(options =>
+			if (DefaultLauncherOptions.UseNewtonsoftJson)
 			{
-				options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
-				options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-				options.SerializerSettings.ContractResolver = new DefaultContractResolver
+				return builder.AddNewtonsoftJson(options =>
 				{
-					NamingStrategy = new DefaultNamingStrategy(),
-				};
+					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+					options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+					options.SerializerSettings.ContractResolver = new DefaultContractResolver
+					{
+						NamingStrategy = new DefaultNamingStrategy(),
+					};
+				});
+			}
+
+			return builder.AddJsonOptions(options =>
+			{
+				options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+				options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+				options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Disallow;
 			});
 		}
-
-		return builder.AddJsonOptions(options =>
-		{
-			options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
-			options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-			options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Disallow;
-		});
 	}
 }

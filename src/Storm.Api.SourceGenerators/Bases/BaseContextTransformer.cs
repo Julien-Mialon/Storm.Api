@@ -85,6 +85,9 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 	protected INamedTypeSymbol GetInterfaceIAction()
 		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.IAction`2");
 
+	protected INamedTypeSymbol GetOpenApiErrorCodesAttribute()
+		=> GetRequiredTypeByMetadataName("Storm.Api.OpenApis.OpenApiErrorCodesAttribute");
+
 	protected INamedTypeSymbol GetTypeTask()
 		=> GetRequiredTypeByMetadataName("System.Threading.Tasks.Task");
 
@@ -103,14 +106,26 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 	protected INamedTypeSymbol GetTypeApiFileResult()
 		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.Domains.Results.ApiFileResult");
 
-	protected INamedTypeSymbol GetAspNetTypeFileResult()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.FileResult");
+	protected INamedTypeSymbol GetAspNetTypeFileContentResult()
+		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.FileContentResult");
+
+	protected INamedTypeSymbol GetTypeStream()
+		=> GetRequiredTypeByMetadataName("System.IO.Stream");
 
 	protected INamedTypeSymbol GetAspNetInterfaceIActionResult()
 		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
 
 	protected INamedTypeSymbol GetAspNetTypeActionResultT()
 		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ActionResult`1");
+
+	protected INamedTypeSymbol GetAspNetTypeProducesResponseTypeAttribute()
+		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute");
+
+	protected INamedTypeSymbol GetAspNetTypeEndpointSummaryAttribute()
+		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Http.EndpointSummaryAttribute");
+
+	protected INamedTypeSymbol GetAspNetTypeEndpointDescriptionAttribute()
+		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Http.EndpointDescriptionAttribute");
 
 	protected bool TryGetAttribute(ISymbol symbol, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? attributeData)
 	{
@@ -124,6 +139,16 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		}
 
 		return attributeData is not null;
+	}
+
+	protected IEnumerable<AttributeData> GetAttributes(ISymbol symbol, INamedTypeSymbol attributeType)
+	{
+		if (attributeType.IsGenericType)
+		{
+			return symbol.GetAttributes().Where(x => x.AttributeClass is { IsGenericType: true } && SymbolEqualityComparer.Default.Equals(x.AttributeClass.ConstructedFrom, attributeType));
+		}
+
+		return symbol.GetAttributes().Where(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, attributeType));
 	}
 
 	protected bool TryGetGenericInterface(ITypeSymbol type, INamedTypeSymbol genericInterfaceType, [NotNullWhen(true)] out INamedTypeSymbol? implementedInterfaceType)

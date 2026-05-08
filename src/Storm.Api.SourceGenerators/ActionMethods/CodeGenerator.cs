@@ -9,6 +9,9 @@ internal class CodeGenerator
 	private readonly GeneratorContext _context;
 	private readonly string _generatedCodeAttribute;
 
+	private const string PROBLEM_MEDIA_TYPE = "application/problem+json";
+	private const string SUCCESS_MEDIA_TYPE = "application/json";
+
 	public CodeGenerator(GeneratorContext context, string generatedCodeAttribute)
 	{
 		_context = context;
@@ -34,6 +37,59 @@ internal class CodeGenerator
 		builder.AddLine("{").Indent();
 		foreach (MethodContext method in _context.Methods)
 		{
+			if (method.Summary is not null)
+			{
+				builder.AddLine($"[{_context.Types.EndpointSummaryAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}(@\"{method.Summary}\")]");
+			}
+
+			string endpointDescription = "";
+			if (method.ErrorCodes.Count > 0)
+			{
+				endpointDescription += "Error Codes:\n";
+				foreach (ErrorCodeContext errorCode in method.ErrorCodes)
+				{
+					string errorDescription = errorCode.Description is not null ? $": {errorCode.Description}" : "";
+					endpointDescription += $"- {errorCode.ErrorCode}{errorDescription}\n";
+				}
+				endpointDescription += "\n";
+			}
+			endpointDescription += method.Description ?? "";
+
+			if (string.IsNullOrEmpty(endpointDescription) is false)
+			{
+				builder.AddLine($"[{_context.Types.EndpointDescriptionAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}(@\"{endpointDescription}\")]");
+			}
+
+			string producesResponseTypeAttribute = _context.Types.ProducesResponseTypeAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+			string mediaType = method.MediaType ?? SUCCESS_MEDIA_TYPE;
+
+			if (method.SuccessStatusCodes.Count > 0)
+			{
+				foreach (StatusCodeContext successCodeContext in method.SuccessStatusCodes)
+				{
+					string description = successCodeContext.Description is not null ? $", Description = @\"{successCodeContext.Description}\"" : "";
+					builder.AddLine($"[{producesResponseTypeAttribute}<{method.OpenApiReturnType}>({successCodeContext.StatusCode}, \"{mediaType}\"{description})]");
+				}
+			}
+			else
+			{
+				builder.AddLine($"[{producesResponseTypeAttribute}<{method.OpenApiReturnType}>(200, \"{mediaType}\")]");
+			}
+
+			if (method.HttpErrorStatusCodes.Count > 0)
+			{
+				foreach (StatusCodeContext httpErrorContext in method.HttpErrorStatusCodes)
+				{
+					string description = httpErrorContext.Description is not null ? $", Description = @\"{httpErrorContext.Description}\"" : "";
+					builder.AddLine($"[{producesResponseTypeAttribute}<{_context.Types.Response.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}>({httpErrorContext.StatusCode}, \"{PROBLEM_MEDIA_TYPE}\"{description})]");
+				}
+			}
+
+			if(method.ErrorCodes.Count > 0)
+			{
+				builder.AddLine($"[{_context.Types.OpenApiErrorCodesAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}({string.Join(", ", method.ErrorCodes.OrderBy(x => x.ErrorCode).Select(ec => $"\"{ec.ErrorCode}\""))})]");
+			}
+
 			builder.Add($"{SyntaxFacts.GetText(_context.ClassAccessibility)} partial async {method.ReturnType} {method.Name}(");
 			builder.Add(string.Join(", ", method.Arguments.Select(p => $"{p.Type} {p.Name}")));
 			builder.AddLine(")");
