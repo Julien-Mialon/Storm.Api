@@ -76,14 +76,17 @@ public partial class UsersController(IServiceProvider services) : BaseController
 {
     [HttpGet("{id}")]
     [WithAction<GetUserQuery>]
+    [Tags("Users")]
     public partial Task<ActionResult<Response<UserDto>>> GetUser([FromRoute] string id);
 
     [HttpPost]
     [WithAction<CreateUserCommand>]
+    [Tags("Users")]
     public partial Task<ActionResult<Response>> CreateUser([FromBody] CreateUserRequest body);
 
     [HttpGet("{id}/avatar")]
     [WithAction<GetAvatarQuery>]
+    [Tags("Users")]
     public partial Task<IActionResult> GetAvatar([FromRoute] string id);
 }
 ```
@@ -93,10 +96,35 @@ public partial class UsersController(IServiceProvider services) : BaseController
 - Always use `[WithAction<TAction>]` — never implement the partial method manually
 - Generator maps HTTP parameters to the action's parameter type **by property name** (case-insensitive)
 - Use `[MapTo(nameof(MyParam.SomeProperty))]` when the HTTP parameter name differs from the parameter class property
+- Use `[Tags("Group")]` on the controller method to group endpoints in the OpenAPI document
 - Return types:
   - `Task<ActionResult<Response<T>>>` — typed output
   - `Task<ActionResult<Response>>` — `Unit` output (no body)
   - `Task<IActionResult>` — file download (`ApiFileResult` output)
+- **Never** put `[ProducesResponseType]`, `[EndpointSummary]`, or `[EndpointDescription]` on the controller — the generator emits these from the action class. Use the documentation attributes below instead.
+
+---
+
+## OpenAPI Documentation Attributes (on the Action class)
+
+Document the endpoint contract on the **action class** — the generator emits `[EndpointSummary]`, `[EndpointDescription]`, `[ProducesResponseType<T>]`, and `[OpenApiErrorCodes(...)]` on the controller method automatically (`BaseStartup` wires up `AddStormOpenApi()` which surfaces error codes as the `x-error-codes` extension).
+
+All attributes are in `Storm.Api.SourceGenerators.ActionMethods`:
+
+- `[Summary("...")]` — endpoint summary (single)
+- `[Description("...")]` — long description (multiple allowed, joined)
+- `[ErrorCode("CODE", Description = "...")]` — business error from `DomainException` (multiple)
+- `[HttpError(HttpStatusCode.X, Description = "...")]` — HTTP error from `DomainHttpCodeException` (multiple)
+- `[SuccessCode(code, Description = "...")]` — override the default `200` (multiple)
+- `[MediaType("image/png")]` — required on `ApiFileResult` actions to declare the file content type
+- `[InternalActionCall<TAction>]` — pull `[ErrorCode]` / `[HttpError]` from a delegated action (multiple)
+
+**Rules:**
+- Pair every `throw new DomainException("CODE", ...)` with a matching `[ErrorCode("CODE", ...)]` on the action.
+- Pair every `throw new DomainHttpCodeException(HttpStatusCode.X, ...)` with a matching `[HttpError(HttpStatusCode.X, ...)]`.
+- When delegating to another action, add `[InternalActionCall<OtherAction>]` instead of restating its errors.
+
+See [examples/documentation-attributes.md](examples/documentation-attributes.md) for a full sample, the attribute reference, and the exact generation behavior.
 
 ---
 
@@ -147,3 +175,7 @@ For a full paginated response example (action + controller), see [examples/pagin
 | Implement partial method manually | Let `[WithAction<T>]` generate it |
 | `if (x == null) throw new ...` | `.NotFoundIfNull()` / `.UnauthorizedIfNull()` etc. |
 | `if (x == false) throw new ...` | `.NotFoundIfFalse()` / `.UnauthorizedIfFalse()` etc. |
+| `[ProducesResponseType<Response>(400)]` on controller | `[HttpError(HttpStatusCode.BadRequest)]` on action |
+| `[ProducesResponseType<FileResult>(200, "image/png")]` on controller | `[MediaType("image/png")]` on action |
+| `[EndpointSummary("...")]` / `[EndpointDescription("...")]` on controller | `[Summary("...")]` / `[Description("...")]` on action |
+| Restating an inner action's errors with `[ErrorCode]` / `[HttpError]` | `[InternalActionCall<InnerAction>]` |
