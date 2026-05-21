@@ -176,6 +176,11 @@ public abstract class BaseController : Controller
 		return InternalWrapForErrorRaw<T>(async () =>
 		{
 			T result = await executor();
+			if (result is Response response)
+			{
+				response.IsSuccess = true;
+			}
+
 			return Ok(result);
 		});
 	}
