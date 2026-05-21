@@ -2,7 +2,7 @@
 
 public static class DefaultValuesExtensions
 {
-	private static readonly Dictionary<Type, object> DEFAULT_VALUES = new();
+	private static Dictionary<Type, object> _defaultValues = new();
 
 	extension(Type type)
 	{
@@ -13,13 +13,24 @@ public static class DefaultValuesExtensions
 				return null;
 			}
 
-			if (DEFAULT_VALUES.TryGetValue(type, out object? value))
+			if (_defaultValues.TryGetValue(type, out object? value))
 			{
 				return value;
 			}
 
 			value = Activator.CreateInstance(type);
-			DEFAULT_VALUES.TryAdd(type, value!);
+
+			Dictionary<Type, object> snapshot, newCache;
+			do
+			{
+				snapshot = _defaultValues;
+				newCache = new(_defaultValues)
+				{
+					[type] = value!
+				};
+			} while (!ReferenceEquals(Interlocked.CompareExchange(ref _defaultValues, newCache, snapshot), snapshot));
+
+
 			return value;
 		}
 	}
