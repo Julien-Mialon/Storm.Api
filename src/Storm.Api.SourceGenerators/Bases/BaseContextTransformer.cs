@@ -127,7 +127,13 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 	protected INamedTypeSymbol GetAspNetTypeEndpointDescriptionAttribute()
 		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Http.EndpointDescriptionAttribute");
 
-	protected bool TryGetAttribute(ISymbol symbol, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? attributeData)
+	protected INamedTypeSymbol GetListT()
+		=> GetRequiredTypeByMetadataName("System.Collections.Generic.List`1");
+
+	protected INamedTypeSymbol GetDictionaryKV()
+		=> GetRequiredTypeByMetadataName("System.Collections.Generic.Dictionary`2");
+
+	protected static bool TryGetAttribute(ISymbol symbol, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? attributeData)
 	{
 		if (attributeType.IsGenericType)
 		{
@@ -141,7 +147,17 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		return attributeData is not null;
 	}
 
-	protected IEnumerable<AttributeData> GetAttributes(ISymbol symbol, INamedTypeSymbol attributeType)
+	protected static bool HasAttribute(ISymbol symbol, INamedTypeSymbol attributeType)
+	{
+		if (attributeType.IsGenericType)
+		{
+			return symbol.GetAttributes().Any(x => x.AttributeClass is { IsGenericType: true } && SymbolEqualityComparer.Default.Equals(x.AttributeClass.ConstructedFrom, attributeType));
+		}
+
+		return symbol.GetAttributes().Any(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, attributeType));
+	}
+
+	protected static IEnumerable<AttributeData> GetAttributes(ISymbol symbol, INamedTypeSymbol attributeType)
 	{
 		if (attributeType.IsGenericType)
 		{
@@ -151,7 +167,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		return symbol.GetAttributes().Where(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, attributeType));
 	}
 
-	protected bool TryGetGenericInterface(ITypeSymbol type, INamedTypeSymbol genericInterfaceType, [NotNullWhen(true)] out INamedTypeSymbol? implementedInterfaceType)
+	protected static bool TryGetGenericInterface(ITypeSymbol type, INamedTypeSymbol genericInterfaceType, [NotNullWhen(true)] out INamedTypeSymbol? implementedInterfaceType)
 	{
 		if (type.Interfaces is { Length: > 0 } interfaces)
 		{
@@ -174,7 +190,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		return false;
 	}
 
-	protected bool Inherits(ITypeSymbol type, INamedTypeSymbol baseType)
+	protected static bool Inherits(ITypeSymbol type, INamedTypeSymbol baseType)
 	{
 		if (SymbolEqualityComparer.Default.Equals(type, baseType))
 		{

@@ -79,4 +79,12 @@ public class CodeBuilder
 		_isStartLine = true;
 		return this;
 	}
+
+	public CodeBuilder Block(Action innerBlock)
+	{
+		AddLine("{").Indent();
+		innerBlock();
+		Unindent().AddLine("}");
+		return this;
+	}
 }
