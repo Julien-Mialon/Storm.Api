@@ -12,15 +12,15 @@ public class ActionMethodCodeGenerator : BaseCodeGenerator
 
 	protected override List<AttributeDefinition> Attributes { get; } =
 	[
-		ActionMethod.WITH_ACTION_ATTRIBUTE,
-		ActionMethod.MAP_TO_ATTRIBUTE,
-		ActionMethod.SUCCESS_CODE_ATTRIBUTE,
-		ActionMethod.MEDIA_TYPE_ATTRIBUTE,
-		ActionMethod.ERROR_CODE_ATTRIBUTE,
-		ActionMethod.HTTP_ERROR_ATTRIBUTE,
-		ActionMethod.DESCRIPTION_ATTRIBUTE,
-		ActionMethod.SUMMARY_ATTRIBUTE,
-		ActionMethod.INTERNAL_ACTION_CALL_ATTRIBUTE,
+		ActionMethodConstants.WITH_ACTION_ATTRIBUTE,
+		ActionMethodConstants.MAP_TO_ATTRIBUTE,
+		ActionMethodConstants.SUCCESS_CODE_ATTRIBUTE,
+		ActionMethodConstants.MEDIA_TYPE_ATTRIBUTE,
+		ActionMethodConstants.ERROR_CODE_ATTRIBUTE,
+		ActionMethodConstants.HTTP_ERROR_ATTRIBUTE,
+		ActionMethodConstants.DESCRIPTION_ATTRIBUTE,
+		ActionMethodConstants.SUMMARY_ATTRIBUTE,
+		ActionMethodConstants.INTERNAL_ACTION_CALL_ATTRIBUTE,
 	];
 
 	public override void Initialize(IncrementalGeneratorInitializationContext context)
@@ -53,7 +53,7 @@ public class ActionMethodCodeGenerator : BaseCodeGenerator
 				member is MethodDeclarationSyntax
 				&& member.AttributeLists.Count > 0
 				&& member.AttributeLists.Any(attributes =>
-					attributes.Attributes.Any(attribute => attribute.Name.ToString().Contains(ActionMethod.WITH_ACTION_ATTRIBUTE.Name))));
+					attributes.Attributes.Any(attribute => attribute.Name.ToString().Contains(ActionMethodConstants.WITH_ACTION_ATTRIBUTE.Name))));
 	}
 
 	private (GeneratorContext? context, DiagnosticContext? diagnostics) CreateSemanticContext(GeneratorSyntaxContext context, CancellationToken cancellationToken)

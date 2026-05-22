@@ -3,7 +3,7 @@ using Storm.Api.SourceGenerators.Bases;
 
 namespace Storm.Api.SourceGenerators.ActionMethods;
 
-internal static class ActionMethod
+internal static class ActionMethodConstants
 {
 	public static readonly AttributeDefinition WITH_ACTION_ATTRIBUTE = new()
 	{
