@@ -14,5 +14,7 @@ public interface IArrayWriter
 
 	IArrayWriter WriteValue(DateTimeOffset value);
 
+	IArrayWriter WriteValue(Guid value);
+
 	IArrayWriter WriteObject(Action<IObjectWriter> objectWriter);
 }
