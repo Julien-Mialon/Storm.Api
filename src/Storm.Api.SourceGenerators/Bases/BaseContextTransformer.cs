@@ -92,63 +92,6 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 	protected void Debug(string title, string message, string id = "SG0001")
 		=> Log(DiagnosticSeverity.Hidden, title, message, id);
 
-	protected INamedTypeSymbol GetRequiredTypeByMetadataName(string fullyQualifiedTypeName)
-	{
-		return SemanticModel.Compilation.GetTypeByMetadataName(fullyQualifiedTypeName)
-			?? throw new($"Type {fullyQualifiedTypeName} not found");
-	}
-
-	protected INamedTypeSymbol GetInterfaceIAction()
-		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.IAction`2");
-
-	protected INamedTypeSymbol GetOpenApiErrorCodesAttribute()
-		=> GetRequiredTypeByMetadataName("Storm.Api.OpenApis.OpenApiErrorCodesAttribute");
-
-	protected INamedTypeSymbol GetTypeTask()
-		=> GetRequiredTypeByMetadataName("System.Threading.Tasks.Task");
-
-	protected INamedTypeSymbol GetTypeTaskT()
-		=> GetRequiredTypeByMetadataName("System.Threading.Tasks.Task`1");
-
-	protected INamedTypeSymbol GetTypeUnit()
-		=> GetRequiredTypeByMetadataName("Storm.Api.Unit");
-
-	protected INamedTypeSymbol GetTypeResponse()
-		=> GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response");
-
-	protected INamedTypeSymbol GetTypeResponseT()
-		=> GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response`1");
-
-	protected INamedTypeSymbol GetTypeApiFileResult()
-		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.Domains.Results.ApiFileResult");
-
-	protected INamedTypeSymbol GetAspNetTypeFileContentResult()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.FileContentResult");
-
-	protected INamedTypeSymbol GetTypeStream()
-		=> GetRequiredTypeByMetadataName("System.IO.Stream");
-
-	protected INamedTypeSymbol GetAspNetInterfaceIActionResult()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
-
-	protected INamedTypeSymbol GetAspNetTypeActionResultT()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ActionResult`1");
-
-	protected INamedTypeSymbol GetAspNetTypeProducesResponseTypeAttribute()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute");
-
-	protected INamedTypeSymbol GetAspNetTypeEndpointSummaryAttribute()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Http.EndpointSummaryAttribute");
-
-	protected INamedTypeSymbol GetAspNetTypeEndpointDescriptionAttribute()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Http.EndpointDescriptionAttribute");
-
-	protected INamedTypeSymbol GetListT()
-		=> GetRequiredTypeByMetadataName("System.Collections.Generic.List`1");
-
-	protected INamedTypeSymbol GetDictionaryKV()
-		=> GetRequiredTypeByMetadataName("System.Collections.Generic.Dictionary`2");
-
 	protected static bool TryGetAttribute(ISymbol symbol, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? attributeData)
 	{
 		if (attributeType.IsGenericType)

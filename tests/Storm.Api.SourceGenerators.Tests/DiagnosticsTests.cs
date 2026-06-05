@@ -33,11 +33,10 @@ public class DiagnosticsTests
 	[Fact]
 	public void Missing_framework_type_surfaces_an_SG0001_diagnostic()
 	{
-		// Remove Storm.Api.OpenApis.OpenApiErrorCodesAttribute from the framework so the eager type
+		// Remove Storm.Api.CQRS.Domains.Results.ApiFileResult from the framework so the eager type
 		// resolution in ContextTransformer throws, which is reported as SG0001.
 		string brokenFramework = FrameworkStubs.SOURCE
-			.Replace("class OpenApiErrorCodesAttribute", "class RenamedAway")
-			.Replace("OpenApiErrorCodesAttribute(params", "RenamedAway(params");
+			.Replace("class ApiFileResult", "class RenamedAway");
 
 		const string USER = """
 

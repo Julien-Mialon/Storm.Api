@@ -13,27 +13,7 @@ internal class ContextTransformer(GeneratorAttributeSyntaxContext context) : Bas
 
 	protected override ActionMethodContext? CreateContext(CancellationToken cancellationToken)
 	{
-		Types types = new()
-		{
-			Unit = GetTypeUnit(),
-			Response = GetTypeResponse(),
-			ResponseT = GetTypeResponseT(),
-			ApiFileResult = GetTypeApiFileResult(),
-			IAction = GetInterfaceIAction(),
-			WithActionAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.WITH_ACTION_ATTRIBUTE.MetadataName),
-			MapToAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.MAP_TO_ATTRIBUTE.MetadataName),
-			SuccessCodeAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.SUCCESS_CODE_ATTRIBUTE.MetadataName),
-			ErrorCodeAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.ERROR_CODE_ATTRIBUTE.MetadataName),
-			HttpErrorAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.HTTP_ERROR_ATTRIBUTE.MetadataName),
-			DescriptionAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.DESCRIPTION_ATTRIBUTE.MetadataName),
-			SummaryAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.SUMMARY_ATTRIBUTE.MetadataName),
-			MediaTypeAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.MEDIA_TYPE_ATTRIBUTE.MetadataName),
-			InternalActionCallAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.INTERNAL_ACTION_CALL_ATTRIBUTE.MetadataName),
-			TaskT = GetTypeTaskT(),
-			AspNetIActionResult = GetAspNetInterfaceIActionResult(),
-			AspNetActionResultT = GetAspNetTypeActionResultT(),
-			AspNetFileResult = GetTypeStream(),
-		};
+		Types types = Types.For(SemanticModel.Compilation);
 
 		IMethodSymbol methodSymbol = _methodSymbol;
 		INamedTypeSymbol classSymbol = methodSymbol.ContainingType;
