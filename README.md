@@ -3,6 +3,32 @@ Framework to build APIs
 
 ## Changelog
 
+### 10.0.15 (June 5th)
+
+#### Improvements
+- **Source generator overhaul** — Rewrote the `[WithAction<T>]` generator to use `ForAttributeWithMetadataName` with a fully cached pipeline (caching context, diagnostic caching) for significantly faster, more incremental builds. Refactored the `ActionMethod` generator for efficiency and added a test suite.
+- **GUID logging** — `JsonLogWriter` now supports writing `Guid` values directly through `IArrayWriter`/`IObjectWriter`.
+
+#### Fixes
+- Fixed attribute generation code in the source generator.
+
+### 10.0.13 (May 21st)
+
+#### Fixes
+- Fixed `DefaultValuesExtensions` concurrency issue.
+- Fixed `IsSuccess` not being set to `true` for `PaginatedResponse`.
+
+### 10.0.11 (May 13th)
+
+#### New Features
+- **Default value from `Type`** — Added a `DefaultValuesExtensions` overload to generate a default value from a `Type` instance.
+
+### 10.0.10 (May 9th)
+
+#### Improvements
+- **OpenAPI documentation** — The source generator now supports specifying multiple attributes on actions for OpenAPI documentation.
+- **Customizable log timestamp field** — The `TimestampLogAppender` field name is now configurable.
+
 ### 10.0.9 (April 13th)
 
 - Fix function **WithDatabaseTransaction** to pass the correct connection in the callback
