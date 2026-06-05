@@ -46,7 +46,7 @@ internal static class ActionMethodConstants
 			new()
 			{
 				Name = "Code",
-				Type = typeof(string),
+				Type = typeof(HttpStatusCode),
 				InConstructor = true,
 			},
 			new()

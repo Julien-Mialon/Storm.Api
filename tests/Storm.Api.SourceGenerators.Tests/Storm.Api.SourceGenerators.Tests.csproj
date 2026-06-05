@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>false</IsPackable>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<IsTestProject>true</IsTestProject>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Snapshot golden files hold generated source as text; they must not be compiled as part
+		     of the test project, but stay visible/editable in the IDE. -->
+		<Compile Remove="Snapshots\**\*.cs" />
+		<None Include="Snapshots\**\*.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Reference the generator as a plain library so the tests can drive it directly via
+		     CSharpGeneratorDriver. We deliberately do NOT mark it as an Analyzer here: the tests
+		     instantiate the generator and run it against in-memory compilations themselves. -->
+		<ProjectReference Include="..\..\src\Storm.Api.SourceGenerators\Storm.Api.SourceGenerators.csproj" />
+	</ItemGroup>
+</Project>

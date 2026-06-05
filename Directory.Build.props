@@ -10,11 +10,11 @@
 		<WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904;IDE0045</WarningsNotAsErrors>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$(MSBuildProjectName.Contains('.Sample')) == true">
+	<PropertyGroup Condition="$(MSBuildProjectName.Contains('.Sample')) == true OR $(MSBuildProjectName.Contains('.Tests')) == true">
 		<IsSample>true</IsSample>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
-	<PropertyGroup Condition="$(MSBuildProjectName.Contains('.Sample')) == false">
+	<PropertyGroup Condition="$(MSBuildProjectName.Contains('.Sample')) == false AND $(MSBuildProjectName.Contains('.Tests')) == false">
 		<IsSample>false</IsSample>
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
