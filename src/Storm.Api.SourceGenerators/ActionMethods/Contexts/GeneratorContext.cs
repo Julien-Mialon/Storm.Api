@@ -9,7 +9,6 @@ internal struct GeneratorContext : IEquatable<GeneratorContext>
 	public string ClassName;
 	public Accessibility ClassAccessibility;
 	public ImmutableArray<MethodContext> Methods;
-	public Types Types; //TODO: review this one, it shouldn't be here
 
 	public readonly bool Equals(GeneratorContext other)
 	{

@@ -13,7 +13,6 @@ internal struct ActionMethodContext : IEquatable<ActionMethodContext>
 	public string ClassName;
 	public Accessibility ClassAccessibility;
 	public MethodContext Method;
-	public Types Types; //TODO: review this one, it shouldn't be here (see issue #1)
 
 	public readonly bool Equals(ActionMethodContext other)
 	{

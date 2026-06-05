@@ -67,7 +67,6 @@ public class ActionMethodCodeGenerator : BaseCodeGenerator
 				Namespace = first.Namespace,
 				ClassName = first.ClassName,
 				ClassAccessibility = first.ClassAccessibility,
-				Types = first.Types,
 				Methods = group
 					.OrderBy(static x => x.Method.Name, StringComparer.Ordinal)
 					.ThenBy(static x => x.Method.ActionType, StringComparer.Ordinal)

@@ -18,16 +18,10 @@ internal struct Types
 	public INamedTypeSymbol MediaTypeAttribute;
 	public INamedTypeSymbol InternalActionCallAttribute;
 
-	public INamedTypeSymbol OpenApiErrorCodesAttribute;
 	public INamedTypeSymbol IAction;
 
 	public INamedTypeSymbol TaskT;
 	public INamedTypeSymbol AspNetIActionResult;
 	public INamedTypeSymbol AspNetActionResultT;
 	public INamedTypeSymbol AspNetFileResult;
-
-	public INamedTypeSymbol ProducesResponseTypeAttribute;
-	public INamedTypeSymbol EndpointSummaryAttribute;
-	public INamedTypeSymbol EndpointDescriptionAttribute;
-
 }

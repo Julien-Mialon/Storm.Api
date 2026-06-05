@@ -20,7 +20,6 @@ internal class ContextTransformer(GeneratorAttributeSyntaxContext context) : Bas
 			ResponseT = GetTypeResponseT(),
 			ApiFileResult = GetTypeApiFileResult(),
 			IAction = GetInterfaceIAction(),
-			OpenApiErrorCodesAttribute = GetOpenApiErrorCodesAttribute(),
 			WithActionAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.WITH_ACTION_ATTRIBUTE.MetadataName),
 			MapToAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.MAP_TO_ATTRIBUTE.MetadataName),
 			SuccessCodeAttribute = GetRequiredTypeByMetadataName(ActionMethodConstants.SUCCESS_CODE_ATTRIBUTE.MetadataName),
@@ -34,9 +33,6 @@ internal class ContextTransformer(GeneratorAttributeSyntaxContext context) : Bas
 			AspNetIActionResult = GetAspNetInterfaceIActionResult(),
 			AspNetActionResultT = GetAspNetTypeActionResultT(),
 			AspNetFileResult = GetTypeStream(),
-			ProducesResponseTypeAttribute = GetAspNetTypeProducesResponseTypeAttribute(),
-			EndpointSummaryAttribute = GetAspNetTypeEndpointSummaryAttribute(),
-			EndpointDescriptionAttribute = GetAspNetTypeEndpointDescriptionAttribute(),
 		};
 
 		IMethodSymbol methodSymbol = _methodSymbol;
@@ -67,7 +63,6 @@ internal class ContextTransformer(GeneratorAttributeSyntaxContext context) : Bas
 			ActionResultType = actionReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
 			Arguments = CreateArguments(actionParameterType, methodSymbol, types).ToImmutableArray(),
 			Type = type,
-			ActionResultTypeSymbol = actionReturnType,
 			Summary = CreateSummary(actionType, types),
 			Description = CreateDescriptionString(actionType, types),
 			ErrorCodes = CreateErrorCodes(actionType, types).ToImmutableArray(),
@@ -81,7 +76,6 @@ internal class ContextTransformer(GeneratorAttributeSyntaxContext context) : Bas
 			Namespace = classSymbol.ContainingNamespace.IsGlobalNamespace ? null : classSymbol.ContainingNamespace.ToDisplayString(),
 			ClassName = classSymbol.Name,
 			ClassAccessibility = classSymbol.DeclaredAccessibility,
-			Types = types,
 			Method = methodContext,
 		};
 	}

@@ -16,7 +16,6 @@ internal struct MethodContext : IEquatable<MethodContext>
 	public string ActionParameterType;
 	public string ActionResultType;
 
-	public ITypeSymbol ActionResultTypeSymbol; //TODO: should be removed
 	public ActionType Type;
 
 	public string? Summary;
