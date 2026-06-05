@@ -58,6 +58,12 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter, IDisposable, IAsyncD
 		return this;
 	}
 
+	public IArrayWriter WriteValue(Guid value)
+	{
+		_jsonWriter.WriteStringValue(value.ToString("N"));
+		return this;
+	}
+
 	IObjectWriter IObjectWriter.WriteProperty(string property, string? value)
 	{
 		_jsonWriter.WritePropertyName(property);
@@ -97,6 +103,13 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter, IDisposable, IAsyncD
 	{
 		_jsonWriter.WritePropertyName(property);
 		_jsonWriter.WriteStringValue(value.ToString("o", CultureInfo.InvariantCulture));
+		return this;
+	}
+
+	public IObjectWriter WriteProperty(string property, Guid value)
+	{
+		_jsonWriter.WritePropertyName(property);
+		_jsonWriter.WriteStringValue(value.ToString("N"));
 		return this;
 	}
 

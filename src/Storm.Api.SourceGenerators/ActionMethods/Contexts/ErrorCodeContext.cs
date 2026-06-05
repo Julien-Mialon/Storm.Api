@@ -1,4 +1,4 @@
-namespace Storm.Api.SourceGenerators.ActionMethods;
+namespace Storm.Api.SourceGenerators.ActionMethods.Contexts;
 
 internal struct ErrorCodeContext : IEquatable<ErrorCodeContext>
 {

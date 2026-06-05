@@ -1,4 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
+using Storm.Api.SourceGenerators.Bases.Contexts;
 
 namespace Storm.Api.SourceGenerators.Bases;
 
@@ -40,7 +42,20 @@ public abstract class BaseCodeGenerator : IIncrementalGenerator
 		builder.AddLine($"namespace {definition.Namespace};");
 		builder.AddLine();
 		builder.AddLine(GeneratedCodeAttribute);
-		builder.AddLine($"[AttributeUsage(AttributeTargets.{definition.Targets:G}, Inherited = {definition.Inherited.ToString().ToLowerInvariant()}, AllowMultiple = {definition.AllowMultiple.ToString().ToLowerInvariant()})]");
+
+		string attributeTargets = definition.Targets.ToString("G");
+		if (attributeTargets.Contains(","))
+		{
+			attributeTargets = attributeTargets.Split([','], StringSplitOptions.RemoveEmptyEntries)
+				.Select(x => $"AttributeTargets.{x.Trim()}")
+					.Aggregate((x, y) => $"{x} | {y}");
+		}
+		else
+		{
+			attributeTargets = $"AttributeTargets.{attributeTargets}";
+		}
+
+		builder.AddLine($"[AttributeUsage({attributeTargets}, Inherited = {definition.Inherited.ToString().ToLowerInvariant()}, AllowMultiple = {definition.AllowMultiple.ToString().ToLowerInvariant()})]");
 		builder.Add($"internal sealed class {definition.FullName}");
 		if (definition.Generics.Count > 0)
 		{
@@ -132,7 +147,7 @@ public abstract class BaseCodeGenerator : IIncrementalGenerator
 	{
 		foreach (DiagnosticItemContext item in context.Items)
 		{
-			sourceContext.ReportDiagnostic(Diagnostic.Create(new(item.Id, item.Title, item.MessageFormat, item.Category, item.Severity, true), item.Location));
+			sourceContext.ReportDiagnostic(Diagnostic.Create(new(item.Id, item.Title, item.MessageFormat, item.Category, item.Severity, true),  item.Location.ToLocation()));
 		}
 	}
 }

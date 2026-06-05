@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.CSharp;
+using Storm.Api.SourceGenerators.ActionMethods.Contexts;
 using Storm.Api.SourceGenerators.Bases;
-using SymbolDisplayFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat;
 
 namespace Storm.Api.SourceGenerators.ActionMethods;
 
@@ -11,6 +11,16 @@ internal class CodeGenerator
 
 	private const string PROBLEM_MEDIA_TYPE = "application/problem+json";
 	private const string SUCCESS_MEDIA_TYPE = "application/json";
+
+	// Fully-qualified display names of framework types used in the generated code. These are non-generic,
+	// non-nested types, so SymbolDisplayFormat.FullyQualifiedFormat is deterministically "global::<ns>.<Type>".
+	// Hardcoding them keeps the cached model symbol-free (see source-generator-issue.md #1).
+	private const string ENDPOINT_SUMMARY_ATTRIBUTE = "global::Microsoft.AspNetCore.Http.EndpointSummaryAttribute";
+	private const string ENDPOINT_DESCRIPTION_ATTRIBUTE = "global::Microsoft.AspNetCore.Http.EndpointDescriptionAttribute";
+	private const string PRODUCES_RESPONSE_TYPE_ATTRIBUTE = "global::Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute";
+	private const string RESPONSE_TYPE = "global::Storm.Api.Dtos.Response";
+	private const string OPEN_API_ERROR_CODES_ATTRIBUTE = "global::Storm.Api.OpenApis.OpenApiErrorCodesAttribute";
+	private const string UNIT_TYPE = "global::Storm.Api.Unit";
 
 	public CodeGenerator(GeneratorContext context, string generatedCodeAttribute)
 	{
@@ -39,11 +49,11 @@ internal class CodeGenerator
 		{
 			if (method.Summary is not null)
 			{
-				builder.AddLine($"[{_context.Types.EndpointSummaryAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}(@\"{method.Summary}\")]");
+				builder.AddLine($"[{ENDPOINT_SUMMARY_ATTRIBUTE}(@\"{method.Summary}\")]");
 			}
 
 			string endpointDescription = "";
-			if (method.ErrorCodes.Count > 0)
+			if (method.ErrorCodes.Length > 0)
 			{
 				endpointDescription += "Error Codes:\n";
 				foreach (ErrorCodeContext errorCode in method.ErrorCodes)
@@ -57,13 +67,13 @@ internal class CodeGenerator
 
 			if (string.IsNullOrEmpty(endpointDescription) is false)
 			{
-				builder.AddLine($"[{_context.Types.EndpointDescriptionAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}(@\"{endpointDescription}\")]");
+				builder.AddLine($"[{ENDPOINT_DESCRIPTION_ATTRIBUTE}(@\"{endpointDescription}\")]");
 			}
 
-			string producesResponseTypeAttribute = _context.Types.ProducesResponseTypeAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+			string producesResponseTypeAttribute = PRODUCES_RESPONSE_TYPE_ATTRIBUTE;
 			string mediaType = method.MediaType ?? SUCCESS_MEDIA_TYPE;
 
-			if (method.SuccessStatusCodes.Count > 0)
+			if (method.SuccessStatusCodes.Length > 0)
 			{
 				foreach (StatusCodeContext successCodeContext in method.SuccessStatusCodes)
 				{
@@ -76,18 +86,18 @@ internal class CodeGenerator
 				builder.AddLine($"[{producesResponseTypeAttribute}<{method.OpenApiReturnType}>(200, \"{mediaType}\")]");
 			}
 
-			if (method.HttpErrorStatusCodes.Count > 0)
+			if (method.HttpErrorStatusCodes.Length > 0)
 			{
 				foreach (StatusCodeContext httpErrorContext in method.HttpErrorStatusCodes)
 				{
 					string description = httpErrorContext.Description is not null ? $", Description = @\"{httpErrorContext.Description}\"" : "";
-					builder.AddLine($"[{producesResponseTypeAttribute}<{_context.Types.Response.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}>({httpErrorContext.StatusCode}, \"{PROBLEM_MEDIA_TYPE}\"{description})]");
+					builder.AddLine($"[{producesResponseTypeAttribute}<{RESPONSE_TYPE}>({httpErrorContext.StatusCode}, \"{PROBLEM_MEDIA_TYPE}\"{description})]");
 				}
 			}
 
-			if(method.ErrorCodes.Count > 0)
+			if(method.ErrorCodes.Length > 0)
 			{
-				builder.AddLine($"[{_context.Types.OpenApiErrorCodesAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}({string.Join(", ", method.ErrorCodes.OrderBy(x => x.ErrorCode).Select(ec => $"\"{ec.ErrorCode}\""))})]");
+				builder.AddLine($"[{OPEN_API_ERROR_CODES_ATTRIBUTE}({string.Join(", ", method.ErrorCodes.OrderBy(x => x.ErrorCode).Select(ec => $"\"{ec.ErrorCode}\""))})]");
 			}
 
 			builder.Add($"{SyntaxFacts.GetText(_context.ClassAccessibility)} partial async {method.ReturnType} {method.Name}(");
@@ -123,14 +133,14 @@ internal class CodeGenerator
 
 	private void OutputForUnit(CodeBuilder builder, MethodContext method)
 	{
-		builder.AddLine($"return await InternalWrapForError<{_context.Types.Response.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}>(async () =>");
+		builder.AddLine($"return await InternalWrapForError<{RESPONSE_TYPE}>(async () =>");
 		builder.AddLine("{").Indent();
 
 		builder.Add($"{method.ActionResultType} actionResult = await Services.ExecuteAction<{method.ActionType}, {method.ActionParameterType}, {method.ActionResultType}>(");
 		OutputActionParameterMapping(builder, method);
 		builder.AddLine(");");
 
-		builder.AddLine($"return new {_context.Types.Response.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}");
+		builder.AddLine($"return new {RESPONSE_TYPE}");
 		builder.AddLine("{").Indent();
 		builder.AddLine("IsSuccess = true,");
 		builder.Unindent().AddLine("};");
@@ -152,7 +162,7 @@ internal class CodeGenerator
 
 	private void OutputForRegular(CodeBuilder builder, MethodContext method)
 	{
-		string responseTOfType = _context.Types.ResponseT.Construct(method.ActionResultTypeSymbol).ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+		string responseTOfType = method.OpenApiReturnType;
 
 		builder.AddLine($"return await InternalWrapForError<{responseTOfType}>(async () =>");
 		builder.AddLine("{").Indent();
@@ -182,7 +192,7 @@ internal class CodeGenerator
 		List<MethodArgumentContext> mapArguments = method.Arguments.Where(x => string.IsNullOrEmpty(x.Name) == false).ToList();
 		if (mapArguments.Count == 0)
 		{
-			if (method.ActionParameterType == _context.Types.Unit.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
+			if (method.ActionParameterType == UNIT_TYPE)
 			{
 				builder.Add(method.ActionParameterType);
 				builder.Add(".Default");

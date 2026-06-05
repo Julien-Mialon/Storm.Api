@@ -1,18 +1,34 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+using Storm.Api.SourceGenerators.Bases.Contexts;
 
 namespace Storm.Api.SourceGenerators.Bases;
 
 internal abstract class BaseContextTransformer<TContext> where TContext : struct
 {
-	protected GeneratorSyntaxContext Context { get; }
+	protected SemanticModel SemanticModel { get; }
+
+	protected Location DefaultLocation { get; }
 
 	protected List<DiagnosticItemContext> Diagnostics { get; } = [];
 
+	protected BaseContextTransformer(SemanticModel semanticModel, Location defaultLocation)
+	{
+		SemanticModel = semanticModel;
+		DefaultLocation = defaultLocation;
+	}
+
 	protected BaseContextTransformer(GeneratorSyntaxContext context)
 	{
-		Context = context;
+		SemanticModel = context.SemanticModel;
+		DefaultLocation = context.Node.GetLocation();
+	}
+
+	protected BaseContextTransformer(GeneratorAttributeSyntaxContext context)
+	{
+		SemanticModel = context.SemanticModel;
+		DefaultLocation = context.TargetNode.GetLocation();
 	}
 
 	public (TContext? context, DiagnosticContext? diagnostics) Transform(CancellationToken ct)
@@ -27,7 +43,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 			Diagnostics.Add(new()
 			{
 				Id = "SG0001",
-				Location = Context.Node.GetLocation(),
+				Location = new(DefaultLocation),
 				MessageFormat = ex.Message,
 				Severity = DiagnosticSeverity.Error,
 				Title = "Exception while generating code",
@@ -46,7 +62,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 
 		return new()
 		{
-			Items = Diagnostics.ToImmutableList(),
+			Items = Diagnostics.ToImmutableArray(),
 		};
 	}
 
@@ -57,7 +73,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		Diagnostics.Add(new()
 		{
 			Id = id,
-			Location = Context.Node.GetLocation(),
+			Location = new(DefaultLocation),
 			MessageFormat = message,
 			Severity = severity,
 			Title = title,
@@ -76,58 +92,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 	protected void Debug(string title, string message, string id = "SG0001")
 		=> Log(DiagnosticSeverity.Hidden, title, message, id);
 
-	protected INamedTypeSymbol GetRequiredTypeByMetadataName(string fullyQualifiedTypeName)
-	{
-		return Context.SemanticModel.Compilation.GetTypeByMetadataName(fullyQualifiedTypeName)
-			?? throw new($"Type {fullyQualifiedTypeName} not found");
-	}
-
-	protected INamedTypeSymbol GetInterfaceIAction()
-		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.IAction`2");
-
-	protected INamedTypeSymbol GetOpenApiErrorCodesAttribute()
-		=> GetRequiredTypeByMetadataName("Storm.Api.OpenApis.OpenApiErrorCodesAttribute");
-
-	protected INamedTypeSymbol GetTypeTask()
-		=> GetRequiredTypeByMetadataName("System.Threading.Tasks.Task");
-
-	protected INamedTypeSymbol GetTypeTaskT()
-		=> GetRequiredTypeByMetadataName("System.Threading.Tasks.Task`1");
-
-	protected INamedTypeSymbol GetTypeUnit()
-		=> GetRequiredTypeByMetadataName("Storm.Api.Unit");
-
-	protected INamedTypeSymbol GetTypeResponse()
-		=> GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response");
-
-	protected INamedTypeSymbol GetTypeResponseT()
-		=> GetRequiredTypeByMetadataName("Storm.Api.Dtos.Response`1");
-
-	protected INamedTypeSymbol GetTypeApiFileResult()
-		=> GetRequiredTypeByMetadataName("Storm.Api.CQRS.Domains.Results.ApiFileResult");
-
-	protected INamedTypeSymbol GetAspNetTypeFileContentResult()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.FileContentResult");
-
-	protected INamedTypeSymbol GetTypeStream()
-		=> GetRequiredTypeByMetadataName("System.IO.Stream");
-
-	protected INamedTypeSymbol GetAspNetInterfaceIActionResult()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.IActionResult");
-
-	protected INamedTypeSymbol GetAspNetTypeActionResultT()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ActionResult`1");
-
-	protected INamedTypeSymbol GetAspNetTypeProducesResponseTypeAttribute()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute");
-
-	protected INamedTypeSymbol GetAspNetTypeEndpointSummaryAttribute()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Http.EndpointSummaryAttribute");
-
-	protected INamedTypeSymbol GetAspNetTypeEndpointDescriptionAttribute()
-		=> GetRequiredTypeByMetadataName("Microsoft.AspNetCore.Http.EndpointDescriptionAttribute");
-
-	protected bool TryGetAttribute(ISymbol symbol, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? attributeData)
+	protected static bool TryGetAttribute(ISymbol symbol, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? attributeData)
 	{
 		if (attributeType.IsGenericType)
 		{
@@ -141,7 +106,17 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		return attributeData is not null;
 	}
 
-	protected IEnumerable<AttributeData> GetAttributes(ISymbol symbol, INamedTypeSymbol attributeType)
+	protected static bool HasAttribute(ISymbol symbol, INamedTypeSymbol attributeType)
+	{
+		if (attributeType.IsGenericType)
+		{
+			return symbol.GetAttributes().Any(x => x.AttributeClass is { IsGenericType: true } && SymbolEqualityComparer.Default.Equals(x.AttributeClass.ConstructedFrom, attributeType));
+		}
+
+		return symbol.GetAttributes().Any(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, attributeType));
+	}
+
+	protected static IEnumerable<AttributeData> GetAttributes(ISymbol symbol, INamedTypeSymbol attributeType)
 	{
 		if (attributeType.IsGenericType)
 		{
@@ -151,7 +126,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		return symbol.GetAttributes().Where(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, attributeType));
 	}
 
-	protected bool TryGetGenericInterface(ITypeSymbol type, INamedTypeSymbol genericInterfaceType, [NotNullWhen(true)] out INamedTypeSymbol? implementedInterfaceType)
+	protected static bool TryGetGenericInterface(ITypeSymbol type, INamedTypeSymbol genericInterfaceType, [NotNullWhen(true)] out INamedTypeSymbol? implementedInterfaceType)
 	{
 		if (type.Interfaces is { Length: > 0 } interfaces)
 		{
@@ -174,7 +149,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		return false;
 	}
 
-	protected bool Inherits(ITypeSymbol type, INamedTypeSymbol baseType)
+	protected static bool Inherits(ITypeSymbol type, INamedTypeSymbol baseType)
 	{
 		if (SymbolEqualityComparer.Default.Equals(type, baseType))
 		{
@@ -184,6 +159,21 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		if (type.BaseType is { } parentType)
 		{
 			return Inherits(parentType, baseType);
+		}
+
+		return false;
+	}
+
+	protected static bool IsGenericTypeInstance(ITypeSymbol type, INamedTypeSymbol genericType)
+	{
+		if (SymbolEqualityComparer.Default.Equals(type, genericType))
+		{
+			return true;
+		}
+
+		if (type is INamedTypeSymbol namedType)
+		{
+			return namedType.IsGenericType && SymbolEqualityComparer.Default.Equals(namedType.ConstructedFrom, genericType);
 		}
 
 		return false;

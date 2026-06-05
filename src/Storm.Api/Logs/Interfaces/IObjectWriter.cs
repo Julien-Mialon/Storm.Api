@@ -14,6 +14,8 @@ public interface IObjectWriter
 
 	IObjectWriter WriteProperty(string property, DateTimeOffset value);
 
+	IObjectWriter WriteProperty(string property, Guid value);
+
 	IObjectWriter WriteObject(string property, Action<IObjectWriter> objectWriter);
 
 	IObjectWriter WriteObject(string property, IDictionary<string, string> properties);

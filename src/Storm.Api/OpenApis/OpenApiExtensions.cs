@@ -32,8 +32,71 @@ public static class OpenApiExtensions
 					return Task.CompletedTask;
 				});
 
+				options.AddDocumentTransformer((document, _, _) =>
+				{
+					MoveNullSchemaToEnd(document);
+					return Task.CompletedTask;
+				});
+
 				configureOptions?.Invoke(options);
 			});
+		}
+	}
+
+	private static void MoveNullSchemaToEnd(OpenApiDocument document)
+	{
+		if (document.Components?.Schemas is null)
+		{
+			return;
+		}
+
+		foreach (IOpenApiSchema schema in document.Components.Schemas.Values)
+		{
+			MoveNullSchemaToEnd(schema);
+		}
+	}
+
+	private static void MoveNullSchemaToEnd(IOpenApiSchema schema)
+	{
+		MoveNullSchemaToEnd(schema.AnyOf);
+		MoveNullSchemaToEnd(schema.OneOf);
+
+		if (schema.Properties is null)
+		{
+			return;
+		}
+
+		foreach (IOpenApiSchema propertySchema in schema.Properties.Values)
+		{
+			MoveNullSchemaToEnd(propertySchema);
+		}
+	}
+
+	private static void MoveNullSchemaToEnd(IList<IOpenApiSchema>? schemas)
+	{
+		if (schemas is null || schemas.Count < 2)
+		{
+			return;
+		}
+
+		List<IOpenApiSchema> nullSchemas = schemas
+			.Where(x => x.Type == JsonSchemaType.Null)
+			.ToList();
+
+		if (nullSchemas.Count == 0)
+		{
+			return;
+		}
+
+		List<IOpenApiSchema> nonNullSchemas = schemas
+			.Where(x => x.Type != JsonSchemaType.Null)
+			.ToList();
+
+		schemas.Clear();
+
+		foreach (IOpenApiSchema schema in nonNullSchemas.Concat(nullSchemas))
+		{
+			schemas.Add(schema);
 		}
 	}
 }
