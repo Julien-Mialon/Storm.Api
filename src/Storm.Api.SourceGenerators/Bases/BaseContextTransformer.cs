@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
+using Storm.Api.SourceGenerators.Bases.Contexts;
 
 namespace Storm.Api.SourceGenerators.Bases;
 
@@ -27,7 +28,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 			Diagnostics.Add(new()
 			{
 				Id = "SG0001",
-				Location = Context.Node.GetLocation(),
+				Location = new(Context.Node.GetLocation()),
 				MessageFormat = ex.Message,
 				Severity = DiagnosticSeverity.Error,
 				Title = "Exception while generating code",
@@ -57,7 +58,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		Diagnostics.Add(new()
 		{
 			Id = id,
-			Location = Context.Node.GetLocation(),
+			Location = new(Context.Node.GetLocation()),
 			MessageFormat = message,
 			Severity = severity,
 			Title = title,

@@ -1,4 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
+using Storm.Api.SourceGenerators.Bases.Contexts;
 
 namespace Storm.Api.SourceGenerators.Bases;
 
@@ -145,7 +147,7 @@ public abstract class BaseCodeGenerator : IIncrementalGenerator
 	{
 		foreach (DiagnosticItemContext item in context.Items)
 		{
-			sourceContext.ReportDiagnostic(Diagnostic.Create(new(item.Id, item.Title, item.MessageFormat, item.Category, item.Severity, true), item.Location));
+			sourceContext.ReportDiagnostic(Diagnostic.Create(new(item.Id, item.Title, item.MessageFormat, item.Category, item.Severity, true),  item.Location.ToLocation()));
 		}
 	}
 }

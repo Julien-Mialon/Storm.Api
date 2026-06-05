@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Storm.Api.SourceGenerators.ActionMethods.Contexts;
 using Storm.Api.SourceGenerators.Bases;
+using Storm.Api.SourceGenerators.Bases.Contexts;
 
 namespace Storm.Api.SourceGenerators.ActionMethods;
 

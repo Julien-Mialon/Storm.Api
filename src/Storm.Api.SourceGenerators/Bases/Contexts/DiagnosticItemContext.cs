@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace Storm.Api.SourceGenerators.Bases;
+namespace Storm.Api.SourceGenerators.Bases.Contexts;
 
 public struct DiagnosticItemContext : IEquatable<DiagnosticItemContext>
 {
@@ -9,7 +9,7 @@ public struct DiagnosticItemContext : IEquatable<DiagnosticItemContext>
 	public string MessageFormat = string.Empty;
 	public string Category = "SourceGenerator";
 	public DiagnosticSeverity Severity = DiagnosticSeverity.Error;
-	public Location Location = Location.None;
+	public LocationContext Location;
 
 	public DiagnosticItemContext()
 	{
@@ -17,7 +17,12 @@ public struct DiagnosticItemContext : IEquatable<DiagnosticItemContext>
 
 	public readonly bool Equals(DiagnosticItemContext other)
 	{
-		return Id == other.Id && Title == other.Title && MessageFormat == other.MessageFormat && Category == other.Category && Severity == other.Severity && Location.Equals(other.Location);
+		return Id == other.Id
+			&& Title == other.Title
+			&& MessageFormat == other.MessageFormat
+			&& Category == other.Category
+			&& Severity == other.Severity
+			&& Location.Equals(other.Location);
 	}
 
 	public override readonly bool Equals(object? obj)
