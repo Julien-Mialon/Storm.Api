@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis.CSharp;
+using Storm.Api.SourceGenerators.ActionMethods.Contexts;
 using Storm.Api.SourceGenerators.Bases;
 using SymbolDisplayFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat;
 
@@ -43,7 +44,7 @@ internal class CodeGenerator
 			}
 
 			string endpointDescription = "";
-			if (method.ErrorCodes.Count > 0)
+			if (method.ErrorCodes.Length > 0)
 			{
 				endpointDescription += "Error Codes:\n";
 				foreach (ErrorCodeContext errorCode in method.ErrorCodes)
@@ -63,7 +64,7 @@ internal class CodeGenerator
 			string producesResponseTypeAttribute = _context.Types.ProducesResponseTypeAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 			string mediaType = method.MediaType ?? SUCCESS_MEDIA_TYPE;
 
-			if (method.SuccessStatusCodes.Count > 0)
+			if (method.SuccessStatusCodes.Length > 0)
 			{
 				foreach (StatusCodeContext successCodeContext in method.SuccessStatusCodes)
 				{
@@ -76,7 +77,7 @@ internal class CodeGenerator
 				builder.AddLine($"[{producesResponseTypeAttribute}<{method.OpenApiReturnType}>(200, \"{mediaType}\")]");
 			}
 
-			if (method.HttpErrorStatusCodes.Count > 0)
+			if (method.HttpErrorStatusCodes.Length > 0)
 			{
 				foreach (StatusCodeContext httpErrorContext in method.HttpErrorStatusCodes)
 				{
@@ -85,7 +86,7 @@ internal class CodeGenerator
 				}
 			}
 
-			if(method.ErrorCodes.Count > 0)
+			if(method.ErrorCodes.Length > 0)
 			{
 				builder.AddLine($"[{_context.Types.OpenApiErrorCodesAttribute.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}({string.Join(", ", method.ErrorCodes.OrderBy(x => x.ErrorCode).Select(ec => $"\"{ec.ErrorCode}\""))})]");
 			}

@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Storm.Api.SourceGenerators.ActionMethods.Contexts;
 using Storm.Api.SourceGenerators.Bases;
 
 namespace Storm.Api.SourceGenerators.ActionMethods;
@@ -71,14 +72,14 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 				ActionType = actionType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
 				ActionParameterType = actionParameterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
 				ActionResultType = actionReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-				Arguments = CreateArguments(actionParameterType, methodSymbol, types).ToImmutableList(),
+				Arguments = CreateArguments(actionParameterType, methodSymbol, types).ToImmutableArray(),
 				Type = type,
 				ActionResultTypeSymbol = actionReturnType,
 				Summary = CreateSummary(actionType, types),
 				Description = CreateDescriptionString(actionType, types),
-				ErrorCodes = CreateErrorCodes(actionType, types).ToImmutableList(),
-				HttpErrorStatusCodes = CreateHttpErrorCodes(actionType, types).ToImmutableList(),
-				SuccessStatusCodes = CreateSuccessCodes(actionType, types).ToImmutableList(),
+				ErrorCodes = CreateErrorCodes(actionType, types).ToImmutableArray(),
+				HttpErrorStatusCodes = CreateHttpErrorCodes(actionType, types).ToImmutableArray(),
+				SuccessStatusCodes = CreateSuccessCodes(actionType, types).ToImmutableArray(),
 				MediaType = CreateMediaType(actionType, types),
 			};
 
@@ -91,7 +92,7 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 			ClassName = classSymbol.Name,
 			ClassAccessibility = classSymbol.DeclaredAccessibility,
 			Types = types,
-			Methods = methodContexts.ToImmutableList(),
+			Methods = methodContexts.ToImmutableArray(),
 		};
 	}
 

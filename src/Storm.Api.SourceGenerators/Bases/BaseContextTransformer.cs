@@ -46,7 +46,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 
 		return new()
 		{
-			Items = Diagnostics.ToImmutableList(),
+			Items = Diagnostics.ToImmutableArray(),
 		};
 	}
 
@@ -200,6 +200,21 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		if (type.BaseType is { } parentType)
 		{
 			return Inherits(parentType, baseType);
+		}
+
+		return false;
+	}
+
+	protected static bool IsGenericTypeInstance(ITypeSymbol type, INamedTypeSymbol genericType)
+	{
+		if (SymbolEqualityComparer.Default.Equals(type, genericType))
+		{
+			return true;
+		}
+
+		if (type is INamedTypeSymbol namedType)
+		{
+			return namedType.IsGenericType && SymbolEqualityComparer.Default.Equals(namedType.ConstructedFrom, genericType);
 		}
 
 		return false;

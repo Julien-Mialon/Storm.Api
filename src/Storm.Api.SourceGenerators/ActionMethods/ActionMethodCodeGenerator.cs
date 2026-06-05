@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Storm.Api.SourceGenerators.ActionMethods.Contexts;
 using Storm.Api.SourceGenerators.Bases;
 
 namespace Storm.Api.SourceGenerators.ActionMethods;
@@ -30,7 +31,7 @@ public class ActionMethodCodeGenerator : BaseCodeGenerator
 		IncrementalValuesProvider<(GeneratorContext? context, DiagnosticContext? diagnostics)> syntaxProvider = context.SyntaxProvider
 			.CreateSyntaxProvider(CouldBeAClassToGenerate, CreateSemanticContext);
 
-		context.RegisterSourceOutput(syntaxProvider.Where(static x => x.diagnostics is { Items.Count: > 0 })
+		context.RegisterSourceOutput(syntaxProvider.Where(static x => x.diagnostics is { Items.Length: > 0 })
 				.Select(static (x, _) => x.diagnostics!.Value)
 				.WithComparer(EqualityComparer<DiagnosticContext>.Default),
 			GenerateDiagnostics);

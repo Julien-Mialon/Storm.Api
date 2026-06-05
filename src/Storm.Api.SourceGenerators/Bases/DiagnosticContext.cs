@@ -4,7 +4,7 @@ namespace Storm.Api.SourceGenerators.Bases;
 
 public struct DiagnosticContext : IEquatable<DiagnosticContext>
 {
-	public ImmutableList<DiagnosticItemContext> Items;
+	public ImmutableArray<DiagnosticItemContext> Items;
 
 	public readonly bool Equals(DiagnosticContext other)
 	{
