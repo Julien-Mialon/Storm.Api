@@ -7,13 +7,28 @@ namespace Storm.Api.SourceGenerators.Bases;
 
 internal abstract class BaseContextTransformer<TContext> where TContext : struct
 {
-	protected GeneratorSyntaxContext Context { get; }
+	protected SemanticModel SemanticModel { get; }
+
+	protected Location DefaultLocation { get; }
 
 	protected List<DiagnosticItemContext> Diagnostics { get; } = [];
 
+	protected BaseContextTransformer(SemanticModel semanticModel, Location defaultLocation)
+	{
+		SemanticModel = semanticModel;
+		DefaultLocation = defaultLocation;
+	}
+
 	protected BaseContextTransformer(GeneratorSyntaxContext context)
 	{
-		Context = context;
+		SemanticModel = context.SemanticModel;
+		DefaultLocation = context.Node.GetLocation();
+	}
+
+	protected BaseContextTransformer(GeneratorAttributeSyntaxContext context)
+	{
+		SemanticModel = context.SemanticModel;
+		DefaultLocation = context.TargetNode.GetLocation();
 	}
 
 	public (TContext? context, DiagnosticContext? diagnostics) Transform(CancellationToken ct)
@@ -28,7 +43,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 			Diagnostics.Add(new()
 			{
 				Id = "SG0001",
-				Location = new(Context.Node.GetLocation()),
+				Location = new(DefaultLocation),
 				MessageFormat = ex.Message,
 				Severity = DiagnosticSeverity.Error,
 				Title = "Exception while generating code",
@@ -58,7 +73,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 		Diagnostics.Add(new()
 		{
 			Id = id,
-			Location = new(Context.Node.GetLocation()),
+			Location = new(DefaultLocation),
 			MessageFormat = message,
 			Severity = severity,
 			Title = title,
@@ -79,7 +94,7 @@ internal abstract class BaseContextTransformer<TContext> where TContext : struct
 
 	protected INamedTypeSymbol GetRequiredTypeByMetadataName(string fullyQualifiedTypeName)
 	{
-		return Context.SemanticModel.Compilation.GetTypeByMetadataName(fullyQualifiedTypeName)
+		return SemanticModel.Compilation.GetTypeByMetadataName(fullyQualifiedTypeName)
 			?? throw new($"Type {fullyQualifiedTypeName} not found");
 	}
 

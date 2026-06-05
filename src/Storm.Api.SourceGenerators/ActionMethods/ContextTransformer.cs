@@ -7,17 +7,12 @@ using Storm.Api.SourceGenerators.Bases;
 
 namespace Storm.Api.SourceGenerators.ActionMethods;
 
-internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextTransformer<GeneratorContext>(context)
+internal class ContextTransformer(GeneratorAttributeSyntaxContext context) : BaseContextTransformer<ActionMethodContext>(context)
 {
-	protected override GeneratorContext? CreateContext(CancellationToken cancellationToken)
-	{
-		ClassDeclarationSyntax classSyntax = (ClassDeclarationSyntax)Context.Node;
-		INamedTypeSymbol? classSymbol = Context.SemanticModel.GetDeclaredSymbol(classSyntax, cancellationToken);
-		if (classSymbol is null)
-		{
-			return null;
-		}
+	private readonly IMethodSymbol _methodSymbol = (IMethodSymbol)context.TargetSymbol;
 
+	protected override ActionMethodContext? CreateContext(CancellationToken cancellationToken)
+	{
 		Types types = new()
 		{
 			Unit = GetTypeUnit(),
@@ -44,55 +39,50 @@ internal class ContextTransformer(GeneratorSyntaxContext context) : BaseContextT
 			EndpointDescriptionAttribute = GetAspNetTypeEndpointDescriptionAttribute(),
 		};
 
-		List<MethodContext> methodContexts = [];
-
-		foreach (IMethodSymbol methodSymbol in classSymbol.GetMembers().OfType<IMethodSymbol>())
+		IMethodSymbol methodSymbol = _methodSymbol;
+		INamedTypeSymbol classSymbol = methodSymbol.ContainingType;
+		if (TryGetAttribute(methodSymbol, types.WithActionAttribute, out AttributeData? withActionAttribute) is false)
 		{
-			if (TryGetAttribute(methodSymbol, types.WithActionAttribute, out AttributeData? withActionAttribute) is false)
-			{
-				continue;
-			}
-
-			ITypeSymbol actionType = withActionAttribute.AttributeClass!.TypeArguments[0];
-			if (TryGetGenericInterface(withActionAttribute.AttributeClass!.TypeArguments[0], types.IAction, out INamedTypeSymbol? actionInterfaceType) is false)
-			{
-				continue;
-			}
-
-			ITypeSymbol actionParameterType = actionInterfaceType.TypeArguments[0];
-			ITypeSymbol actionReturnType = actionInterfaceType.TypeArguments[1];
-			(ITypeSymbol methodReturnType, ITypeSymbol openApiReturnType, ActionType type) = AnalyzeReturnType(actionReturnType, types);
-
-			MethodContext methodContext = new()
-			{
-				Accessibility = methodSymbol.DeclaredAccessibility,
-				Name = methodSymbol.Name,
-				ReturnType = methodReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-				OpenApiReturnType = openApiReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-				ActionType = actionType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-				ActionParameterType = actionParameterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-				ActionResultType = actionReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-				Arguments = CreateArguments(actionParameterType, methodSymbol, types).ToImmutableArray(),
-				Type = type,
-				ActionResultTypeSymbol = actionReturnType,
-				Summary = CreateSummary(actionType, types),
-				Description = CreateDescriptionString(actionType, types),
-				ErrorCodes = CreateErrorCodes(actionType, types).ToImmutableArray(),
-				HttpErrorStatusCodes = CreateHttpErrorCodes(actionType, types).ToImmutableArray(),
-				SuccessStatusCodes = CreateSuccessCodes(actionType, types).ToImmutableArray(),
-				MediaType = CreateMediaType(actionType, types),
-			};
-
-			methodContexts.Add(methodContext);
+			return null;
 		}
 
-		return new GeneratorContext
+		ITypeSymbol actionType = withActionAttribute.AttributeClass!.TypeArguments[0];
+		if (TryGetGenericInterface(actionType, types.IAction, out INamedTypeSymbol? actionInterfaceType) is false)
+		{
+			return null;
+		}
+
+		ITypeSymbol actionParameterType = actionInterfaceType.TypeArguments[0];
+		ITypeSymbol actionReturnType = actionInterfaceType.TypeArguments[1];
+		(ITypeSymbol methodReturnType, ITypeSymbol openApiReturnType, ActionType type) = AnalyzeReturnType(actionReturnType, types);
+
+		MethodContext methodContext = new()
+		{
+			Accessibility = methodSymbol.DeclaredAccessibility,
+			Name = methodSymbol.Name,
+			ReturnType = methodReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+			OpenApiReturnType = openApiReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+			ActionType = actionType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+			ActionParameterType = actionParameterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+			ActionResultType = actionReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+			Arguments = CreateArguments(actionParameterType, methodSymbol, types).ToImmutableArray(),
+			Type = type,
+			ActionResultTypeSymbol = actionReturnType,
+			Summary = CreateSummary(actionType, types),
+			Description = CreateDescriptionString(actionType, types),
+			ErrorCodes = CreateErrorCodes(actionType, types).ToImmutableArray(),
+			HttpErrorStatusCodes = CreateHttpErrorCodes(actionType, types).ToImmutableArray(),
+			SuccessStatusCodes = CreateSuccessCodes(actionType, types).ToImmutableArray(),
+			MediaType = CreateMediaType(actionType, types),
+		};
+
+		return new ActionMethodContext
 		{
 			Namespace = classSymbol.ContainingNamespace.IsGlobalNamespace ? null : classSymbol.ContainingNamespace.ToDisplayString(),
 			ClassName = classSymbol.Name,
 			ClassAccessibility = classSymbol.DeclaredAccessibility,
 			Types = types,
-			Methods = methodContexts.ToImmutableArray(),
+			Method = methodContext,
 		};
 	}
 
