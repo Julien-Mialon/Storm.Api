@@ -58,11 +58,30 @@ public class ThrottledBufferedItemQueueTests
 	}
 
 	[Fact]
-	public async Task Dequeue_ExceptionDuringRead_SwallowedCurrently()
+	public async Task Dequeue_ThrottlingTimeoutTriggersOperationCancelled_SwallowedAndReturnsPartial()
 	{
-		ThrottledBufferedItemQueue<int> q = new(2, TimeSpan.FromMilliseconds(20));
+		// Queuing one item and setting a very short throttle forces the inner `ReadAsync` call to throw
+		// OperationCanceledException when the throttle elapses — that exception is swallowed by the
+		// broad catch in Dequeue() and a partial buffer is returned. Pins current behavior: see source
+		// comment in ThrottledBufferedItemQueue.Dequeue.
+		ThrottledBufferedItemQueue<int> q = new(10, TimeSpan.FromMilliseconds(20));
 		q.Queue(1);
 		int[] items = await q.Dequeue(CancellationToken.None);
 		items.Should().Equal(1);
+	}
+
+	[Fact]
+	public async Task Dequeue_ExternalCancellationAfterFirstItem_ReturnsEmptyArray()
+	{
+		// Outer ct is cancelled after one item arrives; the inner ReadAsync throws.
+		// Current behavior returns [] because ct.IsCancellationRequested is true.
+		ThrottledBufferedItemQueue<int> q = new(10, TimeSpan.FromSeconds(5));
+		using CancellationTokenSource cts = new();
+		q.Queue(1);
+		Task<int[]> t = q.Dequeue(cts.Token);
+		await Task.Delay(30);
+		cts.Cancel();
+		int[] items = await t;
+		items.Should().BeEmpty();
 	}
 }

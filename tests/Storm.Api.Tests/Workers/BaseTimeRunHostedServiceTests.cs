@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,31 +34,30 @@ public class BaseTimeRunHostedServiceTests
 		return sc.BuildServiceProvider();
 	}
 
-	private static async Task<TimeSpan> InvokeAwaitAndMeasure(TestService s, CancellationToken ct)
+	private static Task InvokeAwaitNextRun(TestService s, CancellationToken ct)
 	{
-		MethodInfo? m = typeof(BaseTimeRunHostedService).GetMethod("AwaitNextRun", BindingFlags.NonPublic | BindingFlags.Instance);
-		Task t = (Task)m!.Invoke(s, [ct])!;
-		DateTime start = DateTime.UtcNow;
-		try
-		{
-			await t;
-		}
-		catch (TaskCanceledException)
-		{
-		}
-		return DateTime.UtcNow - start;
+		MethodInfo m = typeof(BaseTimeRunHostedService).GetMethod("AwaitNextRun", BindingFlags.NonPublic | BindingFlags.Instance)!;
+		return (Task)m.Invoke(s, [ct])!;
 	}
 
 	[Fact]
-	public async Task AwaitNextRun_SingleTimeInFuture_WaitsUntilToday()
+	public async Task AwaitNextRun_SingleTimeInFuture_ReturnsWithoutWaitingFullDuration()
 	{
+		// 'now' is at 08:00:00 and next run time is 08:00:01 — should wait ~1 second.
 		DateTimeOffset now = new(2024, 6, 1, 8, 0, 0, TimeSpan.Zero);
 		TestService s = new(Provider(now), new TimeOnly(8, 0, 1));
 
 		using CancellationTokenSource cts = new();
 		cts.CancelAfter(50);
-		TimeSpan elapsed = await InvokeAwaitAndMeasure(s, cts.Token);
-		elapsed.Should().BeLessThan(TimeSpan.FromSeconds(2));
+
+		Stopwatch sw = Stopwatch.StartNew();
+		Func<Task> act = () => InvokeAwaitNextRun(s, cts.Token);
+		await act.Should().ThrowAsync<TaskCanceledException>();
+		sw.Stop();
+
+		// If the wait were "until tomorrow", elapsed would be near a full day.
+		// Cancellation fires at 50ms; assert we bail out well under 2 seconds.
+		sw.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(2));
 	}
 
 	[Fact]
@@ -68,7 +68,8 @@ public class BaseTimeRunHostedServiceTests
 
 		using CancellationTokenSource cts = new();
 		cts.CancelAfter(50);
-		await InvokeAwaitAndMeasure(s, cts.Token);
+		Func<Task> act = () => InvokeAwaitNextRun(s, cts.Token);
+		await act.Should().ThrowAsync<TaskCanceledException>();
 	}
 
 	[Fact]
@@ -79,7 +80,8 @@ public class BaseTimeRunHostedServiceTests
 
 		using CancellationTokenSource cts = new();
 		cts.CancelAfter(50);
-		await InvokeAwaitAndMeasure(s, cts.Token);
+		Func<Task> act = () => InvokeAwaitNextRun(s, cts.Token);
+		await act.Should().ThrowAsync<TaskCanceledException>();
 	}
 
 	[Fact]
@@ -90,7 +92,8 @@ public class BaseTimeRunHostedServiceTests
 
 		using CancellationTokenSource cts = new();
 		cts.CancelAfter(50);
-		await InvokeAwaitAndMeasure(s, cts.Token);
+		Func<Task> act = () => InvokeAwaitNextRun(s, cts.Token);
+		await act.Should().ThrowAsync<TaskCanceledException>();
 	}
 
 	[Fact]
@@ -100,8 +103,7 @@ public class BaseTimeRunHostedServiceTests
 		TestService s = new(Provider(now), new TimeOnly(23, 59, 59));
 
 		using CancellationTokenSource cts = new();
-		MethodInfo m = typeof(BaseTimeRunHostedService).GetMethod("AwaitNextRun", BindingFlags.NonPublic | BindingFlags.Instance)!;
-		Task t = (Task)m.Invoke(s, [cts.Token])!;
+		Task t = InvokeAwaitNextRun(s, cts.Token);
 		cts.Cancel();
 		Func<Task> act = () => t;
 		await act.Should().ThrowAsync<TaskCanceledException>();

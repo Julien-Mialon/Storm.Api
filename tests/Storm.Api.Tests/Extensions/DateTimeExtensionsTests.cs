@@ -98,6 +98,34 @@ public class DateTimeExtensionsTests
 		new DateTime(2024, 5, 27, 0, 0, 0, DateTimeKind.Utc).IsThisWeek(tp).Should().BeFalse();
 	}
 
+	[Fact]
+	public void IsNotToday_DifferentDay_ReturnsTrue()
+	{
+		FixedTimeProvider tp = new(new DateTimeOffset(2024, 6, 1, 0, 0, 0, TimeSpan.Zero));
+		new DateTime(2024, 6, 2, 0, 0, 0, DateTimeKind.Utc).IsNotToday(tp).Should().BeTrue();
+	}
+
+	[Fact]
+	public void IsNotToday_SameDay_ReturnsFalse()
+	{
+		FixedTimeProvider tp = new(new DateTimeOffset(2024, 6, 1, 0, 0, 0, TimeSpan.Zero));
+		new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc).IsNotToday(tp).Should().BeFalse();
+	}
+
+	[Fact]
+	public void IsNotThisWeek_DifferentWeek_ReturnsTrue()
+	{
+		FixedTimeProvider tp = new(new DateTimeOffset(2024, 6, 5, 0, 0, 0, TimeSpan.Zero));
+		new DateTime(2024, 5, 27, 0, 0, 0, DateTimeKind.Utc).IsNotThisWeek(tp).Should().BeTrue();
+	}
+
+	[Fact]
+	public void IsNotThisWeek_SameWeek_ReturnsFalse()
+	{
+		FixedTimeProvider tp = new(new DateTimeOffset(2024, 6, 5, 0, 0, 0, TimeSpan.Zero));
+		new DateTime(2024, 6, 3, 0, 0, 0, DateTimeKind.Utc).IsNotThisWeek(tp).Should().BeFalse();
+	}
+
 	[Theory]
 	[InlineData(2024, 6, 9, 2024, 6, 3)]
 	[InlineData(2024, 6, 3, 2024, 6, 3)]
@@ -121,7 +149,28 @@ public class DateTimeExtensionsTests
 	public void TodayIsInRange_NullRange_ReturnsFalse()
 	{
 		IDateRange? range = null;
-		range.TodayIsInRange(DateTime.UtcNow).Should().BeFalse();
+		range.TodayIsInRange(new DateTime(2024, 6, 1)).Should().BeFalse();
+	}
+
+	[Fact]
+	public void TodayIsNotInRange_NullRange_ReturnsFalse()
+	{
+		IDateRange? range = null;
+		range.TodayIsNotInRange(new DateTime(2024, 6, 1)).Should().BeFalse();
+	}
+
+	[Fact]
+	public void TodayIsNotInRange_OutsideRange_ReturnsTrue()
+	{
+		TestRange range = new(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+		range.TodayIsNotInRange(new DateTime(2024, 7, 1)).Should().BeTrue();
+	}
+
+	[Fact]
+	public void TodayIsNotInRange_InsideRange_ReturnsFalse()
+	{
+		TestRange range = new(new DateTime(2024, 1, 1), new DateTime(2024, 12, 31));
+		range.TodayIsNotInRange(new DateTime(2024, 6, 1)).Should().BeFalse();
 	}
 
 	[Fact]

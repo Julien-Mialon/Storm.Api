@@ -31,7 +31,7 @@ public static class StringExtensions
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static string ValueIfNullOrWhiteSpace(this string? s, string value)
-		=> string.IsNullOrEmpty(s) ? value : s;
+		=> string.IsNullOrWhiteSpace(s) ? value : s;
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static string? NullIfEmpty(this string source)

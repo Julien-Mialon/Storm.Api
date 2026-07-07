@@ -37,11 +37,22 @@ public class DapperTypeHandlersTests
 	}
 
 	[Fact]
-	public void DateOnly_Parse_NullInput_Throws()
+	public void DateOnly_Parse_UnknownType_Throws()
 	{
-		// Current impl throws on unknown types (including null-equivalent)
 		Action act = () => new DateOnlyTypeHandler().Parse(123);
 		act.Should().Throw<InvalidOperationException>();
+	}
+
+	[Fact]
+	public void DateOnly_Parse_StringInput_ReturnsDateOnly()
+	{
+		new DateOnlyTypeHandler().Parse("2024-06-01").Should().Be(new DateOnly(2024, 6, 1));
+	}
+
+	[Fact]
+	public void DateOnly_Parse_DateOnlyInput_ReturnsSame()
+	{
+		new DateOnlyTypeHandler().Parse(new DateOnly(2024, 6, 1)).Should().Be(new DateOnly(2024, 6, 1));
 	}
 
 	[Fact]
@@ -65,5 +76,17 @@ public class DapperTypeHandlersTests
 	{
 		Action act = () => new TimeOnlyTypeHandler().Parse(123);
 		act.Should().Throw<InvalidOperationException>();
+	}
+
+	[Fact]
+	public void TimeOnly_Parse_StringInput_ReturnsTimeOnly()
+	{
+		new TimeOnlyTypeHandler().Parse("10:11:12.000").Should().Be(new TimeOnly(10, 11, 12));
+	}
+
+	[Fact]
+	public void TimeOnly_Parse_TimeOnlyInput_ReturnsSame()
+	{
+		new TimeOnlyTypeHandler().Parse(new TimeOnly(10, 11, 12)).Should().Be(new TimeOnly(10, 11, 12));
 	}
 }

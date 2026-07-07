@@ -44,8 +44,16 @@ public class ProgramTests
 	public void Args_UnknownCommand_ReturnsNonZeroExit()
 	{
 		int exit = InvokeMain(["--bogus"], out _, out string e);
-		exit.Should().NotBe(0);
+		exit.Should().Be(1);
 		e.Should().Contain("Unknown command");
+	}
+
+	[Fact]
+	public void GenerateClaudeSkills_UnknownOption_ReturnsExit1()
+	{
+		int exit = InvokeMain(["--generate-claude-skills", "--not-a-real-flag"], out _, out string e);
+		exit.Should().Be(1);
+		e.Should().Contain("Unknown option");
 	}
 
 	[Fact]

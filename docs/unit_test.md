@@ -194,12 +194,12 @@
 - [x] `Generator_ClassWithoutWithActionAttribute_DoesNotEmit`
 - [x] `Generator_NonClassNode_Skipped`
 - [x] `Generator_MultipleClassesInFile_EmitsOnePerEligibleClass`
-- [ ] `Generator_TransformationThrows_ReportsDiagnostic`
+- [x] `Generator_TransformationThrows_ReportsDiagnostic`
 
 ### `src/Storm.Api.SourceGenerators/ActionMethods/ContextTransformer.cs`
 
 - [x] `CreateContext_ResolvesAllRequiredTypes`
-- [ ] `CreateContext_ReturnsNull_WhenARequiredTypeIsMissing`
+- [x] `CreateContext_ReturnsNull_WhenARequiredTypeIsMissing`
 - [x] `CreateContext_SkipsMethodsWithoutWithActionAttribute`
 - [x] `CreateContext_DetectsActionType_Unit`
 - [x] `CreateContext_DetectsActionType_Response`
@@ -209,10 +209,10 @@
 - [x] `CreateContext_ParameterWithMapTo_MapsExplicitly`
 - [x] `CreateContext_ParameterWithoutMapTo_AutoMapsByNameAndType`
 - [x] `CreateContext_MultipleParametersSameType_NameMatchPrioritized`
-- [ ] `CreateContext_UnmatchedActionProperty_Skipped`
+- [x] `CreateContext_UnmatchedActionProperty_Skipped`
 - [x] `CreateContext_MethodWithNoParameters_UsesDefaultConstructor`
-- [ ] `CreateContext_ActionNotImplementingIAction_MethodSkipped`
-- [ ] `CreateContext_ExceptionDuringTransformation_CapturedAsDiagnostic`
+- [x] `CreateContext_ActionNotImplementingIAction_MethodSkipped`
+- [x] `CreateContext_ExceptionDuringTransformation_CapturedAsDiagnostic`
 
 ### `src/Storm.Api.SourceGenerators/ActionMethods/CodeGenerator.cs`
 
@@ -593,7 +593,7 @@
 - [x] `TryGetIdWithoutValidation_ReturnsClaimIdEvenIfTampered`
 - [x] `TryGetId_ValidToken_ReturnsId`
 - [x] `TryGetId_TamperedSignature_ReturnsFalse`
-- [ ] `TryGetId_ExpiredToken_ReturnsFalse`
+- [x] `TryGetId_ExpiredToken_ReturnsFalse`
 - [x] `TryGetId_WrongAudience_ReturnsFalse`
 - [x] `TryGetId_WrongIssuer_ReturnsFalse`
 - [x] `TryGetId_Malformed_ReturnsFalse`
@@ -610,14 +610,14 @@
 
 ### `src/Storm.Api/Authentications/Refresh/BaseRefreshAction.cs`
 
-- [ ] `Action_ReadsTokenFromTransport`
-- [ ] `Action_TransportValidationFails_ThrowsUnauthorized`
-- [ ] `Action_InvalidJwt_ThrowsUnauthorized`
-- [ ] `Action_MissingJti_ThrowsUnauthorized`
-- [ ] `Action_JtiNotInStorage_ThrowsUnauthorized`
-- [ ] `Action_AccountValidationFails_ThrowsUnauthorized`
-- [ ] `Action_HappyPath_GeneratesNewAccessAndRefreshTokens`
-- [ ] `Action_HappyPath_RotatesJtiAtomically`
+- [x] `Action_ReadsTokenFromTransport`
+- [x] `Action_TransportValidationFails_ThrowsUnauthorized`
+- [x] `Action_InvalidJwt_ThrowsUnauthorized`
+- [x] `Action_MissingJti_ThrowsUnauthorized`
+- [x] `Action_JtiNotInStorage_ThrowsUnauthorized`
+- [x] `Action_AccountValidationFails_ThrowsUnauthorized`
+- [x] `Action_HappyPath_GeneratesNewAccessAndRefreshTokens`
+- [x] `Action_HappyPath_RotatesJtiAtomically`
 
 ### `src/Storm.Api/Authentications/Refresh/Transport/CookieRefreshTokenTransport.cs`
 
@@ -682,7 +682,7 @@
 - [x] `Dispose_WhenNotFinalized_EndsTransaction`
 - [x] `Dispose_WhenFinalized_IsNoOp`
 - [x] `Dispose_CalledTwice_IsIdempotent`
-- [ ] `EndTransaction_ZombieTransaction_SwallowsInvalidOperation`
+- [x] `EndTransaction_ZombieTransaction_SwallowsInvalidOperation`
 
 ### `src/Storm.Api/Databases/Services/DatabaseService.cs`
 

@@ -25,8 +25,13 @@ public class LogServiceTests
 
 	private sealed class MultiAllowedAppender : ILogAppender
 	{
+		public int Calls { get; private set; }
 		public bool MultipleAllowed => true;
-		public void Append(IObjectWriter logEntry) => logEntry.WriteProperty("multi", "y");
+		public void Append(IObjectWriter logEntry)
+		{
+			Calls++;
+			logEntry.WriteProperty("multi", "y");
+		}
 	}
 
 	[Fact]
@@ -86,7 +91,11 @@ public class LogServiceTests
 		MultiAllowedAppender m2 = new();
 		svc.WithAppender(m1).WithAppender(m2);
 		svc.Log(LogLevel.Information, w => w.WriteProperty("msg", "x"));
+
+		// Single log entry is emitted to the sink, but both appenders contributed to it.
 		sink.Entries.Should().ContainSingle();
+		m1.Calls.Should().Be(1);
+		m2.Calls.Should().Be(1);
 	}
 
 	[Fact]

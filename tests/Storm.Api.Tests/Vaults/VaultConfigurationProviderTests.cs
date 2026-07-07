@@ -51,13 +51,30 @@ public class VaultConfigurationProviderTests
 	}
 
 	[Fact]
-	public void AddData_ArrayValues_IndicesUsedInKey()
+	public void AddData_ArrayValue_StoredAsJsonString()
 	{
-		// Current implementation does NOT flatten arrays recursively;
-		// non-Object JsonElements are stored as their string representation.
+		// Current implementation does NOT flatten arrays — non-Object JsonElements are stored as ToString().
 		(object p, MethodInfo addData, IDictionary<string, string?> data) = MakeProvider();
 		JsonElement json = JsonDocument.Parse("[\"a\",\"b\"]").RootElement;
 		addData.Invoke(p, ["arr", json]);
-		data.Should().ContainKey("arr");
+		data["arr"].Should().Be("[\"a\",\"b\"]");
+	}
+
+	[Fact]
+	public void AddData_PrimitiveJsonElement_StoredAsStringValue()
+	{
+		(object p, MethodInfo addData, IDictionary<string, string?> data) = MakeProvider();
+		JsonElement json = JsonDocument.Parse("\"hello\"").RootElement;
+		addData.Invoke(p, ["str", json]);
+		data["str"].Should().Be("hello");
+	}
+
+	[Fact]
+	public void AddData_NestedObjectContainingArray_ObjectIsFlattened_ArrayKeptAsString()
+	{
+		(object p, MethodInfo addData, IDictionary<string, string?> data) = MakeProvider();
+		JsonElement json = JsonDocument.Parse("{\"obj\":{\"arr\":[1,2]}}").RootElement;
+		addData.Invoke(p, ["root", json]);
+		data["root:obj:arr"].Should().Be("[1,2]");
 	}
 }

@@ -34,8 +34,19 @@ public class StringExtensionsTests
 	[Fact]
 	public void ValueIfNullOrWhiteSpace_Whitespace_ReturnsFallback()
 	{
-		// Note: current implementation calls string.IsNullOrEmpty, so whitespace passes through.
-		"   ".ValueIfNullOrWhiteSpace("fb").Should().Be("   ");
+		"   ".ValueIfNullOrWhiteSpace("fb").Should().Be("fb");
+	}
+
+	[Fact]
+	public void ValueIfNullOrWhiteSpace_Null_ReturnsFallback()
+	{
+		((string?)null).ValueIfNullOrWhiteSpace("fb").Should().Be("fb");
+	}
+
+	[Fact]
+	public void ValueIfNullOrWhiteSpace_NonEmpty_ReturnsOriginal()
+	{
+		"x".ValueIfNullOrWhiteSpace("fb").Should().Be("x");
 	}
 
 	[Fact]

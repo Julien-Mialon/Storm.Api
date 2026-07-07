@@ -41,21 +41,25 @@ public class DatabaseTransactionTests
 			CommitCount++;
 			if (ShouldThrowZombieCheck)
 			{
-				throw NewZombieCheckException();
+				ZombieCheck();
 			}
 		}
 
-		public void Rollback() => RollbackCount++;
-		public void Dispose() => Disposed = true;
-
-		private static InvalidOperationException NewZombieCheckException()
+		public void Rollback()
 		{
-			MethodInfo? m = typeof(FakeTransaction).GetMethod(nameof(ZombieCheck), BindingFlags.Instance | BindingFlags.NonPublic);
-			return (InvalidOperationException)Activator.CreateInstance(typeof(InvalidOperationException), "zombie")!
-				?? throw new InvalidOperationException();
+			RollbackCount++;
+			if (ShouldThrowZombieCheck)
+			{
+				ZombieCheck();
+			}
 		}
 
-		internal void ZombieCheck() { }
+		public void Dispose() => Disposed = true;
+
+		// Must be named exactly "ZombieCheck" — DatabaseTransaction.EndTransaction filters on TargetSite.Name.
+		[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+		internal static void ZombieCheck()
+			=> throw new InvalidOperationException("zombie transaction");
 	}
 
 	private static (DatabaseService svc, FakeConnection conn, FakeTransaction tx, object dbTx) BuildTransaction()
@@ -123,5 +127,31 @@ public class DatabaseTransactionTests
 		itx.Dispose();
 		itx.Dispose();
 		tx.Disposed.Should().BeTrue();
+	}
+
+	[Fact]
+	public void EndTransaction_ZombieTransaction_SwallowsInvalidOperation()
+	{
+		(DatabaseService _, FakeConnection _, FakeTransaction tx, object dbTx) = BuildTransaction();
+		tx.ShouldThrowZombieCheck = true;
+
+		IDatabaseTransaction itx = (IDatabaseTransaction)dbTx;
+		Action act = () => itx.Commit();
+
+		act.Should().NotThrow();
+		tx.CommitCount.Should().Be(1);
+	}
+
+	[Fact]
+	public void EndTransaction_RollbackZombieTransaction_SwallowsInvalidOperation()
+	{
+		(DatabaseService _, FakeConnection _, FakeTransaction tx, object dbTx) = BuildTransaction();
+		tx.ShouldThrowZombieCheck = true;
+
+		IDatabaseTransaction itx = (IDatabaseTransaction)dbTx;
+		Action act = () => itx.Rollback();
+
+		act.Should().NotThrow();
+		tx.RollbackCount.Should().Be(1);
 	}
 }

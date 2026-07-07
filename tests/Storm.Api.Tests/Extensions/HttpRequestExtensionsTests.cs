@@ -114,4 +114,78 @@ public class HttpRequestExtensionsTests
 		HttpContext ctx = MakeContext(culture: new RequestCultureFeature(rc, null!));
 		ctx.Request.RequestCulture().Name.Should().Be("fr-FR");
 	}
+
+	private sealed class Accessor(HttpContext? ctx) : IHttpContextAccessor
+	{
+		public HttpContext? HttpContext { get => ctx; set => ctx = value; }
+	}
+
+	[Fact]
+	public void TryGetHeader_Accessor_HttpContextPresent_DelegatesToRequest()
+	{
+		HttpContext ctx = MakeContext(headers: new() { ["X-Thing"] = "v" });
+		Accessor a = new(ctx);
+		a.TryGetHeader("X-Thing", out string? v).Should().BeTrue();
+		v.Should().Be("v");
+	}
+
+	[Fact]
+	public void TryGetHeader_Accessor_HttpContextNull_ReturnsFalse()
+	{
+		Accessor a = new(null);
+		a.TryGetHeader("X-Thing", out string? v).Should().BeFalse();
+		v.Should().BeNull();
+	}
+
+	[Fact]
+	public void TryGetQueryParameter_Accessor_HttpContextPresent_DelegatesToRequest()
+	{
+		HttpContext ctx = MakeContext(query: new() { ["q"] = "v" });
+		Accessor a = new(ctx);
+		a.TryGetQueryParameter("q", out string? v).Should().BeTrue();
+		v.Should().Be("v");
+	}
+
+	[Fact]
+	public void TryGetQueryParameter_Accessor_HttpContextNull_ReturnsFalse()
+	{
+		Accessor a = new(null);
+		a.TryGetQueryParameter("q", out string? v).Should().BeFalse();
+		v.Should().BeNull();
+	}
+
+	[Fact]
+	public void TryGetHeaderOrQueryParameter_Accessor_HttpContextPresent_HeaderWins()
+	{
+		HttpContext ctx = MakeContext(
+			headers: new() { ["X-Thing"] = "h" },
+			query: new() { ["thing"] = "q" });
+		Accessor a = new(ctx);
+		a.TryGetHeaderOrQueryParameter("X-Thing", "thing", out string? v).Should().BeTrue();
+		v.Should().Be("h");
+	}
+
+	[Fact]
+	public void TryGetHeaderOrQueryParameter_Accessor_HttpContextNull_ReturnsFalse()
+	{
+		Accessor a = new(null);
+		a.TryGetHeaderOrQueryParameter("X-Thing", "thing", out string? v).Should().BeFalse();
+		v.Should().BeNull();
+	}
+
+	[Fact]
+	public void RequestCulture_Accessor_HttpContextNull_ReturnsInvariant()
+	{
+		Accessor a = new(null);
+		a.RequestCulture().Should().Be(CultureInfo.InvariantCulture);
+	}
+
+	[Fact]
+	public void RequestCulture_Accessor_HttpContextWithCulture_ReturnsCulture()
+	{
+		RequestCulture rc = new(new CultureInfo("de-DE"));
+		HttpContext ctx = MakeContext(culture: new RequestCultureFeature(rc, null!));
+		Accessor a = new(ctx);
+		a.RequestCulture().Name.Should().Be("de-DE");
+	}
 }

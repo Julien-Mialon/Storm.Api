@@ -20,9 +20,11 @@ public class SequentialGuidTests
 	[Fact]
 	public void NewGuid_ConsecutiveCalls_AreChronologicallyOrdered()
 	{
-		Init(sqlServer: false);
+		DateTimeOffset t1 = new(2024, 6, 1, 0, 0, 0, TimeSpan.Zero);
+		FixedTimeProvider tp = new(t1);
+		Init(sqlServer: false, tp);
 		Guid a = SequentialGuid.NewGuid();
-		Thread.Sleep(5);
+		tp.Now = t1.AddMilliseconds(5);
 		Guid b = SequentialGuid.NewGuid();
 		a.CompareTo(b).Should().BeLessThan(0);
 	}
@@ -62,6 +64,7 @@ public class SequentialGuidTests
 				break;
 			}
 		}
+
 		cmp.Should().BeLessThan(0);
 	}
 

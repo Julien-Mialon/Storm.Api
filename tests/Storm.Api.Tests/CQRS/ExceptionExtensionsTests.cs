@@ -165,4 +165,58 @@ public class ExceptionExtensionsTests
 		Action act = () => false.DomainExceptionIfFalse("C");
 		act.Should().Throw<DomainException>().Which.Should().NotBeOfType<DomainHttpCodeException>();
 	}
+
+	[Fact]
+	public async Task DomainExceptionIfFalse_TaskOverload_FalseThrows()
+	{
+		Func<Task> act = () => Task.FromResult(false).DomainExceptionIfFalse("C", "m");
+		(await act.Should().ThrowAsync<DomainException>()).Which.ErrorCode.Should().Be("C");
+	}
+
+	[Fact]
+	public async Task DomainExceptionIfFalse_TaskOverload_TrueReturnsTrue()
+	{
+		(await Task.FromResult(true).DomainExceptionIfFalse("C")).Should().BeTrue();
+	}
+
+	[Fact]
+	public async Task DomainExceptionIfTrue_TaskOverload_TrueThrows()
+	{
+		Func<Task> act = () => Task.FromResult(true).DomainExceptionIfTrue("C", "m");
+		(await act.Should().ThrowAsync<DomainException>()).Which.ErrorCode.Should().Be("C");
+	}
+
+	[Fact]
+	public async Task DomainExceptionIfTrue_TaskOverload_FalseReturnsFalse()
+	{
+		(await Task.FromResult(false).DomainExceptionIfTrue("C")).Should().BeFalse();
+	}
+
+	[Fact]
+	public async Task DomainHttpCodeExceptionIfFalse_TaskOverload_FalseThrows()
+	{
+		Func<Task> act = () => Task.FromResult(false).DomainHttpCodeExceptionIfFalse(HttpStatusCode.Conflict, "C", "m");
+		(await act.Should().ThrowAsync<DomainHttpCodeException>()).Which.Code.Should().Be(409);
+	}
+
+	[Fact]
+	public async Task BadRequestIfTrue_TaskOverload_TrueThrows()
+	{
+		Func<Task> act = () => Task.FromResult(true).BadRequestIfTrue();
+		(await act.Should().ThrowAsync<DomainHttpCodeException>()).Which.Code.Should().Be(400);
+	}
+
+	[Fact]
+	public async Task ForbiddenIfTrue_TaskOverload_TrueThrows()
+	{
+		Func<Task> act = () => Task.FromResult(true).ForbiddenIfTrue();
+		(await act.Should().ThrowAsync<DomainHttpCodeException>()).Which.Code.Should().Be(403);
+	}
+
+	[Fact]
+	public async Task NotFoundIfTrue_TaskOverload_TrueThrows()
+	{
+		Func<Task> act = () => Task.FromResult(true).NotFoundIfTrue();
+		(await act.Should().ThrowAsync<DomainHttpCodeException>()).Which.Code.Should().Be(404);
+	}
 }

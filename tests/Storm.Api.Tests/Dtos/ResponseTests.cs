@@ -52,7 +52,7 @@ public class ResponseTests
 	}
 
 	[Fact]
-	public void Response_DeserializeRoundtrip_PreservesAllFields()
+	public void Response_DeserializeRoundtrip_SystemTextJson_PreservesAllFields()
 	{
 		Response<int> r = new() { IsSuccess = true, ErrorCode = "c", ErrorMessage = "m", Data = 7 };
 		string json = JsonSerializer.Serialize(r);
@@ -62,5 +62,26 @@ public class ResponseTests
 		back.ErrorCode.Should().Be("c");
 		back.ErrorMessage.Should().Be("m");
 		back.Data.Should().Be(7);
+	}
+
+	[Fact]
+	public void Response_DeserializeRoundtrip_NewtonsoftJson_PreservesAllFields()
+	{
+		Response<int> r = new() { IsSuccess = true, ErrorCode = "c", ErrorMessage = "m", Data = 7 };
+		string json = JsonConvert.SerializeObject(r);
+		Response<int>? back = JsonConvert.DeserializeObject<Response<int>>(json);
+		back.Should().NotBeNull();
+		back!.IsSuccess.Should().BeTrue();
+		back.ErrorCode.Should().Be("c");
+		back.ErrorMessage.Should().Be("m");
+		back.Data.Should().Be(7);
+	}
+
+	[Fact]
+	public void ResponseT_SerializeWithData_NewtonsoftJson_IncludesDataField()
+	{
+		Response<int> r = new() { Data = 42, IsSuccess = true };
+		string json = JsonConvert.SerializeObject(r);
+		json.Should().Contain("\"data\":42");
 	}
 }
