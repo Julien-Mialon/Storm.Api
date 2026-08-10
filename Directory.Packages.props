@@ -1,14 +1,14 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <ServiceStackVersion>10.0.6</ServiceStackVersion>
-    <AspNetVersion>10.0.5</AspNetVersion>
-    <SentryVersion>6.3.0</SentryVersion>
+    <ServiceStackVersion>10.0.8</ServiceStackVersion>
+    <AspNetVersion>10.0.10</AspNetVersion>
+    <SentryVersion>6.8.0</SentryVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- utils -->
-    <PackageVersion Include="PolySharp" Version="1.15.0" />
-    <PackageVersion Include="Resend" Version="0.2.2" />
+    <PackageVersion Include="PolySharp" Version="1.16.0" />
+    <PackageVersion Include="Resend" Version="0.8.0" />
     <PackageVersion Include="VaultSharp" Version="1.17.5.1" />
     <PackageVersion Include="System.Text.Json" Version="$(AspNetVersion)" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
@@ -17,14 +17,15 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(AspNetVersion)" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(AspNetVersion)" />
     <!-- swagger -->
+    <PackageVersion Include="Microsoft.OpenApi" Version="3.9.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(AspNetVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(AspNetVersion)" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3" />
     <PackageVersion Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.6" />
     <PackageVersion Include="Swashbuckle.AspNetCore.Newtonsoft" Version="9.0.6" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.13.20" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.18" />
     <!-- logs -->
-    <PackageVersion Include="Elastic.Clients.Elasticsearch" Version="8.19.18" />
+    <PackageVersion Include="Elastic.Clients.Elasticsearch" Version="8.19.24" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <!-- service stack -->
@@ -34,22 +35,22 @@
     <PackageVersion Include="ServiceStack.OrmLite.MySql" Version="$(ServiceStackVersion)" />
     <PackageVersion Include="ServiceStack.OrmLite.PostgreSQL" Version="$(ServiceStackVersion)" />
     <!-- redis -->
-    <PackageVersion Include="StackExchange.Redis" Version="2.12.14" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.13.17" />
     <!-- jwt -->
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
     <!-- images -->
     <PackageVersion Include="SixLabors.ImageSharp" Version="2.1.9" />
     <!-- sentry -->
     <PackageVersion Include="Sentry" Version="$(SentryVersion)" />
     <PackageVersion Include="Sentry.AspNetCore" Version="$(SentryVersion)" />
     <!-- nuget source link -->
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.301" />
     <!-- Source generators -->
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="5.3.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="5.6.0" />
     <!-- testing -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
 </Project>
