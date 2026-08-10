@@ -3,7 +3,7 @@ Framework to build APIs
 
 ## Changelog
 
-### 10.0.16 (August 10th)
+### 10.0.16 / 10.0.17 (August 10th)
 
 #### Fixes
 - Fixed disposal order of JsonLogWriter which could cause an unflushed stream to be disposed before flush.
