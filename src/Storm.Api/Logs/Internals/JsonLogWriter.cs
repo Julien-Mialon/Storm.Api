@@ -175,13 +175,13 @@ internal class JsonLogWriter : IObjectWriter, IArrayWriter, IDisposable, IAsyncD
 
 	public void Dispose()
 	{
-		_memoryStream.Dispose();
 		_jsonWriter.Dispose();
+		_memoryStream.Dispose();
 	}
 
 	public async ValueTask DisposeAsync()
 	{
-		await _memoryStream.DisposeAsync();
 		await _jsonWriter.DisposeAsync();
+		await _memoryStream.DisposeAsync();
 	}
 }
