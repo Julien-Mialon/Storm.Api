@@ -4,6 +4,7 @@ using ServiceStack;
 using Storm.Api.Databases.Configurations;
 using Storm.Api.Databases.Middlewares;
 using Storm.Api.Databases.Services;
+using Storm.Api.Launchers;
 
 namespace Storm.Api.Databases;
 
@@ -11,7 +12,7 @@ public static class DatabaseBootstrapper
 {
 	public static IServiceCollection AddDatabaseModule(this IServiceCollection services, DatabaseConfigurationBuilder databaseConfigurationBuilder, bool skipLicenceCheck = false)
 	{
-		if (LicenseUtils.HasLicensedFeature(LicenseFeature.OrmLite) is false && skipLicenceCheck is false)
+		if (DefaultLauncherOptions.SkipOrmLiteLicenseCheck is false && skipLicenceCheck is false && LicenseUtils.HasLicensedFeature(LicenseFeature.OrmLite) is false)
 		{
 			throw new InvalidOperationException("You need a license to use OrmLite");
 		}

@@ -15,6 +15,8 @@ public static class DefaultLauncherOptions
 	public static bool UseNewtonsoftJson { get; set; }
 
 	public static bool UseOldMigrations { get; set; }
+
+	public static bool SkipOrmLiteLicenseCheck { get; set; }
 }
 
 public static class DefaultLauncher<TStartup>
