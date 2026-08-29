@@ -15,7 +15,7 @@ public class DatabaseConfigurationBuilder
 {
 	private const string AZURE_SQL_SERVER_FORMAT = "Server=tcp:{0},1433;Initial Catalog={1};Persist Security Info=False;User ID={2};Password={3};MultipleActiveResultSets=True;Encrypt={4};TrustServerCertificate=False;Connection Timeout={5};";
 	private const string SQL_SERVER_FORMAT = "Data Source={0};Initial Catalog={1};Integrated Security={5};User ID={2};Password={3};MultipleActiveResultSets=True;Encrypt={4};TrustServerCertificate=False;Connect Timeout={6};";
-	private const string MYSQL_FORMAT = "Server={0};Port={4};Database={1};UID={2};Password={3};SslMode=None;Charset=utf8";
+	private const string MYSQL_FORMAT = "Server={0};Port={4};Database={1};UID={2};Password={3};Charset=utf8";
 	private const string POSTGRES_FORMAT = "Server={0};Port={1};Userid={2};Password={3};Database={4};Protocol=3;SSL=false;Pooling=false;MinPoolSize=1;MaxPoolSize=20;Timeout=15;SslMode=Disable";
 
 	private bool _enableDebug;
