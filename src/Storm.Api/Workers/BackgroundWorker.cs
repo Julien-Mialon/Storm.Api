@@ -10,7 +10,6 @@ public class BackgroundWorker
 	private readonly Func<CancellationToken, Task> _run;
 	private Task? _currentTask;
 	private CancellationTokenSource? _cts;
-	private bool _isRunning;
 
 	public BackgroundWorker(ILogService logService, Func<CancellationToken, Task> run)
 	{
@@ -20,11 +19,11 @@ public class BackgroundWorker
 
 	public void Start()
 	{
-		if (_currentTask == null || _cts == null || _cts.IsCancellationRequested || !_isRunning)
+		if (_currentTask == null || _cts == null || _cts.IsCancellationRequested || _currentTask.IsCompleted)
 		{
 			lock (_mutex)
 			{
-				if (_currentTask == null || _cts == null || _cts.IsCancellationRequested || !_isRunning)
+				if (_currentTask == null || _cts == null || _cts.IsCancellationRequested || _currentTask.IsCompleted)
 				{
 					_cts?.Dispose();
 					_cts = new();
@@ -45,7 +44,6 @@ public class BackgroundWorker
 
 	private async Task Run(CancellationToken ct)
 	{
-		_isRunning = true;
 		try
 		{
 			_logService.Trace("BackgroundWorker started");
@@ -57,10 +55,6 @@ public class BackgroundWorker
 			_logService.Error(x => x
 				.WriteMessage("Background worker stopped with exception")
 				.WriteException(ex));
-		}
-		finally
-		{
-			_isRunning = false;
 		}
 	}
 }
