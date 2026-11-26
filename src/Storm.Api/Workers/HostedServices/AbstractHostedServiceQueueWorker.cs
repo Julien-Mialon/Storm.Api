@@ -35,25 +35,15 @@ public abstract class AbstractHostedServiceQueueWorker<TInput, TOutput, TQueue> 
 		{
 			try
 			{
-				if (await DoAction(items))
+				if (await DoAction(items, ct))
 				{
 					OnItemsSuccess(items);
 					return;
 				}
-
-				if (_retryStrategy?.DiscardAfterFailedAttempts is not true || tries < _retryStrategy.AttemptsCountBeforeDiscard)
-				{
-					await OnItemsError(items);
-				}
-				else
-				{
-					int triesCopy = tries;
-					Resolve<ILogService>().Error(x => x
-						.WriteProperty("type", GetType().FullName)
-						.WriteMethodInfo()
-						.WriteMessage($"Fail to process item {triesCopy} times")
-						.DumpObject("items", items));
-				}
+			}
+			catch (OperationCanceledException) when (ct.IsCancellationRequested)
+			{
+				throw;
 			}
 			catch (Exception ex)
 			{
@@ -61,27 +51,32 @@ public abstract class AbstractHostedServiceQueueWorker<TInput, TOutput, TQueue> 
 					.WriteProperty("type", GetType().FullName)
 					.WriteMethodInfo()
 					.WriteException(ex));
-
-				await OnItemsError(items);
-
-				if (_retryStrategy?.DiscardAfterFailedAttempts is true && tries >= _retryStrategy.AttemptsCountBeforeDiscard)
-				{
-					return;
-				}
 			}
+
+			if (_retryStrategy?.DiscardAfterFailedAttempts is true && tries >= _retryStrategy.AttemptsCountBeforeDiscard)
+			{
+				int attemptsCount = tries + 1;
+				Resolve<ILogService>().Error(x => x
+					.WriteProperty("type", GetType().FullName)
+					.WriteMethodInfo()
+					.WriteMessage($"Discarding item after {attemptsCount} failed attempts")
+					.DumpObject("items", items));
+				return;
+			}
+
+			await OnItemsError(items, ct);
 		}
 	}
 
-	protected abstract Task<bool> DoAction(TOutput item);
+	protected abstract Task<bool> DoAction(TOutput item, CancellationToken ct);
 
 	protected virtual void OnItemsSuccess(TOutput item)
 	{
 		_retryStrategy?.Reset();
 	}
 
-	protected virtual Task OnItemsError(TOutput item)
+	protected virtual Task OnItemsError(TOutput item, CancellationToken ct)
 	{
-		_retryStrategy?.Wait();
-		return Task.CompletedTask;
+		return _retryStrategy?.Wait(ct) ?? Task.CompletedTask;
 	}
 }

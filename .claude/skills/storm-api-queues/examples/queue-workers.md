@@ -55,7 +55,7 @@ public class EmailWorker(IServiceProvider services)
         services,
         new ExponentialBackOffStrategy(2000, 4, 5))
 {
-    protected override async Task<bool> DoAction(EmailMessage item)
+    protected override async Task<bool> DoAction(EmailMessage item, CancellationToken ct)
     {
         var emailService = Resolve<IEmailService>();
         await emailService.Send(item.ToEmailContent());
@@ -87,7 +87,7 @@ public class LogWorker(IServiceProvider services)
         services,
         new ExponentialBackOffStrategy(5000, 4, 3))
 {
-    protected override async Task<bool> DoAction(string[] batch)
+    protected override async Task<bool> DoAction(string[] batch, CancellationToken ct)
     {
         var sender = Resolve<IBulkLogSender>();
         return await sender.Send(batch);

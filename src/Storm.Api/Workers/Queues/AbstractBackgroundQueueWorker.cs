@@ -12,12 +12,17 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 
 	private readonly IItemQueue<TInput, TOutput> _queue;
 
-	private readonly Func<TOutput, Task<bool>> _itemAction;
+	private readonly Func<TOutput, CancellationToken, Task<bool>> _itemAction;
 	private readonly Action<TOutput, Exception>? _onException;
 
 	private readonly IRetryStrategy? _retryStrategy;
 
 	protected AbstractBackgroundQueueWorker(ILogService logService, IItemQueue<TInput, TOutput> queue, Func<TOutput, Task<bool>> itemAction, Action<TOutput, Exception>? onException, IRetryStrategy? retryStrategy)
+		: this(logService, queue, (items, _) => itemAction(items), onException, retryStrategy)
+	{
+	}
+
+	protected AbstractBackgroundQueueWorker(ILogService logService, IItemQueue<TInput, TOutput> queue, Func<TOutput, CancellationToken, Task<bool>> itemAction, Action<TOutput, Exception>? onException, IRetryStrategy? retryStrategy)
 	{
 		_logService = logService;
 		_itemAction = itemAction;
@@ -50,25 +55,15 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 		{
 			try
 			{
-				if (await _itemAction.Invoke(items))
+				if (await _itemAction.Invoke(items, ct))
 				{
 					OnItemsSuccess(items);
 					return;
 				}
-
-				if (_retryStrategy?.DiscardAfterFailedAttempts is not true || tries < _retryStrategy.AttemptsCountBeforeDiscard)
-				{
-					await OnItemsError(items);
-				}
-				else
-				{
-					int triesCopy = tries;
-					_logService.Error(x => x
-						.WriteProperty("type", GetType().FullName)
-						.WriteMethodInfo()
-						.WriteMessage($"Fail to process item {triesCopy} times")
-						.DumpObject("items", items));
-				}
+			}
+			catch (OperationCanceledException) when (ct.IsCancellationRequested)
+			{
+				throw;
 			}
 			catch (Exception ex)
 			{
@@ -77,14 +72,21 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 					.WriteMethodInfo()
 					.WriteException(ex));
 
-				await OnItemsError(items);
 				_onException?.Invoke(items, ex);
-
-				if (_retryStrategy?.DiscardAfterFailedAttempts is true && tries >= _retryStrategy.AttemptsCountBeforeDiscard)
-				{
-					return;
-				}
 			}
+
+			if (_retryStrategy?.DiscardAfterFailedAttempts is true && tries >= _retryStrategy.AttemptsCountBeforeDiscard)
+			{
+				int attemptsCount = tries + 1;
+				_logService.Error(x => x
+					.WriteProperty("type", GetType().FullName)
+					.WriteMethodInfo()
+					.WriteMessage($"Discarding item after {attemptsCount} failed attempts")
+					.DumpObject("items", items));
+				return;
+			}
+
+			await OnItemsError(items, ct);
 		}
 	}
 
@@ -93,9 +95,8 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 		_retryStrategy?.Reset();
 	}
 
-	protected virtual Task OnItemsError(TOutput item)
+	protected virtual Task OnItemsError(TOutput item, CancellationToken ct)
 	{
-		_retryStrategy?.Wait();
-		return Task.CompletedTask;
+		return _retryStrategy?.Wait(ct) ?? Task.CompletedTask;
 	}
 }

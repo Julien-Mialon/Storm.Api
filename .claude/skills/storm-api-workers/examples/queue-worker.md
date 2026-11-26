@@ -16,7 +16,7 @@ public class NotificationWorker(IServiceProvider services)
         services,
         new ExponentialBackOffStrategy(baseMillisecondsCount: 2000, maxIteration: 4, attemptsCountBeforeDiscard: 5))
 {
-    protected override async Task<bool> DoAction(NotificationMessage item)
+    protected override async Task<bool> DoAction(NotificationMessage item, CancellationToken ct)
     {
         var sender = Resolve<INotificationSender>();
         await sender.Send(item);

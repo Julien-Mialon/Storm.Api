@@ -11,7 +11,17 @@ public class BackgroundQueueWorker<TWorkItem> : AbstractBackgroundQueueWorker<TW
 	{
 	}
 
+	public BackgroundQueueWorker(ILogService logService, Func<TWorkItem, CancellationToken, Task<bool>> itemAction, Action<TWorkItem?, Exception>? onException, IRetryStrategy? retryStrategy)
+		: base(logService, new ItemQueue<TWorkItem>(), itemAction, onException, retryStrategy)
+	{
+	}
+
 	public BackgroundQueueWorker(ILogService logService, IItemQueue<TWorkItem> queue, Func<TWorkItem, Task<bool>> itemAction, Action<TWorkItem?, Exception>? onException, IRetryStrategy? retryStrategy)
+		: base(logService, queue, itemAction, onException, retryStrategy)
+	{
+	}
+
+	public BackgroundQueueWorker(ILogService logService, IItemQueue<TWorkItem> queue, Func<TWorkItem, CancellationToken, Task<bool>> itemAction, Action<TWorkItem?, Exception>? onException, IRetryStrategy? retryStrategy)
 		: base(logService, queue, itemAction, onException, retryStrategy)
 	{
 	}
