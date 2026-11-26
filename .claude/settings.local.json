@@ -10,11 +10,11 @@
       "Bash(mkdir *)",
       "Bash(xargs grep *)",
       "Bash(git show:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git push *)",
+      "Bash(git commit *)"
     ],
     "deny": [
-      "Bash(git push *)",
-      "Bash(git commit *)",
       "Edit(.git/**)",
       "Edit(.claude/settings.local.json)"
     ]
