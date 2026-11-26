@@ -23,7 +23,7 @@ public class ExponentialBackOffStrategy : IRetryStrategy
 		_currentIteration = 0;
 	}
 
-	public Task Wait()
+	public Task Wait(CancellationToken ct)
 	{
 		_currentIteration++;
 		if (_currentIteration > _maxIteration)
@@ -31,7 +31,7 @@ public class ExponentialBackOffStrategy : IRetryStrategy
 			_currentIteration = _maxIteration;
 		}
 
-		return Task.Delay(GetTimeForCurrentIteration());
+		return Task.Delay(GetTimeForCurrentIteration(), ct);
 	}
 
 	private int GetTimeForCurrentIteration()

@@ -12,12 +12,17 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 
 	private readonly IItemQueue<TInput, TOutput> _queue;
 
-	private readonly Func<TOutput, Task<bool>> _itemAction;
+	private readonly Func<TOutput, CancellationToken, Task<bool>> _itemAction;
 	private readonly Action<TOutput, Exception>? _onException;
 
 	private readonly IRetryStrategy? _retryStrategy;
 
 	protected AbstractBackgroundQueueWorker(ILogService logService, IItemQueue<TInput, TOutput> queue, Func<TOutput, Task<bool>> itemAction, Action<TOutput, Exception>? onException, IRetryStrategy? retryStrategy)
+		: this(logService, queue, (items, _) => itemAction(items), onException, retryStrategy)
+	{
+	}
+
+	protected AbstractBackgroundQueueWorker(ILogService logService, IItemQueue<TInput, TOutput> queue, Func<TOutput, CancellationToken, Task<bool>> itemAction, Action<TOutput, Exception>? onException, IRetryStrategy? retryStrategy)
 	{
 		_logService = logService;
 		_itemAction = itemAction;
@@ -50,11 +55,15 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 		{
 			try
 			{
-				if (await _itemAction.Invoke(items))
+				if (await _itemAction.Invoke(items, ct))
 				{
 					OnItemsSuccess(items);
 					return;
 				}
+			}
+			catch (OperationCanceledException) when (ct.IsCancellationRequested)
+			{
+				throw;
 			}
 			catch (Exception ex)
 			{
@@ -77,7 +86,7 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 				return;
 			}
 
-			await OnItemsError(items);
+			await OnItemsError(items, ct);
 		}
 	}
 
@@ -86,8 +95,8 @@ public abstract class AbstractBackgroundQueueWorker<TInput, TOutput> : IWorker<T
 		_retryStrategy?.Reset();
 	}
 
-	protected virtual Task OnItemsError(TOutput item)
+	protected virtual Task OnItemsError(TOutput item, CancellationToken ct)
 	{
-		return _retryStrategy?.Wait() ?? Task.CompletedTask;
+		return _retryStrategy?.Wait(ct) ?? Task.CompletedTask;
 	}
 }

@@ -19,8 +19,8 @@ public class DelayRetryStrategy : IRetryStrategy
 	{
 	}
 
-	public Task Wait()
+	public Task Wait(CancellationToken ct)
 	{
-		return Task.Delay(_timeToWait);
+		return Task.Delay(_timeToWait, ct);
 	}
 }

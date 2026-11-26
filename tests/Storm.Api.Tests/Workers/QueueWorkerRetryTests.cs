@@ -17,15 +17,15 @@ public abstract class QueueWorkerRetryTests
 	private const int ATTEMPTS_COUNT_BEFORE_DISCARD = 2;
 	private const int ATTEMPTS_COUNT = ATTEMPTS_COUNT_BEFORE_DISCARD + 1;
 
-	private static readonly TimeSpan STEP_TIMEOUT = TimeSpan.FromSeconds(10);
+	protected static readonly TimeSpan STEP_TIMEOUT = TimeSpan.FromSeconds(10);
 
-	private readonly ConcurrentQueue<string> _logEntries = new();
+	protected ConcurrentQueue<string> LogEntries { get; } = new();
 
 	protected ILogService LogService { get; }
 
 	protected QueueWorkerRetryTests()
 	{
-		LogService = new LogService(_ => new RecordingLogSink(_logEntries), LogLevel.Trace);
+		LogService = new LogService(_ => new RecordingLogSink(LogEntries), LogLevel.Trace);
 	}
 
 	/// <summary>Starts the worker under test, which hands every item it dequeues to <paramref name="action"/>.</summary>
@@ -80,7 +80,7 @@ public abstract class QueueWorkerRetryTests
 
 		Assert.Equal("first", await Next(action.Succeeded));
 		Assert.Equal(FAILED_ATTEMPTS_COUNT + 1, action.Attempts.Count);
-		Assert.DoesNotContain(_logEntries, static entry => entry.Contains("Discarding item"));
+		Assert.DoesNotContain(LogEntries, static entry => entry.Contains("Discarding item"));
 	}
 
 	/// <summary>Queues "first", which <paramref name="action"/> fails on every attempt, then "next".</summary>
@@ -97,7 +97,7 @@ public abstract class QueueWorkerRetryTests
 		Assert.Equal("next", await Next(action.Succeeded));
 		Assert.Equal([.. Enumerable.Repeat("first", ATTEMPTS_COUNT), "next"], action.Attempts);
 		Assert.Equal(0, retryStrategy.Waits.Count);
-		Assert.Single(_logEntries, static entry => entry.Contains($"Discarding item after {ATTEMPTS_COUNT} failed attempts"));
+		Assert.Single(LogEntries, static entry => entry.Contains($"Discarding item after {ATTEMPTS_COUNT} failed attempts"));
 	}
 
 	private static async Task ReleaseWaits(ManualRetryStrategy retryStrategy, int count)
@@ -152,11 +152,11 @@ public abstract class QueueWorkerRetryTests
 		{
 		}
 
-		public Task Wait()
+		public Task Wait(CancellationToken ct)
 		{
 			TaskCompletionSource wait = new(TaskCreationOptions.RunContinuationsAsynchronously);
 			_waits.Writer.TryWrite(wait);
-			return wait.Task;
+			return wait.Task.WaitAsync(ct);
 		}
 	}
 

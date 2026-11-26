@@ -13,7 +13,7 @@ public class ElasticSearchHostedService : AbstractHostedServiceQueueWorker<strin
 	{
 	}
 
-	protected override async Task<bool> DoAction(string[] item)
+	protected override async Task<bool> DoAction(string[] item, CancellationToken ct)
 	{
 		_sender ??= Resolve<IElasticSender>();
 		return await _sender.Send(item);

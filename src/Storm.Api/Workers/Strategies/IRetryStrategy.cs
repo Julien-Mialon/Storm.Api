@@ -8,5 +8,5 @@ public interface IRetryStrategy
 
 	void Reset();
 
-	Task Wait();
+	Task Wait(CancellationToken ct);
 }

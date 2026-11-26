@@ -10,4 +10,9 @@ public class BackgroundThrottledBufferedQueueWorker<TWorkItem> : AbstractBackgro
 		: base(logService, new ThrottledBufferedItemQueue<TWorkItem>(bufferSize, throttlingTime), itemAction, onException, retryStrategy)
 	{
 	}
+
+	public BackgroundThrottledBufferedQueueWorker(ILogService logService, Func<IReadOnlyList<TWorkItem>, CancellationToken, Task<bool>> itemAction, TimeSpan throttlingTime, Action<IReadOnlyList<TWorkItem>, Exception>? onException, int bufferSize, IRetryStrategy? retryStrategy)
+		: base(logService, new ThrottledBufferedItemQueue<TWorkItem>(bufferSize, throttlingTime), itemAction, onException, retryStrategy)
+	{
+	}
 }
