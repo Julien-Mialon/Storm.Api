@@ -99,6 +99,57 @@ public static class DateTimeExtensions
 		}
 	}
 
+	extension(DateTime? date)
+	{
+		public bool IsPast()
+			=> date.IsPast(TimeProvider.System);
+
+		public bool IsPast(TimeProvider timeProvider)
+		{
+			return date.HasValue && date.Value.IsPast(timeProvider);
+		}
+
+		public bool IsFuture()
+			=> date.IsFuture(TimeProvider.System);
+
+		public bool IsFuture(TimeProvider timeProvider)
+		{
+			return date.HasValue && date.Value.IsFuture(timeProvider);
+		}
+
+		public bool IsToday()
+			=> date.IsToday(TimeProvider.System);
+
+		public bool IsToday(TimeProvider timeProvider)
+		{
+			return date.HasValue && date.Value.IsToday(timeProvider);
+		}
+
+		public bool IsNotToday()
+			=> date.IsNotToday(TimeProvider.System);
+
+		public bool IsNotToday(TimeProvider timeProvider)
+		{
+			return date.HasValue && date.Value.IsNotToday(timeProvider);
+		}
+
+		public bool IsThisWeek()
+			=> date.IsThisWeek(TimeProvider.System);
+
+		public bool IsThisWeek(TimeProvider timeProvider)
+		{
+			return date.HasValue && date.Value.IsThisWeek(timeProvider);
+		}
+
+		public bool IsNotThisWeek()
+			=> date.IsNotThisWeek(TimeProvider.System);
+
+		public bool IsNotThisWeek(TimeProvider timeProvider)
+		{
+			return date.HasValue && date.Value.IsNotThisWeek(timeProvider);
+		}
+	}
+
 	extension(IDateRange? date)
 	{
 		public bool TodayIsInRange(DateTime now)
